@@ -2,7 +2,7 @@
 /* tslint:disable:no-unused-expression */
 const express = require('express');
 
-const errors = require('@feathersjs/errors');
+const errors = require('@zero/errors');
 const request = require('request');
 const fs = require('fs');
 const { join } = require('path');

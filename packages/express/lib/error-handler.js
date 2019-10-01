@@ -1,4 +1,4 @@
-const errors = require('@feathersjs/errors');
+const errors = require('@zero/errors');
 const path = require('path');
 
 const defaults = {

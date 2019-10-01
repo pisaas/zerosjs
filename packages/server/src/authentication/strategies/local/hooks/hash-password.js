@@ -1,5 +1,5 @@
 const { get, set, cloneDeep } = require('lodash');
-const { BadRequest } = require('@feathersjs/errors');
+const { BadRequest } = require('@zero/errors');
 const Debug = require('debug');
 
 const debug = Debug('@zero/server/authentication/strategies/local/hooks/hash-password');

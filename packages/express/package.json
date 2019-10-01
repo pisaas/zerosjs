@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@feathersjs/commons": "^4.3.0",
-    "@feathersjs/errors": "^4.3.3",
+    "@zero/errors": "^0.0.1",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "lodash": "^4.17.15",

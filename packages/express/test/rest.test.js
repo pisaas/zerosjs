@@ -2,7 +2,7 @@ const assert = require('assert');
 const axios = require('axios');
 
 const feathers = require('@feathersjs/feathers');
-const { BadRequest } = require('@feathersjs/errors');
+const { BadRequest } = require('@zero/errors');
 const { Service } = require('@zero/tests/lib/fixture');
 const { crud } = require('@zero/tests/lib/crud');
 

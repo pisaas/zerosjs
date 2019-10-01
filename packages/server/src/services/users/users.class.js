@@ -1,5 +1,4 @@
-const { Service } = require('feathers-mongoose');
+const { ServiceBase } = require('../base');
 
-exports.Users = class Users extends Service {
-  
+exports.Users = class Users extends ServiceBase {
 };

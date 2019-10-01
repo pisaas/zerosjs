@@ -1,4 +1,4 @@
-const errors = require('@feathersjs/errors');
+const errors = require('@zero/errors');
 
 const handler = require('../lib/not-found-handler');
 

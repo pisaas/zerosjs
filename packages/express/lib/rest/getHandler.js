@@ -1,4 +1,4 @@
-const errors = require('@feathersjs/errors');
+const errors = require('@zero/errors');
 const { omit } = require('@feathersjs/commons')._;
 const debug = require('debug')('@zero/express/rest');
 

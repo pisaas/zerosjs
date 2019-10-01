@@ -1,6 +1,6 @@
 const { get, omit, isArray } = require('lodash');
 const Debug = require('debug');
-const { NotAuthenticated } = require('@feathersjs/errors');
+const { NotAuthenticated } = require('@zero/errors');
 const { AuthenticationBaseStrategy } = require('@feathersjs/authentication');
 
 const security = require('../../../lib/security');

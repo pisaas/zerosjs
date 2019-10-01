@@ -19,6 +19,7 @@ const channels = require('./channels');
 const authentication = require('./authentication');
 
 const data = require('./data');
+const api = require('./api');
 
 const app = express(feathers());
 
@@ -45,8 +46,11 @@ app.configure(middleware);
 app.configure(authentication);
 // Set up our services (see `services/index.js`)
 app.configure(services);
-// Set up event channels (see channels.js)
+// Set up event channels (see `channels/index.js`)
 app.configure(channels);
+
+// Set up api (see `api/index.js`)
+app.configure(api);
 
 // Configure a middleware for 404s and the error handler
 app.use(express.notFound());

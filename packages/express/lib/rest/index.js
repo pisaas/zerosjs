@@ -119,6 +119,14 @@ function rest (handler = formatter) {
 
     // Register the REST provider
     app.providers.push(function (service, path, options) {
+      if (service && service.options) {
+        let { disabledRest } = service.options;
+
+        if (disabledRest === true) {
+          return;
+        }
+      }
+
       const baseUri = `/${path}`;
       let { middleware: { before, after } } = options;
 
