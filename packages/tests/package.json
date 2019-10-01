@@ -1,0 +1,29 @@
+{
+  "name": "@zero/tests",
+  "private": true,
+  "description": "Core module common tests. Forked from feathers.",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">= 6"
+  },
+  "scripts": {
+    "test": "jest test"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@feathersjs/feathers": "^4.3.3",
+    "jest": "^24.9.0",
+    "shx": "^0.3.2",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
+  }
+}

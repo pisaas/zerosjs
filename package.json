@@ -1,0 +1,14 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "install": "lerna bootstrap",
+    "publish": "lerna publish && git commit -am \"Update version and changelog\" && git push origin master",
+    "lint": "echo eslint",
+    "test": "npm run lint && nyc lerna run test"
+  },
+  "devDependencies": {
+    "lerna": "^3.16.4",
+    "nyc": "^14.1.1"
+  }
+}
