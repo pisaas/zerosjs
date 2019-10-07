@@ -1,6 +1,6 @@
 {
   "host": "localhost",
-  "port": 3030,
+  "port": 1337,
   "public": "../public/",
   "paginate": {
     "default": 10,
@@ -9,8 +9,13 @@
   "mongodb": "mongodb://localhost:27017/zero",
   "authentication": {
     "entity": "user",
-    "service": "users",
+    "service": "sys/users",
     "secret": "Hi5r9X2h9CrohaxQD9MF7oNof6Y=",
+    "secrets": {
+      "client": "Hi5r9X2h9CrohaxQD9MF7oNof6Y=",
+      "admin": "Hi5r9X2h9CrohaxQD9MF7oNof6Y=",
+      "console": "Hi5r9X2h9CrohaxQD9MF7oNof6Y="
+    },
     "authStrategies": [
       "jwt",
       "local"
@@ -27,7 +32,7 @@
     "local": {
       "usernameField": "username",
       "passwordField": "password",
-      "verifyFields": [ "uname", "email", "mobile" ]
+      "verifyFields": [ "id", "uname", "email", "mobile" ]
     }
   }
 }

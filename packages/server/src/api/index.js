@@ -1,7 +1,9 @@
-const content = require('./content');
+const client = require('./client');
 const admin = require('./admin');
+const consol = require('./console');
 
 module.exports = function (app) {
-  app.configure(content);
+  app.configure(client);
   app.configure(admin);
+  app.configure(consol);
 };

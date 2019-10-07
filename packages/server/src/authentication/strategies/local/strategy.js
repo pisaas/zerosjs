@@ -129,6 +129,10 @@ class LocalStrategy extends AuthenticationBaseStrategy {
     const { passwordField, usernameField, entity } = this.configuration;
     const username = data[usernameField];
     const password = data[passwordField];
+
+    // 默认认证目标，client（默认）, admin, console
+    const authTarget = data['target'] || 'client';
+
     const result = await this.findEntity(username, omit(params, 'provider'));
 
     await this.comparePassword(result, password);

@@ -6,7 +6,7 @@ module.exports = function (app) {
   const { register } = app.get('dbClient');
 
   return register({
-    code: { type: String, unique: true, maxlength: 50 },
+    id: { type: String, unique: true, maxlength: 50 },
     uname: { type: String, sparseUnique: true, maxlength: 50 },
     mobile: { type: String, sparseUnique: true },
     email: { type: String, sparseUnique: true, lowercase: true, trim: true },
