@@ -31,6 +31,10 @@ export default {
 
   methods: {
     onTabClick () {
+      this.loadAppList()
+    },
+
+    loadAppList () {
       let targetLists = this.$refs[`appList${this.tabName}`]
       if (targetLists && targetLists[0] && targetLists[0].getList) {
         targetLists[0].getList()
@@ -39,6 +43,7 @@ export default {
   },
 
   mounted () {
+    this.loadAppList()
   }
 }
 

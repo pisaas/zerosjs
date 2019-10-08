@@ -53,8 +53,8 @@ export default {
     },
 
     logout () {
-      this.$apis.app.logout().then(() => {
-        this.$app.loadUrl()
+      this.$service.logout().then(() => {
+        this.$uni.reload()
       })
     }
   }

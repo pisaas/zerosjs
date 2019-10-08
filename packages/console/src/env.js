@@ -68,27 +68,11 @@ export const viewSizeName = () => {
   return sizeName
 }
 
-// 重新加载页面(兼容微信端刷新)
-export function loadUrl (url) {
-  // 防止App闪退 (只在Cordova中使用)
-  if (is.app()) {
-    return window.location.reload(true)
-  }
-
-  if (!url) {
-    // url = (window.top.location.href + '?timestamp=' + new Date().getTime())
-    url = (window.location.protocol + '//' + window.location.host + '?ts=' + new Date().getTime() + '/' + window.location.hash)
-  }
-
-  window.top.location.href = url
-}
-
 export default {
   appCode,
   baseUrl,
   apiDomain,
   is,
   viewSize,
-  viewSizeName,
-  loadUrl
+  viewSizeName
 }

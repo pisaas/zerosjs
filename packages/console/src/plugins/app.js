@@ -1,10 +1,12 @@
 import iView from 'iview'
 
-import str     from '@/lib/str'
-import timeago from '@/lib/timeago'
-import date    from '@/lib/date'
-import format  from '@/lib/format'
-import regexr  from '@/lib/regexr'
+import str     from '@/utils/str'
+import timeago from '@/utils/timeago'
+import date    from '@/utils/date'
+import format  from '@/utils/format'
+import regexr  from '@/utils/regexr'
+import errors  from '@/utils/errors'
+import uni     from '@/utils/uni'
 
 import env from '@/env'
 import apis from '@/apis'
@@ -12,6 +14,8 @@ import apis from '@/apis'
 export default ({ app, Vue }) => {
   Vue.prototype.$env = env
   Vue.prototype.$util = { str, timeago, date, format, regexr }
+  Vue.prototype.$errors = errors
+  Vue.prototype.$uni = uni
 
   Vue.prototype.$apis = apis
   Vue.prototype.$service = apis.service
@@ -103,41 +107,30 @@ function initApp (app, Vue) {
    * 跳转错误页面
    * @return {[type]} [description]
    */
-  function goError () {
-    return app.router.push('/404')
+  function goError (code) {
+    code = code || '404'
+    return app.router.push(`/${code}`)
   }
 
-  function toast (text, opts) {
-    opts = opts || {}
-    opts.type = opts.type || 'info'
+  function toast (title, opts) {
+    opts = Object.assign({ title }, opts)
+    uni.showToast(opts)
+  }
 
-    const toastTypes = ['info', 'success', 'warning', 'error', 'loading']
-
-    if (toastTypes.indexOf(opts.type) < 0) {
-      return
-    }
-
-    // 根据text长度调整显示时间。
-    opts.content = text
-    opts.duration = (opts.duration || parseInt(2 * (text.length / 10)))
-    iView.Message[opts.type](opts)
+  function loading (type) {
+    uni.showLoading(type)
   }
 
   function alert (opts) {
-    opts = opts || {}
-    opts.type = opts.type || 'info'
-
-    const alertTypes = ['info', 'success', 'warning', 'error', 'confirm']
-
-    if (alertTypes.indexOf(opts.type) < 0) {
-      return
-    }
-
-    iView.Modal[opts.type](opts)
+    uni.showModal(opts)
   }
 
   function confirm (opts) {
-    return iView.Modal.confirm(opts)
+    opts = Object.assign({
+      type: 'confirm'
+    }, opts)
+
+    uni.showModal(opts)
   }
 
   return {
@@ -149,7 +142,9 @@ function initApp (app, Vue) {
     isLogin,
     goLogin,
     goHome,
-    goError
-    
+    goError,
+    toast,
+    loading,
+    confirm
   }
 }

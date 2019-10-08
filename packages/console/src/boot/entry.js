@@ -38,6 +38,5 @@ app.store.dispatch('app/load', {
   // initialState
 }).then(() => {
   app.store.commit('app/setAppInitialized', true)
-
   new Vue(app)
 })
