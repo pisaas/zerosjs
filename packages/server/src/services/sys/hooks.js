@@ -1,4 +1,9 @@
 const { get, set, cloneDeep } = require('lodash');
+const { protectFields } = require('../../hooks');
+
+exports.protectFields = protectFields;
+
+exports.fuzzySearch = require('../../hooks/fuzzy-search');
 
 exports.genId = function (field) {
   if (!field) {

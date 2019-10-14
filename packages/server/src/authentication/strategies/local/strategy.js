@@ -126,12 +126,17 @@ class LocalStrategy extends AuthenticationBaseStrategy {
    * @param {*} params 
    */
   async authenticate (data, params) {
-    const { passwordField, usernameField, entity } = this.configuration;
+    const { passwordField, usernameField, entity, errorMessage } = this.configuration;
     const username = data[usernameField];
     const password = data[passwordField];
 
     // 默认认证目标，client（默认）, admin, console
-    const authTarget = data['target'] || 'client';
+    // const authTarget = data['target'] || 'client';
+
+    // 生产环境不能登入0用户
+    if (username == '0' && process.env.NODE_ENV === 'production') {
+      throw new NotAuthenticated(errorMessage);
+    }
 
     const result = await this.findEntity(username, omit(params, 'provider'));
 

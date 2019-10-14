@@ -1,4 +1,5 @@
-import iView from 'iview'
+import ViewUI  from 'view-design';
+import lodash  from 'lodash'
 
 import str     from '@/utils/str'
 import timeago from '@/utils/timeago'
@@ -13,7 +14,7 @@ import apis from '@/apis'
 
 export default ({ app, Vue }) => {
   Vue.prototype.$env = env
-  Vue.prototype.$util = { str, timeago, date, format, regexr }
+  Vue.prototype.$util = { lodash, str, timeago, date, format, regexr }
   Vue.prototype.$errors = errors
   Vue.prototype.$uni = uni
 
@@ -23,7 +24,7 @@ export default ({ app, Vue }) => {
 }
 
 function initApp (app, Vue) {
-  Vue.use(iView, {
+  Vue.use(ViewUI, {
     // i18n: (key, value) => i18n.t(key, value)
   })
 

@@ -1,19 +1,23 @@
-import io from 'socket.io-client'
-import feathers from '@feathersjs/client'
+const feathers = require('@feathersjs/client')
 
 import { showToast } from '@/utils/uni'
 import { ErrorCodes } from '@/utils/errors'
 
-// for rest api
-// const feathers = require('@feathersjs/feathers')
-// const rest = require('@feathersjs/rest-client')
 import { apiDomain } from '../env'
 
-const socket = io(`${apiDomain}`)
+const clientType = 'rest'
+let apiBaseUrl = 'api'
 
 const client = feathers()
 
-client.configure(feathers.socketio(socket))
+if (clientType === 'rest') {
+  initRestClient(client)
+} else {
+  apiBaseUrl = 'api/console'
+  initIoClient(client)
+}
+
+
 client.configure(feathers.authentication({
   storageKey: 'zero-token'
 }))
@@ -23,21 +27,75 @@ client.hooks({
 })
 
 function clientService(path) {
-  return client.service(`api/console/${path}`)
+  return client.service(`${apiBaseUrl}/${path}`)
 }
 
-Object.assign(clientService, client)
-
-// for rest api
-// const client = feathers();
-// const restClient = rest('/api')
-// client.configure(restClient.fetch(window.fetch));
-
-// client.service('users').get('101').then((res) => {
-//   console.log("service('users') get ------->", res)
-// })
+Object.assign(clientService, client, {
+  getSearchQuery
+})
 
 export default clientService
+
+function initIoClient (client) {
+  const io = require('socket.io-client')
+  const socket = io(`${apiDomain}`)
+
+  client.configure(feathers.socketio(socket))
+
+  return client
+}
+
+function initRestClient (client) {
+  const axios = require('axios')
+
+  const restClient = feathers.rest()
+  client.configure(restClient.axios(axios))
+
+  return client
+}
+
+/**
+ * 获取服务查询
+ */
+function getSearchQuery (query, options) {
+  if (!query) {
+    return
+  }
+
+  query = Object.assign({}, query, options)
+
+  let { search, page, size, sort, equalFields = [], fuzzyFields = [] } = query
+
+  let $skip = (size * (page - 1))
+  if ($skip < 0) {
+    $skip = 0
+  }
+  if (query.total && $skip > query.total) {
+    $skip = query.total
+  }
+
+  let qryObj = {
+    $skip,
+    $limit: size,
+    $sort: sort
+  }
+
+  if (search) {
+    let $or = []
+
+    equalFields.forEach((f) => {
+      $or.push({ [f]: search })
+    })
+
+    fuzzyFields.forEach((f) => {
+      $or.push({ [f]: { $search: search } })
+    })
+
+    qryObj.$or = $or
+  }
+
+  return qryObj
+}
 
 /**
  * 处理服务错误

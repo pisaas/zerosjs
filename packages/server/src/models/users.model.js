@@ -6,15 +6,15 @@ module.exports = function (app) {
   const { register } = app.get('dbClient');
 
   return register({
-    id: { type: String, unique: true, maxlength: 50 },
+    id: { type: String, required: true, unique: true, maxlength: 50 },
     uname: { type: String, sparseUnique: true, maxlength: 50 },
     mobile: { type: String, sparseUnique: true },
     email: { type: String, sparseUnique: true, lowercase: true, trim: true },
-    password: { type: String },
+    password: { type: String, protected: true },
 
-    weOpenId: { type: String, sparseUnique: true, maxlength: 100 },
-    wxOpenId: { type: String, sparseUnique: true, maxlength: 100 },
-    wxUnionId: { type: String, sparseUnique: true, maxlength: 100 },
+    weOpenId: { type: String, protected: true, sparseUnique: true, maxlength: 100 },
+    wxOpenId: { type: String, protected: true, sparseUnique: true, maxlength: 100 },
+    wxUnionId: { type: String, protected: true, sparseUnique: true, maxlength: 100 },
 
     nickname: { type: String, maxlength: 50 },
     realname: { type: String, maxlength: 50 },
@@ -34,6 +34,7 @@ module.exports = function (app) {
     location: { type: Array },
 
     lastLogin: {
+      protected: true,
       ip: { type: String, maxlength: 50 },
       ts: { type: Date }
     }

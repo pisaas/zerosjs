@@ -6,7 +6,7 @@ import createApp from './app.js'
 // import pIO        from '../plugins/io.js'
 // import pCmpts     from '../plugins/cmpts.js'
 import pApp       from '../plugins/app.js'
-// import pMedia     from '../plugins/media.js'
+import pMedia     from '../plugins/media.js'
 // import pResc      from '../plugins/resc.js'
 
 Vue.config.devtools = true
@@ -17,7 +17,8 @@ const { app, store, router } = createApp()
 ;[
   // pValidator, pIO, pCmpts, 
   pApp,
-  // pMedia, pResc
+  pMedia,
+  // pResc
 ].forEach(plugin => {
   plugin({
     app,
@@ -27,12 +28,6 @@ const { app, store, router } = createApp()
     ssrContext: null
   })
 })
-
-// Vue.prototype.$service('users').get('101').then((res) => {
-//   debugger
-// }).catch((err) => {
-//   debugger
-// })
 
 app.store.dispatch('app/load', {
   // initialState

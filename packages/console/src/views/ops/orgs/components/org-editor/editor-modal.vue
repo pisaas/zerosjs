@@ -28,9 +28,9 @@ export default {
   computed: {
     modalTitle () {
       if (this.editMode === 'update') {
-        return `编辑应用 (${this.userCode || ''})`
+        return `编辑组织 (${this.userCode || ''})`
       }
-      return '新建应用'
+      return '新建组织'
     },
 
     modalWidth () {
@@ -42,6 +42,11 @@ export default {
     onOk () {
       this.$refs.editor.save().then((res) => {
         this.resetLoading()
+        
+        if (res === false) {
+          return
+        }
+        
         this.$emit('on-save', res)
       }).catch(() => {
         this.resetLoading()

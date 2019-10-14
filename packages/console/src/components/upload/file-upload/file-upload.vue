@@ -48,12 +48,17 @@ export default {
       }
 
       let file = input.files[0]
-
       return file
     },
 
     reset () {
-      this.$refs.file.value = ''
+      let input = this.$refs.file
+      input.value = ''
+      
+      if(!/safari/i.test(navigator.userAgent)){
+        input.type = ''
+        input.type = 'file'
+      }
     }
   }
 }

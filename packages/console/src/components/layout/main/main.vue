@@ -31,6 +31,7 @@
         <Card class="content-container" :bordered="false">
           <div v-if="showHeader" class="content-header" slot="title">
             {{ util.menuTitle($route) }}
+            <router-view name="header" />
           </div>
           <router-view />
         </Card>
@@ -94,6 +95,8 @@ export default {
     if (this.$env.viewSizeName() === 'xs') {
       this.collapsed = true
     }
+
+    
   },
 
   methods: {
@@ -103,6 +106,7 @@ export default {
 
     turnToPage (route) {
       let { name, params, query } = {}
+
       if (typeof route === 'string') {
         name = route
       } else {

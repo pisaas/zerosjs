@@ -1,5 +1,5 @@
 
-import { LoadingBar, Message, Modal } from 'iview'
+import { LoadingBar, Message, Modal } from 'view-design'
 
 export function showToast (options) {
   if (typeof options === 'string') {

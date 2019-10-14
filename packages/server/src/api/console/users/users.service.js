@@ -1,12 +1,13 @@
-const { protectFields } = require('../../../hooks');
-const { Users } = require('./users.class');
+const { ApiService } = require('../service');
 
 module.exports = function (app) {
   new Users().register(app, 'users', {
-    hooks: {
-      after: {
-        all: [ protectFields('password') ]
-      }
+    adapterService: {
+      path: 'sys/users',
+      methods: 'all'
     }
   });
 };
+
+class Users extends ApiService {
+}

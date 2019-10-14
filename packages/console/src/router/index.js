@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import { LoadingBar } from 'iview'
+import { LoadingBar } from 'view-design'
 
 import routes from './routes'
 

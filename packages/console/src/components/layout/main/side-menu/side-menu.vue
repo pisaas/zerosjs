@@ -5,14 +5,14 @@
     </div>
     <extended-menu
       v-show="!collapsed"
-      :routes="subRoutes"
+      :routes="subVisibleRoutes"
       :iconSize="iconSize"
       :defaultIcon="defaultIcon"
       @on-change="onChange">
     </extended-menu>
     <collapsed-menu
       v-show="collapsed"
-      :routes="subRoutes"
+      :routes="subVisibleRoutes"
       :iconSize="iconSize"
       :iconColor="iconColor"
       :defaultIcon="defaultIcon"
@@ -63,23 +63,45 @@ export default {
       return this.$app.topRoute()
     },
 
-    subRoutes () {
+    subVisibleRoutes () {
       let topRoute = this.topRoute
       if (!topRoute) {
         return []
       }
-      let menus = topRoute.children
-      return menus
+      let vRoutes = this.retrieveVisibleRoutes(topRoute.children)
+      return vRoutes
     }
   },
 
   methods: {
     onChange (name) {
-      this.$router.push({
-        name: name
+      this.$emit('on-change', name)
+    },
+
+    retrieveVisibleRoutes (routes) {
+      let thiz = this
+
+      if (!routes || !routes.length) {
+        return []
+      }
+
+      let vRoutes = []
+
+      routes.forEach((r) => {
+        if (!r) {
+          return
+        }
+
+        if (r.meta && r.meta.hideInMenu === true) {
+          return
+        }
+        
+        let vr = Object.assign({}, r)
+        vr.children = thiz.retrieveVisibleRoutes(r.children)
+        vRoutes.push(vr)
       })
 
-      this.$emit('on-change', name)
+      return vRoutes;
     }
   }
 }

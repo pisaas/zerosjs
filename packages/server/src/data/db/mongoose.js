@@ -26,13 +26,32 @@ function dbClient (app) {
   const { Schema } = mongooseClient;
 
   function register (schema, options) {
+    options = Object.assign({}, options);
+
+    let protectedFields = ['_id', '__v'];
+
     Object.keys(schema).forEach((key) => {
       let field = schema[key];
 
       if (field.sparseUnique) {
         field.index = sparseUniqueIndex(key, field.index);
       }
+
+      if (field.protected === true) {
+        protectedFields.push(key);
+      }
+
+      if (field.protected !== undefined) {
+        delete field.protected;
+      }
     });
+
+    protectedFields = protectedFields.concat((options.protectedFields || []));
+
+    let pTransformFn = protectFieldsTransform(protectedFields);
+
+    // options.toObject = Object.assign({ transform: pTransformFn }, options.toObject);
+    options.toJSON = Object.assign({ transform: pTransformFn }, options.toJSON);
 
     let s = new Schema(schema, options);
 
@@ -53,6 +72,17 @@ function dbClient (app) {
     return m;
   }
 
+  // mongoose保护
+  function protectFieldsTransform (pFields) {
+    return function transformFn (doc, ret, options) {
+      pFields = (pFields || []).concat(options.protectedFields || []);
+      pFields.forEach((f) => {
+        delete ret[f];
+      });
+      return ret;
+    };
+  }
+
   function sparseIndex (name, options) {
     return Object.assign({}, options, {
       partialFilterExpression: {[name]: {$type: 'string'}}
@@ -66,6 +96,7 @@ function dbClient (app) {
   return {
     mongooseClient,
     Schema,
+    Types: Schema.Types,
     register,
     sparseIndex,
     sparseUniqueIndex

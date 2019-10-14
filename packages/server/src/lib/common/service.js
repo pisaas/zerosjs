@@ -30,7 +30,7 @@ exports.prependHook = (hooks, path, hook) => {
 
   hooks = hooks || {};
 
-  let targetHooks = get(hooks, path);
+  let targetHooks = get(hooks, path, []);
   if (!targetHooks) {
     targetHooks = set(hooks, path, []);
   }
@@ -48,7 +48,7 @@ exports.appendHook = (hooks, path, hook) => {
 
   hooks = hooks || {};
 
-  let targetHooks = get(hooks, path);
+  let targetHooks = get(hooks, path, []);
   if (!targetHooks) {
     targetHooks = set(hooks, path, []);
   }

@@ -8,6 +8,8 @@ module.exports = {
     'eslint:recommended'
   ],
   rules: {
+    'x-invalid-end-tag': 'off',
+    'vue/no-unused-components': 'off',
     'vue/valid-template-root': 'off',
     'no-unused-vars': 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
