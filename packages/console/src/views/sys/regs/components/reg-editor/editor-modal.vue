@@ -3,22 +3,22 @@
     class="app-editor-modal" draggable
     :title="modalTitle" :width="modalWidth" :loading="loading"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
-    <org-editor ref="editor"></org-editor>
+    <reg-editor ref="editor"></reg-editor>
   </Modal>
 </template>
 
 <script>
 
-import OrgEditor from './editor'
+import RegEditor from './editor'
 
 export default {
   components: {
-    OrgEditor
+    RegEditor
   },
 
   data () {
     return {
-      orgId: null,
+      regId: null,
       editMode: 'create',
       showModal: false,
       loading: true
@@ -28,9 +28,9 @@ export default {
   computed: {
     modalTitle () {
       if (this.editMode === 'update') {
-        return `编辑组织 (${this.orgId || ''})`
+        return `编辑注册 (${this.regId || ''})`
       }
-      return '新建组织'
+      return '新建注册'
     },
 
     modalWidth () {
@@ -46,7 +46,10 @@ export default {
         if (res === false) {
           return
         }
-        
+
+        let eventName = `on-${this.editMode}`
+
+        this.$emit(eventName, res)
         this.$emit('on-save', res)
       }).catch(() => {
         this.resetLoading()
@@ -66,9 +69,10 @@ export default {
       this.$emit('on-close', data)
     },
 
-    create () {
+    create (id) {
+      this.pid = id
       this.editMode = 'create'
-      this.$refs.editor.create().then(() => {
+      this.$refs.editor.create(id).then(() => {
         this.showModal = true
       })
     },
@@ -76,7 +80,7 @@ export default {
     update (id) {
       this.editMode = 'update'
       this.$refs.editor.update(id).then((res) => {
-        this.orgId = res.id
+        this.regId = res.id
         this.showModal = true
       }).catch(() => {
         this.close()

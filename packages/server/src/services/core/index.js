@@ -1,6 +1,5 @@
-const ids = require('./ids/ids.service');
+const { configureDir } = require('../../lib/common/service');
 
-// eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
-  app.configure(ids);
+  configureDir(app, __dirname);
 };

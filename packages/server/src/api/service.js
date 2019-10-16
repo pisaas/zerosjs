@@ -1,4 +1,5 @@
 const { service } = require('../lib/common');
+const debug = require('debug')('@zero/server/api');
 
 exports.ApiService = class ApiService {
   constructor (options) {
@@ -23,6 +24,8 @@ exports.ApiService = class ApiService {
   }
 
   register (app, path, options) {
+    debug(`register api service "${path}"`, app, options);
+    
     this.app = app;
 
     let opts = Object.assign({
@@ -32,8 +35,6 @@ exports.ApiService = class ApiService {
     if (opts.adapterService) {
       this._registerAdapterService(app, opts.adapterService);
     }
-    
-    // opts.hooks = service.appendHook(opts.hooks, 'after.all', protecteFields());
 
     let protoService = service.register(app, path, this, opts);
 

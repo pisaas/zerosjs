@@ -1,5 +1,5 @@
-const user = require('./user/user.service');
+const { configureDir } = require('../../lib/common/service');
 
 module.exports = function (app) {
-  app.configure(user);
+  configureDir(app, __dirname);
 };

@@ -43,23 +43,6 @@ const routes = [
       },
     ]
   },
-  { path: '/stats', name: 'stats', redirect: '/stats/report', component: Main,
-    meta: { title: '数据', icon: 'md-analytics', level: 0 },
-    children: [
-      { path: '/stats/report', name: 'stats:report',
-        meta: { title: '报表', icon: 'md-stats' },
-        component: Parent,
-        children: [
-          { path: '/admins1', name: 'stats:report:m1', component: load('sys/staff'),
-            meta: { title: '报表1' },
-          },
-          { path: '/admins2', name: 'stats:report:m2', component: load('sys/staff'),
-            meta: { title: '报表2' },
-          }
-        ]
-      },
-    ]
-  },
   { path: '/sys', name: 'sys', redirect: '/sys/regs', component: Main,
     meta: { title: '系统', icon: 'md-cog', level: 0 },
     children: [
@@ -77,6 +60,23 @@ const routes = [
       },
       { path: '/sys/feedback', name: 'sys:feedback', component: load('sys/feedback'),
         meta: { title: '建议反馈', icon: 'ios-mail' },
+      },
+    ]
+  },
+  { path: '/stats', name: 'stats', redirect: '/stats/report', component: Main,
+    meta: { title: '数据', icon: 'md-analytics', level: 0 },
+    children: [
+      { path: '/stats/report', name: 'stats:report',
+        meta: { title: '报表', icon: 'md-stats' },
+        component: Parent,
+        children: [
+          { path: '/admins1', name: 'stats:report:m1', component: load('sys/staff'),
+            meta: { title: '报表1' },
+          },
+          { path: '/admins2', name: 'stats:report:m2', component: load('sys/staff'),
+            meta: { title: '报表2' },
+          }
+        ]
       },
     ]
   },

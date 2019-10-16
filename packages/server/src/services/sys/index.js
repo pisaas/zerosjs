@@ -1,11 +1,5 @@
-const regs = require('./regs/regs.service');
-const orgs = require('./orgs/orgs.service');
-const apps = require('./apps/apps.service');
-const users = require('./users/users.service');
+const { configureDir } = require('../../lib/common/service');
 
 module.exports = function (app) {
-  app.configure(regs);
-  app.configure(orgs);
-  app.configure(apps);
-  app.configure(users);
+  configureDir(app, __dirname);
 };

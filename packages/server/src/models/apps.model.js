@@ -16,6 +16,8 @@ module.exports = function (app) {
     logo: { type: String, maxlength: 200 },
     desc: { type: String, maxlength: 500 },
     data: Types.Mixed,
+    pubed: { type: Boolean, default: false },
+    frzn: { type: Boolean, default: false },
   }, {
     docName: 'apps',
     timestamps: true

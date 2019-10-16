@@ -28,13 +28,15 @@
         <side-menu ref="sideMenu" :collapsed="collapsed" @on-change="turnToPage" />
       </Sider>
       <Content class="layout-content">
-        <Card class="content-container" :bordered="false">
-          <div v-if="showHeader" class="content-header" slot="title">
+        <div class="content-container" :bordered="false">
+          <div v-if="showHeader" class="content-header">
             {{ util.menuTitle($route) }}
             <router-view name="header" />
           </div>
-          <router-view />
-        </Card>
+          <div class="content-body">
+            <router-view />
+          </div>
+        </div>
       </Content>
     </Layout>
   </Layout>
@@ -160,12 +162,20 @@ export default {
   .content-container {
     border-radius: 0;
     height: 100%;
-    overflow: scroll;
+    background: white;
   }
 
   .content-header {
     font-weight: bold;
     font-size: 16px;
+    line-height: 40px;
+    padding: 0 16px;
+    border-bottom: 1px solid @border-color;
+  }
+
+  .content-body {
+    overflow: scroll;
+    height: calc(100% - 50px);
   }
 }
 </style>

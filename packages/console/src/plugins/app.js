@@ -1,4 +1,3 @@
-import ViewUI  from 'view-design';
 import lodash  from 'lodash'
 
 import str     from '@/utils/str'
@@ -24,10 +23,6 @@ export default ({ app, Vue }) => {
 }
 
 function initApp (app, Vue) {
-  Vue.use(ViewUI, {
-    // i18n: (key, value) => i18n.t(key, value)
-  })
-
   function appBasic (key) {
     let appBasic = Object.assign({}, app.store.getters['app/basic'])
 

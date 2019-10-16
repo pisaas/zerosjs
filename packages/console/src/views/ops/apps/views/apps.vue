@@ -1,8 +1,8 @@
 <template>
-  <div class="ops-apps">
+  <div class="ops-apps page-view">
     <Tabs v-model="tabName" :animated="false" @on-click="onTabClick">
       <Tab-pane v-for="(v, k) in tabItems" :label="v" :name="k" :key="k">
-        <app-list :ref="`appList${k}`" :status="k"></app-list>
+        <app-list :ref="`appList${k}`" :orgCode="k"></app-list>
       </Tab-pane>
     </Tabs>
   </div>

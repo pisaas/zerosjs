@@ -18,9 +18,9 @@ export function showToast (options) {
 
   if (!opts.duration) {
     if (opts.content.length < 10) {
-      opts.duration = 3000
+      opts.duration = 3
     } else {
-      opts.duration = parseInt(2 * (opts.content.length / 10))
+      opts.duration = (2 + parseInt(2 * (opts.content.length / 10)))
     }
   }
 

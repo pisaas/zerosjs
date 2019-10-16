@@ -7,6 +7,9 @@ module.exports = {
     'plugin:vue/essential',
     'eslint:recommended'
   ],
+  globals: {
+    'wx': 'on'
+  },
   rules: {
     'x-invalid-end-tag': 'off',
     'vue/no-unused-components': 'off',

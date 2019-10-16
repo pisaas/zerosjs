@@ -9,6 +9,10 @@
               <span class="label">ID：</span>
               <span class="data">{{ appData.id }}</span>
             </div>
+            <div v-if="appData.ocode" class="fld-item">
+              <span class="label">所属组织编号：</span>
+              <span class="data">{{ appData.ocode }}</span>
+            </div>
             <div v-if="appData.desc" class="fld-item">
               <span class="label">简介：</span>
               <span class="data">{{ appData.desc }}</span>

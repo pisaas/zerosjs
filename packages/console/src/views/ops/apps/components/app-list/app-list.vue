@@ -24,6 +24,7 @@
         </div>
         <div slot-scope="{ row }" slot="basic">
           <div><b>APPID:</b> {{ row.id }}</div>
+          <div v-if="row.ocode"><b>所属组织编号:</b> {{ row.ocode }}</div>
           <div v-if="row.name"><b>名称:</b> {{ row.name }}</div>
         </div>
         <div slot-scope="{ row }" slot="contact">
@@ -56,7 +57,7 @@ export default {
   },
 
   props: {
-    status: String
+    orgCode: String
   },
 
   data () {
@@ -117,7 +118,7 @@ export default {
       })
     },
 
-    onUnFreeze (row) {
+    onUnfreeze (row) {
       if (!row || !row.id) {
         return
       }
@@ -219,6 +220,12 @@ export default {
 
     getList () {
       const query = this.$service.getSearchQuery(this.tableQuery)
+
+      let orgCode = this.orgCode
+
+      if (orgCode && orgCode !== 'all') {
+        query.ocode = this.orgCode
+      }
 
       return this.$service('apps').find({ query }).then((res) => {
         this.tableItems = res.data

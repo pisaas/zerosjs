@@ -1,5 +1,5 @@
 <template>
-  <div class="ops-orgs">
+  <div class="ops-orgs page-view">
     <Tabs v-model="tabName" :animated="false" @on-click="onTabClick">
       <Tab-pane v-for="(v, k) in tabItems" :label="v" :name="k" :key="k">
         <org-list :ref="`orgList${k}`" :status="k"></org-list>

@@ -1,16 +1,19 @@
 <template>
-  <Form v-if="formModel" class="org-editor" ref="form"
+  <Form v-if="formModel" class="reg-editor" ref="form"
     :model="formModel" :rules="formRules" :label-width="120">
-    <FormItem label="组织名称" required prop="name">
-      <Input v-model="formModel.name" :maxlength="50" placeholder="请输入组织名称 (50字以内)" />
+    <FormItem label="名称" required prop="name">
+      <Input v-model="formModel.name" :maxlength="50" placeholder="请输入注册名称 (100字以内)" />
     </FormItem>
-    <FormItem label="组织编号" required prop="code">
-      <Input v-model="formModel.code" :maxlength="20" placeholder="请输入组织编号 (20字以内)"
+    <FormItem label="编号" required prop="code">
+      <Input v-model="formModel.code" :maxlength="20" placeholder="请输入注册编号 (100字以内)"
         :disabled="!isAllowedEdit('code')" />
     </FormItem>
-    <FormItem label="组织简介" required prop="desc">
+    <FormItem label="排序号" prop="sn">
+      <InputNumber v-model="formModel.sn"></InputNumber>
+    </FormItem>
+    <FormItem label="描述" prop="desc">
       <Input v-model="formModel.desc" type="textarea" :maxlength="200"
-        :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入组织简介 (200字以内)" />
+        :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入描述 (200字以内)" />
     </FormItem>
   </Form>
 </template>
@@ -23,12 +26,12 @@ export default {
   data () {
     return {
       editMode: 'create', // 编辑模式（update, create）
-      orgId: null,
+      pid: null,
+      regId: null,
       formModel: {},
       formRules: {
         name: [ { required: true, message: '请输入组织名', trigger: 'blur' } ],
-        code: [ { required: true, message: '请输入组织编号', trigger: 'blur' } ],
-        desc: [ { required: true, message: '请输入组织描述', trigger: 'blur' } ]
+        code: [ { required: true, message: '请输入组织编号', trigger: 'blur' } ]
       }
     }
   },
@@ -40,24 +43,27 @@ export default {
   },
 
   methods: {
-    create () {
+    create (pid) {
       this.reset()
       this.editMode = 'create'
+      this.pid = pid
 
       return Promise.resolve()
     },
 
-    update (id) {
+    update (regId) {
       this.reset()
       this.editMode = 'update'
-      this.orgId = id
+      this.regId = regId
 
       return this.loadData()
     },
 
     reset () {
-      this.orgId = null
-      this.formModel = {}
+      this.regId = null
+      this.formModel = {
+        sn: 1000
+      }
 
       if (this.$refs.form) {
         this.$refs.form.resetFields()
@@ -80,12 +86,14 @@ export default {
           return false
         }
 
-        let orgService = this.$service('orgs')
+        let regService = this.$service('regs')
 
         if (editMode === 'create') {
-          return orgService.create(formModel)
+          formModel.pid = this.pid
+          formModel.type = 'json'
+          return regService.create(formModel)
         } else {
-          return orgService.update(this.orgId, formModel)
+          return regService.update(this.regId, formModel)
         }
       })
     },
@@ -104,14 +112,14 @@ export default {
     },
 
     loadData () {
-      if (!this.orgId) {
+      if (!this.regId) {
         this.formModel = {}
         this.$refs.form.resetFields()
 
         return Promise.resolve()
       }
 
-      return this.$service('orgs').get(this.orgId).then((res) => {
+      return this.$service('regs').get(this.regId).then((res) => {
         let formModel = res
         this.formModel = formModel
         return formModel

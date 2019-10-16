@@ -1,5 +1,5 @@
 <template>
-  <div class="origin-staffs">
+  <div class="origin-staffs page-view">
     <div class="row">
       <div class="flex-main">
         <Poptip v-if="user.isSuperAdmin" v-model="showPoptip"
