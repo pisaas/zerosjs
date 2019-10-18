@@ -1,13 +1,11 @@
 <template>
   <div class="reg-data-editor fh">
-    <div v-if="regData" class="editor-container fh">
-      <json-editor
-        ref="jsonEditor"
+    <div class="editor-container fh">
+      <json-editor ref="jsonEditor"
         class="json-editor fh"
-        v-model="regData"
         :showBtns="false"
-        mode="code"
-        @has-error="onError" />
+        :mode="mode"
+        :modes="modes" />
     </div>
   </div>
 </template>
@@ -21,13 +19,18 @@ export default {
   },
 
   props: {
-    reg: Object
+    reg: Object,
+    type: {
+      type: String,
+      default: 'data0'
+    }
   },
 
   data () {
     return {
       error: false,
-      regData: null
+      mode: 'code',
+      modes: undefined
     }
   },
 
@@ -37,6 +40,10 @@ export default {
   watch: {
     reg () {
       this.loadRegData()
+    },
+
+    type () {
+      this.loadRegData()
     }
   },
 
@@ -45,7 +52,7 @@ export default {
   },
 
   methods: {
-    getEditorData () {
+    getData () {
       let innerEditor = this.$refs.jsonEditor.editor
 
       let data = null
@@ -60,13 +67,25 @@ export default {
     },
 
     loadRegData () {
-      let regData = {}
+      const { reg, type } = this
 
-      if (this.reg && this.reg.data) {
-        regData = this.reg.data
+      let regData = {}
+      if (reg && reg[type]) {
+        regData = reg[type]
+      }
+      
+      let mode = 'view'
+      let modes = ['view', 'text']
+
+      if (type === 'data0') {
+        mode = 'code'
+        modes = undefined
       }
 
-      this.regData = regData
+      let innerEditor = this.$refs.jsonEditor.editor
+      innerEditor.set(regData)
+      innerEditor.setMode(mode)
+      innerEditor.refresh()
     }
   }
 }

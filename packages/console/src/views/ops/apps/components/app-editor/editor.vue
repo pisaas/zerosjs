@@ -1,19 +1,29 @@
 <template>
   <Form v-if="formModel" class="app-editor" ref="form"
     :model="formModel" :rules="formRules" :label-width="120">
-    <FormItem label="应用名称" required prop="name">
-      <Input v-model="formModel.name" :maxlength="50" placeholder="请输入应用名称 (50字以内)" />
-    </FormItem>
-    <FormItem label="应用编号" required prop="code" disabled>
-      <Input v-model="formModel.code" :maxlength="20" placeholder="请输入应用编号 (20字以内)"
-        :disabled="!isAllowedEdit('code')" />
-    </FormItem>
-    <FormItem label="所属组织" required prop="oid">
-      <Select v-model="formModel.oid" style="width:300px"
-        :loading="orgLoading" filterable remote :remote-method="onOrgFilter">
-        <Option v-for="it in orgData" :value="it.id" :key="it.id">{{ it.name }}</Option>
-      </Select>
-    </FormItem>
+    <Row>
+      <i-col span="12">
+        <FormItem label="应用名称" required prop="name">
+          <Input v-model="formModel.name" :maxlength="50" placeholder="请输入应用名称 (50字以内)" />
+        </FormItem>
+      </i-col>
+      <i-col span="12">
+        <FormItem label="应用编号" required prop="code" disabled>
+          <Input v-model="formModel.code" :maxlength="20" placeholder="请输入应用编号 (20字以内)"
+            :disabled="!isAllowedEdit('code')" />
+        </FormItem>
+      </i-col>
+    </Row>
+    <Row>
+      <i-col span="12">
+        <FormItem label="所属组织" required prop="oid">
+          <Select v-model="formModel.oid"
+            :loading="orgLoading" filterable remote :remote-method="onOrgFilter">
+            <Option v-for="it in orgData" :value="it.id" :key="it.id">{{ it.name }}</Option>
+          </Select>
+        </FormItem>
+      </i-col>
+    </Row>
     <FormItem label="应用简介" required prop="desc">
       <Input v-model="formModel.desc" type="textarea" :maxlength="200"
         :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入应用简介 (200字以内)" />

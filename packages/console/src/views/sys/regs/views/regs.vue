@@ -12,7 +12,9 @@
             {{ currentReg.code }} : {{ displayName }}
           </div>
           <div class="header-tail">
-            <Button v-if="!isCtrlLocked" type="primary" @click="onEditorSave">保存</Button>
+            <Button v-if="isAllowed('data-save')" type="info" @click="onDataSave">保存</Button>
+            &nbsp;
+            <Button v-if="isAllowed('data-pub')" type="success" @click="onDataPub">发布</Button>
           </div>
         </div>
 
@@ -23,8 +25,16 @@
           <div v-if="isCtrlLocked">
             当前节点不支持编辑
           </div>
-          <div v-else class="editor-container">
-            <reg-data-editor ref="dataEditor" :reg="currentReg" />
+          <div v-else class="content-editor">
+            <div class="q-pa-sm">
+              <RadioGroup v-model="regDataType">
+                <Radio label="data0"><span>编辑中</span></Radio>
+                <Radio label="data"><span>已发布</span></Radio>
+              </RadioGroup>
+            </div>
+            <div class="editor-container">
+              <reg-data-editor ref="dataEditor" :type="regDataType" :reg="currentReg" />
+            </div>
           </div>
         </div>
       </div>
@@ -51,6 +61,7 @@ export default {
 
   data () {
     return {
+      regDataType: 'data0',
       currentReg: null,
       treeItems: [],
       splitRate: 0.3,
@@ -78,18 +89,42 @@ export default {
       this.currentReg = data
     },
 
-    onEditorSave () {
-      let data = this.$refs.dataEditor.getEditorData()
+    onDataSave () {
+      let data = this.$refs.dataEditor.getData()
 
       if (!data) {
         this.$app.toast('数据存在错误，请修正后再保存。')
         return
       }
 
-      this.saveRegData().then(() => {
+      this.saveRegData0().then(() => {
         this.$app.toast('保存成功！', {
           type: 'success'
         })
+      })
+    },
+
+    onDataPub () {
+      if (this.regDataType === 'data') {
+        return
+      }
+
+      let data = this.$refs.dataEditor.getData()
+
+      if (!data) {
+        this.$app.toast('数据存在错误，请修正后再保存。')
+        return
+      }
+
+      this.$app.confirm({
+        title: '发布数据',
+        content: '<p>数据发布后将直接生效，请谨慎操作！确认发布？</p>',
+        onOk: () => {
+          this.pubRegData().then(() => {
+            this.$app.toast('发布成功！', { type: 'success' })
+            this.regDataType = 'data'
+          })
+        }
       })
     },
 
@@ -153,15 +188,41 @@ export default {
       this.reloadNode({ root, node, data })
     },
 
-    async saveRegData () {
+    isAllowed (op) {
+      switch (op) {
+        case 'data-save':
+        case 'data-pub':
+          return (this.regDataType === 'data0' && !this.isCtrlLocked)
+      }
+
+      return false
+    },
+
+    async pubRegData () {
       let regService = this.$service('regs')
-      let { reg, regData } = this.$refs.dataEditor
+      let { reg } = this.$refs.dataEditor
+
+      let data0 = this.$refs.dataEditor.getData()
 
       let result = await regService.patch(reg.id, {
-        data: regData
+        data0
+      }, {
+        query: { verb: 'pub' }
       })
 
       this.$set(reg, 'data', result.data)
+      this.$set(reg, 'data0', result.data0)
+    },
+
+    async saveRegData0 () {
+      let regService = this.$service('regs')
+      let { reg } = this.$refs.dataEditor
+
+      let data0 = this.$refs.dataEditor.getData()
+
+      let result = await regService.patch(reg.id, { data0 })
+
+      this.$set(reg, 'data0', result.data0)
     },
 
     async removeItem ({ root, node, data }) {
@@ -170,6 +231,7 @@ export default {
       await regService.remove(data.id)
 
       const parent = this.getParentData({ root, node })
+
       const index = parent.children.indexOf(data)
       parent.children.splice(index, 1)
       this.currentNode = null
@@ -216,6 +278,11 @@ export default {
       }
 
       const parent = this.getParentData({ root, node })
+
+      if (!parent) {
+        return
+      }
+
       const index = parent.children.indexOf(data)
 
       let item = await this.loadItem(data.id)
@@ -239,8 +306,14 @@ export default {
 
     getParentData ({ root, node }) {
       const parentKey = root.find(it => it === node).parent
-      const parent = root.find(it => it.nodeKey === parentKey).node
-      return parent
+
+      const parentNode = root.find(it => it.nodeKey === parentKey)
+
+      if (!parentNode) {
+        return null
+      }
+      
+      return parentNode.node
     },
 
     toTreeItems (regData) {

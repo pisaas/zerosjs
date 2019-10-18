@@ -87,6 +87,31 @@ class Regs extends ApiService {
     return result;
   }
 
+  async patch (id, data, params) {
+    let { query } = params;
+
+    let reg = await this.adapterService.get(id);
+
+    if (!reg) {
+      throw new errors.BadRequest('未找到对应节点');
+    }
+    
+    let data0 = reg.data0;
+
+    if (data && data.data0) {
+      data0 = data.data0;
+    }
+
+    if (query.verb === 'pub') {
+      return await this.adapterService.patch(id, {
+        data0,
+        data: data0
+      });
+    }
+
+    return await this.adapterService.patch(id, data, params);
+  }
+
   async remove (id) {
     let reg = await this.adapterService.get(id);
 
@@ -112,22 +137,15 @@ class Regs extends ApiService {
       }
     });
 
-    let data = await this.adapterService.remove(reg.id);
+    let result = await this.adapterService.remove(reg.id);
 
     // 如果父节点只有1个子节点，则设置leaf为1
-    let parent = null;
-
     if (hasSiblings.total < 2) {
-      parent = await this.adapterService.patch(reg.pid, {
+      await this.adapterService.patch(reg.pid, {
         leaf: true
       });
-    } else {
-      parent = await this.get(reg.pid);
     }
 
-    return {
-      data,
-      parent
-    };
+    return result;
   }
 }

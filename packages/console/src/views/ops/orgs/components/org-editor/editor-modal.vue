@@ -1,7 +1,7 @@
 <template>
   <Modal ref="editorModal" v-model="showModal"
     class="app-editor-modal" draggable
-    :title="modalTitle" :width="modalWidth" :loading="loading"
+    :title="modalTitle" :width="600" :loading="loading"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
     <org-editor ref="editor"></org-editor>
   </Modal>
@@ -31,10 +31,6 @@ export default {
         return `编辑组织 (${this.orgId || ''})`
       }
       return '新建组织'
-    },
-
-    modalWidth () {
-      return (this.editMode === 'update' ? 800 : 700)
     }
   },
 

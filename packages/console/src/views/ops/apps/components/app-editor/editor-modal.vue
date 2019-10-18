@@ -1,7 +1,7 @@
 <template>
   <Modal ref="editorModal" v-model="showModal"
-    class="app-editor-modal" fullscreen
-    :title="modalTitle" :loading="loading"
+    class="app-editor-modal" draggable
+    :title="modalTitle" :width="800" :loading="loading"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
     <div class="modal-container">
       <app-editor ref="editor" :code="userCode"></app-editor>

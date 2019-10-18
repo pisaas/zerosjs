@@ -82,7 +82,6 @@ function _loadPhotoUrl (url, spec, cb) {
 }
 
 function _scalePhoto (bufferImg, spec) {
-  console.log('cmptUtil _scalePhoto ')
   const bufferCanvas = document.getElementById('appBufferCanvas')
   const bfx = bufferCanvas.getContext('2d')
 
@@ -93,8 +92,6 @@ function _scalePhoto (bufferImg, spec) {
 
     bufferCanvas.width = computedRec.cwidth
     bufferCanvas.height = computedRec.cheight
-
-    console.log('cmptUtil scalePhoto drawImage ')
 
     bfx.drawImage(bufferImg, (computedRec.sx || 0), (computedRec.sy || 0), computedRec.swidth, computedRec.sheight,
       (computedRec.x || 0), (computedRec.y || 0), computedRec.width, computedRec.height)
@@ -107,8 +104,6 @@ function _scalePhoto (bufferImg, spec) {
 
 // 计算缩放图片的宽和高
 function _computeSaclePhotoRec (bufferImg, spec) {
-  console.log('cmptUtil _getStandardPhotoRec ')
-
   if (typeof spec.compute === 'function') {
     return spec.compute(bufferImg)
   }
