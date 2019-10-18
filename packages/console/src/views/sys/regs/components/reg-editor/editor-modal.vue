@@ -8,7 +8,6 @@
 </template>
 
 <script>
-
 import RegEditor from './editor'
 
 export default {

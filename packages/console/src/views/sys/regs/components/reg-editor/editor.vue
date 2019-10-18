@@ -4,12 +4,23 @@
     <FormItem label="名称" required prop="name">
       <Input v-model="formModel.name" :maxlength="50" placeholder="请输入注册名称 (100字以内)" />
     </FormItem>
-    <FormItem label="编号" required prop="code">
-      <Input v-model="formModel.code" :maxlength="20" placeholder="请输入注册编号 (100字以内)"
-        :disabled="!isAllowedEdit('code')" />
-    </FormItem>
-    <FormItem label="排序号" prop="sn">
-      <InputNumber v-model="formModel.sn"></InputNumber>
+    <Row>
+      <i-col span="12">
+        <FormItem label="编号" required prop="code">
+          <Input v-model="formModel.code" :maxlength="20" placeholder="请输入注册编号 (100字以内)"
+            :disabled="!isAllowedEdit('code')" />
+        </FormItem>
+      </i-col>
+      <i-col span="12">
+        <FormItem label="排序号" prop="sn">
+          <InputNumber v-model="formModel.sn"></InputNumber>
+        </FormItem>
+      </i-col>
+    </Row>
+    <FormItem label="权限" prop="modes">
+      <CheckboxGroup v-model="formModel.modes">
+        <Checkbox v-for="(lbl, key) in Permissions" :label="key" :key="key">{{ lbl }}</Checkbox>
+      </CheckboxGroup>
     </FormItem>
     <FormItem label="描述" prop="desc">
       <Input v-model="formModel.desc" type="textarea" :maxlength="200"
@@ -19,12 +30,20 @@
 </template>
 
 <script>
+const Permissions = {
+  'w': '可编辑',
+  'c': '可添加子节点',
+  'd': '可删除',
+  'l': '可锁定'
+}
+
 export default {
   components: {
   },
 
   data () {
     return {
+      Permissions,
       editMode: 'create', // 编辑模式（update, create）
       pid: null,
       regId: null,
@@ -62,7 +81,8 @@ export default {
     reset () {
       this.regId = null
       this.formModel = {
-        sn: 1000
+        sn: 1000,
+        modes: ['w', 'd', 'c']
       }
 
       if (this.$refs.form) {

@@ -61,7 +61,8 @@ export default {
   data () {
     return {
       util,
-      collapsed: false
+      collapsed: false,
+      currentReg: null
     }
   },
 

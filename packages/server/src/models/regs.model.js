@@ -15,11 +15,14 @@ module.exports = function (app) {
     sn: { type: Number, required: true },
 
     desc: { type: String },
+    data0: Types.Mixed, // 草稿
     data: Types.Mixed,
     leaf: { type: Boolean, default: true },
 
     pubed: { type: Boolean },
     frzn: { type: Boolean },
+    modes: { type: Array, default: [] },
+    ctrls: Types.Mixed,
   }, {
     docName: 'regs',
     timestamps: true

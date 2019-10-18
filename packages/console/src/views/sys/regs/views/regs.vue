@@ -3,10 +3,33 @@
     <Split v-model="splitRate" min="160px">
       <div slot="left" class="page-left">
         <Tree :data="treeItems" :load-data="loadItems" :render="treeNodeRender"
-          @on-add="onAdd" @on-edit="onEdit" @on-remove="onRemove"></Tree>
+          @on-add="onAdd" @on-edit="onEdit" @on-remove="onRemove"
+          @on-select="onSelect"></Tree>
       </div>
-      <div slot="right" class="page-body">
-        Right Pane
+      <div v-if="currentReg" slot="right" class="page-body">
+        <div class="body-header flex">
+          <div class="header-main flex-main">
+            {{ currentReg.code }} : {{ displayName }}
+          </div>
+          <div class="header-tail">
+            <Button v-if="!isCtrlLocked" type="primary" @click="onEditorSave">保存</Button>
+          </div>
+        </div>
+
+        <div class="body-content">
+          <div v-if="currentReg.desc" class="reg-desc">
+            {{ currentReg.desc }}
+          </div>
+          <div v-if="isCtrlLocked">
+            当前节点不支持编辑
+          </div>
+          <div v-else class="editor-container">
+            <reg-data-editor ref="dataEditor" :reg="currentReg" />
+          </div>
+        </div>
+      </div>
+      <div v-else slot="right" class="page-body-none">
+        点击节点编辑注册值
       </div>
     </Split>
 
@@ -17,22 +40,59 @@
 <script>
 import TreeCell from '../components/tree-cell'
 import { RegEditorModal } from '../components/reg-editor'
+import { RegDataEditor } from '../components/reg-data-editor'
 
 
 export default {
   components: {
-    RegEditorModal
+    RegEditorModal,
+    RegDataEditor
   },
 
   data () {
     return {
-      currentNode: null,
+      currentReg: null,
       treeItems: [],
       splitRate: 0.3,
     }
   },
 
+  computed: {
+    displayName () {
+      let { name } = this.currentReg || {}
+      name = this.$util.format.truncate(name, 10)
+      return name
+    },
+
+    isCtrlLocked () {
+      let { ctrls } = this.currentReg || {}
+      return (ctrls && ctrls.locked)
+    }
+  },
+
   methods: {
+    onSelect (e) {
+      this.currentNode = e.target
+      let { data } = e.target
+      
+      this.currentReg = data
+    },
+
+    onEditorSave () {
+      let data = this.$refs.dataEditor.getEditorData()
+
+      if (!data) {
+        this.$app.toast('数据存在错误，请修正后再保存。')
+        return
+      }
+
+      this.saveRegData().then(() => {
+        this.$app.toast('保存成功！', {
+          type: 'success'
+        })
+      })
+    },
+
     onAdd (e) {
       this.currentNode = e.target
 
@@ -47,11 +107,7 @@ export default {
       this.$refs.editorModal.update(data.id)
     },
 
-    onReload (e) {
-    },
-
     onRemove (e) {
-      this.currentNode = e.target
       let { root, node, data } = e.target
 
       if (data.children && data.children.length) {
@@ -59,19 +115,12 @@ export default {
         return
       }
 
-      let regService = this.$service('regs')
-
-      let treeNode = this.currentNode.treeNode
-
-      regService.remove(data.id).then(() => {
-        const parent = this.getParentData({ root, node })
-        const index = parent.children.indexOf(data)
-        parent.children.splice(index, 1)
-
-        this.currentNode = null
-
-        // 刷新父节点
-        this.reloadNode({ root, data: parent })
+      this.$app.confirm({
+        title: '删除节点',
+        content: '<p>删除后将无法恢复，请谨慎操作！确认删除？</p>',
+        onOk: () => {
+          this.removeItem({ root, node, data })
+        }
       })
     },
 
@@ -102,6 +151,31 @@ export default {
       
       // 更新当前节点数据
       this.reloadNode({ root, node, data })
+    },
+
+    async saveRegData () {
+      let regService = this.$service('regs')
+      let { reg, regData } = this.$refs.dataEditor
+
+      let result = await regService.patch(reg.id, {
+        data: regData
+      })
+
+      this.$set(reg, 'data', result.data)
+    },
+
+    async removeItem ({ root, node, data }) {
+      let regService = this.$service('regs')
+
+      await regService.remove(data.id)
+
+      const parent = this.getParentData({ root, node })
+      const index = parent.children.indexOf(data)
+      parent.children.splice(index, 1)
+      this.currentNode = null
+
+      // 刷新父节点
+      await this.reloadNode({ root, data: parent })
     },
 
     async loadItems (item, callback) {
@@ -239,6 +313,27 @@ export default {
 }
 
 .page-body {
+  height: 100%;
+  padding-left:10px;
+
+  &-none {
+    padding: 20px;
+  }
+}
+
+.body-header {
+  line-height: 40px;
+  padding: 0 16px;
+  border-bottom: 1px solid @border-color;
+}
+
+.body-content {
   padding: 10px;
+  height: 100%;
+}
+
+.editor-container {
+  padding: 10px 0;
+  height: 500px;
 }
 </style>

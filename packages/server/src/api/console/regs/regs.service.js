@@ -11,12 +11,28 @@ module.exports = function (app) {
 };
 
 const RootData = [
-  { id: 'sys', code: 'sys', name: '系统', owner: '0', readonly: true }
+  { id: 'sys', code: 'sys', name: '系统', owner: '0', modes: [ 'c' ], ctrls: { locked: true } }
 ];
 
 const RootDataIds = RootData.map(it => it.id);
 
 class Regs extends ApiService {
+  async get (id, params) {
+    if (!id) {
+      throw new errors.BadRequest('请提供节点ID。');
+    }
+
+    let result = RootData.find((it) => {
+      return (it.id === id);
+    });
+
+    if (result) {
+      return result;
+    }
+
+    return this.adapterService.get(id, params);
+  }
+
   async find (params) {
     let { query } = params;
 
@@ -106,7 +122,7 @@ class Regs extends ApiService {
         leaf: true
       });
     } else {
-      parent = await this.adapterService.get(reg.pid);
+      parent = await this.get(reg.pid);
     }
 
     return {
