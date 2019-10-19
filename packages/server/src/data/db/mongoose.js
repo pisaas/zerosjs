@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { logger } = require('../../lib/common');
+const { logger } = require('../../common');
 
 module.exports = function (app) {
   mongoose.connect(

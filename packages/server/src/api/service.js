@@ -1,4 +1,4 @@
-const { service } = require('../lib/common');
+const { service } = require('../common');
 const debug = require('debug')('@zero/server/api');
 
 exports.ApiService = class ApiService {

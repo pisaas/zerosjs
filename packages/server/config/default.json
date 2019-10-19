@@ -9,7 +9,7 @@
   "mongodb": "mongodb://localhost:27017/zero",
   "authentication": {
     "entity": "user",
-    "service": "sys/users",
+    "service": "data/users",
     "secret": "Hi5r9X2h9CrohaxQD9MF7oNof6Y=",
     "secrets": {
       "client": "Hi5r9X2h9CrohaxQD9MF7oNof6Y=",

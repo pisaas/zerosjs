@@ -6,8 +6,8 @@ module.exports = function (app) {
 
   return register({
     id: { type: String, required: true, unique: true, maxlength: 50 },
-    name: { type: String, required: true, unique: true, maxlength: 100 },
     code: { type: String, required: true, unique: true, maxlength: 100 },
+    name: { type: String, required: true, maxlength: 100 },
     type: { type: String, required: true, maxlength: 100 },
 
     pid: { type: String, required: true, maxlength: 50 },

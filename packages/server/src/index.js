@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const { logger } = require('./lib/common');
+const { logger } = require('./common');
 const app = require('./app');
 const port = app.get('port');
 const server = app.listen(port);

@@ -1,4 +1,4 @@
-const { service } = require('../../lib/common');
+const { service } = require('../../common');
 
 exports.CoreService = class CoreService {
   constructor (options, app) {

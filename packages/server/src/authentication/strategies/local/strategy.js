@@ -3,8 +3,6 @@ const Debug = require('debug');
 const { NotAuthenticated } = require('@zero/errors');
 const { AuthenticationBaseStrategy } = require('@feathersjs/authentication');
 
-const security = require('../../../lib/security');
-
 const debug = Debug('@zero/server/authentication/strategies/local');
 
 class LocalStrategy extends AuthenticationBaseStrategy {
@@ -107,7 +105,8 @@ class LocalStrategy extends AuthenticationBaseStrategy {
 
     debug('Verifying password');
 
-    const result = await security.password.compare(password, hash);
+    const pwdService = this.app.service('core/security/password');
+    const result = await pwdService.compare(password, hash);
 
     if (result) {
       return entity;
@@ -117,7 +116,8 @@ class LocalStrategy extends AuthenticationBaseStrategy {
   }
 
   async hashPassword (password) {
-    return security.password.hash(password);
+    const pwdService = this.app.service('core/security/password');
+    return pwdService.hash(password);
   }
 
   /**

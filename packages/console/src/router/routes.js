@@ -27,18 +27,18 @@ const routes = [
       } 
     ]
   },
-  { path: '/ops', name: 'ops', redirect: '/ops/apps', component: Main,
-    meta: { title: '管理', icon: 'md-cube', level: 0 },
+  { path: '/app', name: 'app', redirect: '/app/apps', component: Main,
+    meta: { title: '应用', icon: 'md-cube', level: 0 },
     children: [
-      { path: '/ops/apps', name: 'ops:apps', redirect: '/ops/apps/list', component: Parent,
+      { path: '/app/apps', name: 'app:apps', redirect: '/app/apps/list', component: Parent,
         meta: { title: '应用管理', icon: 'ios-albums' },
         children: [
-          { path: 'list', name: 'ops:apps:list', component: load('ops/apps'),
+          { path: 'list', name: 'app:apps:list', component: load('app/apps'),
             meta: { title: '应用列表', hideInMenu: true, },
           }
         ]
       },
-      { path: '/ops/orgs', name: 'ops:orgs', component: load('ops/orgs'),
+      { path: '/app/orgs', name: 'app:orgs', component: load('app/orgs'),
         meta: { title: '组织管理', icon: 'ios-people' }
       },
     ]
@@ -47,7 +47,7 @@ const routes = [
     meta: { title: '系统', icon: 'md-cog', level: 0 },
     children: [
       { path: '/sys/regs', name: 'sys:regs', component: load('sys/regs'),
-        meta: { title: '注册信息', icon: 'md-snow' }
+        meta: { title: '注册信息', hideSide: true, icon: 'md-snow' }
       },
       { path: '/sys/logs', name: 'sys:logs', component: load('sys/logs'),
         meta: { title: '系统日志', icon: 'md-list' }

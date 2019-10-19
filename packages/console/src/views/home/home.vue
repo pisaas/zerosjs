@@ -1,5 +1,5 @@
 <template>
-  <div class="app-page home-page">
+  <div class="page-home page-view">
     HOME
     {{ $store.getters['usr/isLogin'] }}
   </div>
