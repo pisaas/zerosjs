@@ -1,11 +1,10 @@
 <template>
-  <div v-if="data" class="reg-cell">
+  <div v-if="data" class="reg-cell no-selection">
     <div v-if="data.__empty" class="empty-cell">暂无</div>
     <div v-else class="node-cell" :class="{ 'selected': data.selected }"
       :title="title">
       <span class="q-pr-xs">
-        <Icon v-if="data.selected" type='ios-folder' />
-        <Icon v-else type='ios-folder-outline' />
+        <Icon type='ios-folder' />
       </span>
       <span class="node-cell-title" @click="onSelect">
         {{ displayTitle }}
@@ -13,7 +12,7 @@
       <span class="node-cell-tail fr">
         <div class="node-cell-actions">
           <ButtonGroup v-if="isLock && locked" class="padding-sm">
-            <Button size="small" type="text" @click="onLock(false)">
+            <Button size="small" type="text" ghost @click="onLock(false)">
               <Icon type="md-unlock" />
             </Button>
           </ButtonGroup>
@@ -21,16 +20,16 @@
             <!-- <Button size="small" type="text" @click="onReload">
               <Icon type="md-refresh" />
             </Button> -->
-            <Button v-if="isAllowed('c')" size="small" type="text" @click="onAdd">
+            <Button v-if="isAllowed('c')" size="small" type="text" ghost @click="onAdd">
               <Icon type="md-add" />
             </Button>
-            <Button v-if="isAllowed('w')" size="small" type="text" @click="onEdit">
+            <Button v-if="isAllowed('w')" size="small" type="text" ghost @click="onEdit">
               <Icon type="md-create" />
             </Button>
-            <Button v-if="isAllowed('d')" size="small" type="text" @click="onRemove">
+            <Button v-if="isAllowed('d')" size="small" type="text" ghost @click="onRemove">
               <Icon type="md-trash" />
             </Button>
-            <Button v-if="isLock" size="small" type="text" @click="onLock()">
+            <Button v-if="isLock" size="small" type="text" ghost @click="onLock()">
               <Icon type="md-lock" />
             </Button>
           </ButtonGroup>
@@ -122,9 +121,9 @@ export default {
 
       let treeNode = this.treeNode
       if (data.selected) {
-        // if (data.children) {
-        //   treeNode.handleExpand()
-        // }
+        if (data.children) {
+          treeNode.handleExpand()
+        }
         return
       }
 
@@ -173,6 +172,7 @@ export default {
 .reg-cell {
   display: inline-block;
   width: 100%;
+  min-width: 200px;
 }
 
 .empty-cell {
@@ -180,8 +180,9 @@ export default {
 }
 
 .node-cell {
-  padding: 0 5px;
   display: flex;
+  padding: 0 8px;
+  border-radius: 2px;
 
   &-title {
     flex: 1;
@@ -191,16 +192,17 @@ export default {
     border-radius: 3px;
     cursor: pointer;
     vertical-align: top;
-    color: #515a6e;
     transition: all .2s ease-in-out;
   }
 
   &:hover {
-    background: #eaf4fe;
+    color: lighten(@primary, 10%);
+    background: lighten(@layout-sider-background, 5%);
   }
 
   &.selected {
-    background: #d5e8fc;
+    color: @primary;
+    background: lighten(@layout-sider-background, 10%);
   }
 }
 </style>

@@ -77,9 +77,14 @@ export default {
       let openNames = []
       
       let nameParts = routeName.split(':')
+
       if (nameParts.length > 1) {
         activeName = nameParts.slice(0, 2).join(':')
         openNames = [activeName]
+      }
+
+      if (nameParts.length > 2) {
+        activeName = nameParts.slice(0, 3).join(':')
       }
 
       this.activeName = activeName

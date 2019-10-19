@@ -28,7 +28,7 @@
         <side-menu ref="sideMenu" :collapsed="collapsed" @on-change="turnToPage" />
       </Sider>
       <Content class="layout-content">
-        <div class="content-container" :bordered="false">
+        <div class="content-container" :class="{ 'no-header': !showHeader }" :bordered="false">
           <div v-if="showHeader" class="content-header">
             {{ util.menuTitle($route) }}
             <router-view name="header" />
@@ -164,19 +164,25 @@ export default {
     border-radius: 0;
     height: 100%;
     background: white;
-  }
 
-  .content-header {
-    font-weight: bold;
-    font-size: 16px;
-    line-height: 40px;
-    padding: 0 16px;
-    border-bottom: 1px solid @border-color;
-  }
+    .content-header {
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 40px;
+      padding: 0 16px;
+      border-bottom: 1px solid @border-color;
+    }
 
-  .content-body {
-    overflow: scroll;
-    height: calc(100% - 50px);
+    .content-body {
+      overflow: scroll;
+      height: calc(100% - 50px);
+    }
+
+    &.no-header {
+      .content-body {
+        height: 100%;
+      }
+    }
   }
 }
 </style>

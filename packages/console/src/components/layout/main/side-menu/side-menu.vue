@@ -116,8 +116,7 @@ export default {
   display: flex;
   align-items: center;
   color: white;
-  font-weight: bold;
-  font-size: 18px;
+  font-size: 16px;
   padding: 10px 40px;
 }
 </style>

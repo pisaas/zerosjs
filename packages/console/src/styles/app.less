@@ -36,6 +36,7 @@ hr.separator { border: 0; border-top: 1px solid lighten(@border-color, 5%); }
 .fr { float: right; }
 .relative { position: relative; }
 .inline { display: inline-block; }
+.no-selection { user-select: none; }
 
 .row, .column, .col, .flex {
   display: flex;
@@ -173,6 +174,13 @@ button.action-button {
       button.ivu-btn-small {
         padding: 0 2px;
       }
+    }
+  }
+
+  &-menu {
+    &-vertical &-item,
+    &-vertical &-submenu-title {
+      padding: 8px 24px;
     }
   }
 }

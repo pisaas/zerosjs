@@ -18,10 +18,10 @@
           </div>
         </div>
         <div class="body-content">
-          <div v-if="viewType === 'reg'">
+          <div v-if="viewType === 'reg'" class="fh">
             <reg-data-editor-view ref="dataEditor" :reg="currentReg" />
           </div>
-          <div v-if="viewType === 'page'">
+          <div v-if="viewType === 'page'" class="fh">
             <reg-data-render :render="pageRender" :reg="currentReg"></reg-data-render>
           </div>
         </div>
@@ -114,17 +114,20 @@ export default {
 <style lang="less" scoped>
 .page-regs {
   height: 100%;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 0;
 }
 
 .page-left {
-  padding: 10px 30px 10px 0;
+  padding: 0px 30px 0px 16px;
+  height: 100%;
+  background: @layout-sider-background;
+  overflow: scroll;
 }
 
 .page-body {
   height: 100%;
   padding-left:10px;
+  min-width: 500px;
 
   &-none {
     padding: 20px;

@@ -1,8 +1,13 @@
 <template>
-  <div>
-    <Tree :data="treeItems" :load-data="loadItems" :render="treeNodeRender"
-        @on-add="onAdd" @on-edit="onEdit" @on-remove="onRemove"
-        @on-select="onSelect"></Tree>
+  <div class="cmpt-reg-tree">
+    <div class="tree-top">
+      <span class="q-ml-sm">注册</span>
+    </div>
+    <div class="tree-container">
+      <Tree :data="treeItems" :load-data="loadItems" :render="treeNodeRender"
+          @on-add="onAdd" @on-edit="onEdit" @on-remove="onRemove"
+          @on-select="onSelect"></Tree>
+    </div>
     
     <reg-editor-modal ref="editorModal" @on-create="onEditorCreate" @on-update="onEditorUpdate" />
   </div>
@@ -257,4 +262,23 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.cmpt-reg-tree {
+  color: white;
+}
+
+.tree-top {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 16px;
+  padding: 10px 40px;
+}
+</style>
+
+<style lang="less">
+.cmpt-reg-tree {
+  .ivu-tree ul li {
+    margin: 5px 0;
+  }
+}
 </style>

@@ -32,27 +32,29 @@ const routes = [
       } 
     ]
   },
-  { path: '/app', name: 'app', redirect: '/app/apps', component: Main,
-    meta: { title: '应用', icon: 'md-cube', level: 0 },
+  {
+    path: '/ops', name: 'ops', redirect: '/ops/app/apps', component: Main,
+    meta: { title: '管理', icon: 'md-cube', level: 0 },
     children: [
-      { path: '/app/apps', name: 'app:apps', redirect: '/app/apps/list', component: Parent,
-        meta: { title: '应用管理', icon: 'ios-albums' },
+      { path: 'app', name: 'ops:app',
+        meta: { title: '应用', icon: 'md-apps' },
+        component: Parent,
         children: [
-          { path: 'list', name: 'app:apps:list', component: load('app/apps'),
-            meta: { title: '应用列表', hideInMenu: true, },
-          }
+          { path: 'apps', name: 'ops:app:apps', component: load('app/apps'),
+            meta: { title: '应用列表', },
+          },
+          { path: 'orgs', name: 'ops:app:orgs', component: load('app/orgs'),
+            meta: { title: '组织管理', icon: 'ios-people' }
+          },
         ]
-      },
-      { path: '/app/orgs', name: 'app:orgs', component: load('app/orgs'),
-        meta: { title: '组织管理', icon: 'ios-people' }
-      },
+      }
     ]
   },
   { path: '/sys', name: 'sys', redirect: '/sys/regs', component: Main,
     meta: { title: '系统', icon: 'md-cog', level: 0 },
     children: [
       { path: '/sys/regs', name: 'sys:regs', component: load('sys/regs'),
-        meta: { title: '注册信息', hideSide: true, icon: 'md-snow' }
+        meta: { title: '注册信息', hideSide: true, hideHeader: true, icon: 'md-snow' }
       },
       { path: '/sys/logs', name: 'sys:logs', component: load('sys/logs'),
         meta: { title: '系统日志', icon: 'md-list' }
@@ -75,10 +77,10 @@ const routes = [
         meta: { title: '报表', icon: 'md-stats' },
         component: Parent,
         children: [
-          { path: '/admins1', name: 'stats:report:m1', component: load('sys/staff'),
+          { path: '/admins1', name: 'stats:report:m1', component: load('sys/staffs'),
             meta: { title: '报表1' },
           },
-          { path: '/admins2', name: 'stats:report:m2', component: load('sys/staff'),
+          { path: '/admins2', name: 'stats:report:m2', component: load('sys/staffs'),
             meta: { title: '报表2' },
           }
         ]
