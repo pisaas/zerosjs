@@ -1,8 +1,13 @@
 import Main from '@c/layout/main'
 import Parent from '@c/layout/parent'
 
-function load (page) {
-  return () => import(`@/views/${page}`)
+let __routeCmpts = {}
+
+function load (path) {
+  let cmpt = () => import(`@/views/${path}`)
+  __routeCmpts[path] = cmpt
+
+  return cmpt
 }
 
 /**
@@ -92,5 +97,7 @@ if (process.env.MODE !== 'ssr') {
     component: () => import('@/views/error/40X.vue')
   })
 }
+
+export const routeCmpts = __routeCmpts
 
 export default routes

@@ -1,2 +1,2 @@
-import Apps from './views/apps.vue'
-export default Apps
+import Default from './views/apps.vue'
+export default Default

@@ -1,4 +1,6 @@
-import ViewUI  from 'view-design';
+import ViewUI  from 'view-design'
+
+import { routeCmpts } from '../router/routes'
 
 export default ({ app, router, Vue }) => {
   Vue.use(ViewUI, {
@@ -9,6 +11,10 @@ export default ({ app, router, Vue }) => {
 }
 
 function cmptLib (app, Vue) {
+  function getRouteCmpt (path) {
+    return routeCmpts[path]
+  }
+
   // Find components upward
   function findComponentUpward (context, componentName, componentNames) {
     if (typeof componentName === 'string') {
@@ -78,6 +84,7 @@ function cmptLib (app, Vue) {
   }
 
   return {
+    getRouteCmpt,
     findComponentUpward,
     findComponentDownward,
     findComponentsDownward,

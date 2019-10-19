@@ -4,7 +4,7 @@
       {{ currentReg.desc }}
     </div>
     <div v-if="isCtrlLocked">
-      当前节点不支持编辑
+      当前节点不支持配置
     </div>
     <div v-else class="content-editor">
       <div class="editor-header flex q-pa-sm">
