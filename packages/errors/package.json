@@ -18,8 +18,7 @@
   },
   "dependencies": {
     "@feathersjs/errors": "^4.3.3",
-    "debug": "^4.1.1",
-    "errors": "^0.3.0"
+    "debug": "^4.1.1"
   },
   "devDependencies": {
     "jest": "^24.9.0"

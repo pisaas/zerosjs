@@ -43,7 +43,6 @@
     "config": "^3.2.3",
     "cors": "^2.8.5",
     "debug": "^4.1.1",
-    "errors": "^0.3.0",
     "feathers-hooks-common": "^4.20.7",
     "feathers-mongoose": "^8.0.3",
     "flake-idgen": "^1.1.2",
