@@ -1,6 +1,6 @@
 <template>
   <div class="page-regs page-view">
-    <Split v-model="splitRate" min="200px" max="500px">
+    <Split v-model="splitRate" min="180px" max="500px">
       <div slot="left" class="page-left">
         <reg-tree @on-node-select="onNodeSelect" @on-node-change="onNodeChange" />
       </div>
@@ -48,7 +48,7 @@ export default {
     return {
       viewType: 'reg',  // reg, page
       currentReg: null,
-      splitRate: 0.2,
+      splitRate: 0.25,
     }
   },
 

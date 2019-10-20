@@ -270,8 +270,9 @@ export default {
   display: flex;
   align-items: center;
   color: white;
-  font-size: 16px;
   padding: 10px 40px;
+  font-size: 16px;
+  font-weight: bold;
 }
 </style>
 

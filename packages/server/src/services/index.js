@@ -1,8 +1,9 @@
 const core = require('./core');
 const data = require('./data');
+const sys = require('./sys');
 
-// eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(core);
   app.configure(data);
+  app.configure(sys);
 };

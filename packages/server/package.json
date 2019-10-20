@@ -44,6 +44,7 @@
     "feathers-hooks-common": "^4.20.7",
     "feathers-mongoose": "^8.0.3",
     "flake-idgen": "^1.1.2",
+    "qiniu": "^7.2.2",
     "helmet": "^3.21.1",
     "include-all": "^4.0.3",
     "lodash": "^4.17.15",

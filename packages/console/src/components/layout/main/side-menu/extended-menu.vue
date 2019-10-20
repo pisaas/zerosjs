@@ -1,5 +1,5 @@
 <template>
-  <Menu v-if="routes && routes.length" ref="menu" class="extended-menu"
+  <Menu v-if="routes && routes.length" ref="menu" class="extended-menu no-selection"
     width="auto" :active-name="activeName" :open-names="openNames"
     @on-select="onMenuSelect">
     <template v-for="item in routes">

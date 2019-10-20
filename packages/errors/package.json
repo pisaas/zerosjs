@@ -1,8 +1,10 @@
 {
   "name": "@zero/errors",
-  "version": "0.0.1",
   "description": "Common error types for Pisaas Zero apps. Forked from feathersjs.",
+  "version": "0.0.1",
+  "homepage": "https://pisaas.com",
   "main": "lib/",
+  "types": "index.d.ts",
   "directories": {
     "lib": "lib",
     "test": "test"
