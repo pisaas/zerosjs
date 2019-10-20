@@ -2,6 +2,7 @@
   "name": "@zero/express",
   "description": "Express framework bindings and REST provider. Forked from feathersjs.",
   "version": "0.0.1",
+  "private": true,
   "homepage": "https://pisaas.com",
   "main": "lib/",
   "types": "index.d.ts",
