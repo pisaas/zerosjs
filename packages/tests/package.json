@@ -2,7 +2,7 @@
   "name": "@zero/tests",
   "private": true,
   "description": "Core module common tests. Forked from feathers.",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.0",
   "engines": {
     "node": ">= 6"
   },
