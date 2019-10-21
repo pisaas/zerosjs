@@ -48,6 +48,7 @@
     "flake-idgen": "^1.1.2",
     "helmet": "^3.21.1",
     "include-all": "^4.0.3",
+    "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.15",
     "mongodb-core": "^3.2.7",
     "mongoose": "^5.7.1",

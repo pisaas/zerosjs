@@ -1,5 +1,3 @@
-const { service } = require('../../common');
-
 exports.SysService = class SysService {
   constructor (options, app) {
     this.options = Object.assign({
@@ -19,6 +17,6 @@ exports.SysService = class SysService {
       basePath: this.options.basePath
     }, options);
 
-    return service.register(this.app, path, this, opts);
+    return zero.$service.register(this.app, path, this, opts);
   }
 };

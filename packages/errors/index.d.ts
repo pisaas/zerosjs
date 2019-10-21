@@ -16,6 +16,10 @@ export class ZeroError extends Error {
   toJSON (): ZeroErrorJSON;
 }
 
+export class InnerError extends ZeroError {
+  constructor (msg?: string | Error, data?: any);
+}
+
 export class BadRequest extends ZeroError {
   constructor (msg?: string | Error, data?: any);
 }
@@ -82,6 +86,7 @@ export class Unavailable extends ZeroError {
 
 export interface Errors {
   ZeroError: ZeroError;
+  InnerError: InnerError;
   BadRequest: BadRequest;
   NotAuthenticated: NotAuthenticated;
   PaymentError: PaymentError;

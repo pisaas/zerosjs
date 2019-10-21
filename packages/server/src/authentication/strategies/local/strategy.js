@@ -56,7 +56,7 @@ class LocalStrategy extends AuthenticationBaseStrategy {
     }, params);
 
     const findParams = Object.assign({}, params, { query });
-    const entityService = this.app.service(service);
+    const entityService = zero.service(service);
 
     debug('Finding entity with query', params.query);
 
@@ -105,7 +105,7 @@ class LocalStrategy extends AuthenticationBaseStrategy {
 
     debug('Verifying password');
 
-    const pwdService = this.app.service('core/security/password');
+    const pwdService = zero.service('core/security/password');
     const result = await pwdService.compare(password, hash);
 
     if (result) {
@@ -116,7 +116,7 @@ class LocalStrategy extends AuthenticationBaseStrategy {
   }
 
   async hashPassword (password) {
-    const pwdService = this.app.service('core/security/password');
+    const pwdService = zero.service('core/security/password');
     return pwdService.hash(password);
   }
 

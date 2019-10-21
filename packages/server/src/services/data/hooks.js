@@ -22,7 +22,7 @@ exports.genId = function (field) {
       return context;
     }
 
-    const idsService = app.service('core/ids');
+    const idsService = zero.service('core/ids');
     const newId = await idsService.gen();
 
     // eslint-disable-next-line require-atomic-updates

@@ -5,6 +5,8 @@ const config = require('config');
 const debug = Debug('@zero/server/configuration');
 const separator = path.sep;
 
+const exposeGlobals = require('./exposeGlobals');
+
 module.exports = function init () {
   return (app) => {
     const convert = (current) => {
@@ -24,6 +26,7 @@ module.exports = function init () {
             if (process.env[value]) {
               value = process.env[value];
             }
+
             if (value.indexOf('.') === 0 || value.indexOf('..') === 0) {
               // Make relative paths absolute
               value = path.resolve(
@@ -62,6 +65,8 @@ module.exports = function init () {
       debug(`Setting ${name} configuration value to`, value);
       app.set(name, value);
     });
+
+    exposeGlobals(app);
 
     return conf;
   };

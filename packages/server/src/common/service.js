@@ -32,7 +32,7 @@ exports.register = (app, path, service, options) => {
 
   app.use(servicePath, service);
 
-  const protoService = app.service(servicePath);
+  const protoService = zero.service(servicePath);
 
   if (hooks) {
     protoService.hooks(hooks);

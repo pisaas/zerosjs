@@ -11,7 +11,7 @@ const __env = process.env
 // userAgent相关方法
 const __navUserAgnet = navigator.userAgent
 const __navUseragnet = navigator.userAgent.toLowerCase()
-export const appCode = '0'
+export const appId = '0'
 export const hostBaseUrl = window.location.protocol + '//' + window.location.host
 export const baseUrl = (__env.BASE_URL === '@host' ? hostBaseUrl : __env.BASE_URL)
 export const apiDomain = (__env.API_DOMAIN === '@host' ? hostBaseUrl : __env.API_DOMAIN)
@@ -69,7 +69,7 @@ export const viewSizeName = () => {
 }
 
 export default {
-  appCode,
+  appId,
   baseUrl,
   apiDomain,
   is,

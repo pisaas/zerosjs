@@ -9,7 +9,7 @@ exports.Users = class Users extends ApiService {
       throw new errors.Forbidden('只允许获取本人的信息');
     }
     
-    let usersService = this.app.service('users');
+    let usersService = zero.service('users');
     let userInfo = usersService.get(code);
 
     return userInfo;

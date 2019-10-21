@@ -12,4 +12,11 @@ function ZeroError (msg, name, code, className, data) {
 
 inheritsFrom(ZeroError, feathersErrors.FeathersError);
 
+// 500 - InnerError
+function InnerError (message, data) {
+  ZeroError.call(this, message, 'InnerError', 500, 'inner-error', data);
+}
+
+inheritsFrom(InnerError, ZeroError);
+
 module.exports = Object.assign({ ZeroError }, feathersErrors);

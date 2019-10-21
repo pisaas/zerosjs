@@ -8,6 +8,9 @@
     "ecmaVersion": 2018
   },
   "extends": "eslint:recommended",
+  "globals": {
+    "zero": "readonly"
+  },
   "rules": {
     "indent": [ "error", 2 ],
     "linebreak-style": [ "error", "unix" ],

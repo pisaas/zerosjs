@@ -31,19 +31,21 @@
     <FormItem label="应用图标/Logo">
       <Row>
         <i-col span="6" class="text-center">
-          <div class="logo-photo flex-center panel-shadow">
-            <img v-if="logoUrl" :src="logoUrl" @click="onLogoPreview" />
-            <Icon v-else type="md-image" size="120"></Icon>
-          </div>
-          <div class="logo-actions q-py-sm">
-            <image-upload ref="imgUpload" @image-selected="onLogoSelected"
-              style="display: inline-block;">
-              <Button type="primary" size="small">选择</Button>
-            </image-upload>
-            <Button v-if="logoUrl" class="q-ml-sm" size="small"
-              @click="onLogoPreview">预览</Button>
-            <Button v-if="isLogoChanged" class="q-ml-sm" size="small"
-              @click="onLogoReset">还原</Button>
+          <div class="logo-upload">
+            <div class="logo-photo flex-center panel-shadow">
+              <img v-if="logoUrl" :src="logoUrl" @click="onLogoPreview" />
+              <Icon v-else type="md-image" size="120"></Icon>
+            </div>
+            <div class="logo-actions q-py-sm">
+              <image-upload ref="imgUpload" @image-selected="onLogoSelected"
+                style="display: inline-block;">
+                <Button type="primary" size="small">选择</Button>
+              </image-upload>
+              <Button v-if="logoUrl" class="q-ml-sm" size="small"
+                @click="onLogoPreview">预览</Button>
+              <Button v-if="isLogoChanged" class="q-ml-sm" size="small"
+                @click="onLogoReset">还原</Button>
+            </div>
           </div>
           <Modal title="预览" transfer v-model="isLogoPreview"
             cancel-text='' :z-index="9000">
@@ -203,21 +205,26 @@ export default {
         if (orgItem) {
           formModel.ocode = orgItem.code
         }
-
-        let appService = this.$service('apps')
-
-        if (editMode === 'create') {
-          return appService.create(formModel)
-        } else {
-          return appService.update(this.appId, formModel)
-        }
         
-        // return this.uploadLogo().then((res) => {
-        //   if (res && res.key) {
-        //     formModel.logo = { key: res.key }
-        //   }
-        //   return this.$apis.usr.postUser(editMode, formModel)
-        // })
+        let appService = this.$service('apps')
+        
+        return Promise.resolve().then(() => {
+          if (editMode !== 'create') {
+            return this.appId
+          }
+
+          return appService.create(formModel).then((res) => {
+            return res.id
+          })
+        }).then((appId) => {
+          return this.uploadLogo({ appId }).then((res) => {
+            if (res && res.key) {
+              formModel.logo = { key: res.key }
+            }
+
+            return appService.patch(appId, formModel)
+          })
+        })
       })
     },
 
@@ -304,6 +311,10 @@ export default {
   width: 800px;
 }
 
+.logo-upload {
+  min-width: 150px;
+}
+
 .logo-photo {
   height: @logoPhotoSize;
   border-radius: 4px;
@@ -319,23 +330,4 @@ export default {
     max-height: @logoPhotoSize - 10;
   }
 }
-
-// .logo-photo {
-//   width: 150px;
-//   height: 150px;
-//
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//
-//   &>img {
-//     max-width: 150px;
-//     max-height: 150px;
-//   }
-//
-//   &>i {
-//     line-height: 150px;
-//     color: #dcdee2;
-//   }
-// }
 </style>

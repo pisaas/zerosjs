@@ -9,9 +9,9 @@ export default {
   versionNo: '',
 
   basic: {
-    code: env.appCode,
+    id: env.appId,
     name: 'Zero',
-    logo: `${rescDomain}/apps/${env.appCode}/logo.png`,
+    logo: `${rescDomain}/apps/${env.appId}/logo.png`,
     rescDomain,
     tmpRescDomain
   },

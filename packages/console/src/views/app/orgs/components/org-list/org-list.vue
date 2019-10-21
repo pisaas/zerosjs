@@ -136,6 +136,8 @@ export default {
     },
 
     onSave () {
+      this.$app.toast('保存成功！', { type: 'success' })
+
       this.$refs.editorModal.close()
       this.getList()
     },
@@ -188,6 +190,9 @@ export default {
       return this.$service('orgs').patch(id, {
         frzn: flag
       }).then(() => {
+        let msg = (flag ? '组织已冻结！' : '组织已激活！')
+        this.$app.toast(msg, { type: 'success' })
+
         this.getList()
       })
     },
@@ -197,12 +202,14 @@ export default {
       return this.$service('orgs').patch(id, {
         pubed: flag
       }).then(() => {
+        this.$app.toast('组织已发布！', { type: 'success' })
         this.getList()
       })
     },
 
     removeItem (id) {
       return this.$service('orgs').remove(id).then(() => {
+        this.$app.toast('组织已删除！', { type: 'success' })
         this.getList()
       })
     },

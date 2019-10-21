@@ -1,5 +1,3 @@
-const { configureDir } = require('../../common/service');
-
 module.exports = function (app) {
-  configureDir(app, __dirname);
+  zero.$service.configureDir(app, __dirname);
 };

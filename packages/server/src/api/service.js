@@ -1,4 +1,3 @@
-const { service } = require('../common');
 const debug = require('debug')('@zero/server/api');
 
 exports.ApiService = class ApiService {
@@ -14,7 +13,7 @@ exports.ApiService = class ApiService {
     if (!this.adapterServicPath) {
       return null;
     }
-    return this.app.service(this.adapterServicPath);
+    return zero.service(this.adapterServicPath);
   }
 
   _setup (app) {
@@ -36,7 +35,7 @@ exports.ApiService = class ApiService {
       this._registerAdapterService(app, opts.adapterService);
     }
 
-    let protoService = service.register(app, path, this, opts);
+    let protoService = zero.$service.register(app, path, this, opts);
 
     return protoService;
   }

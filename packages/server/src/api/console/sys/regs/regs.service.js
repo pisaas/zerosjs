@@ -1,5 +1,5 @@
 const errors = require('@zero/errors');
-const { ApiService } = require('../service');
+const { ApiService } = require('../../service');
 
 module.exports = function (app) {
   new Regs().register(app, 'regs', {

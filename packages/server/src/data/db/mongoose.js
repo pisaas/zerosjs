@@ -50,7 +50,6 @@ function dbClient (app) {
 
     let pTransformFn = protectFieldsTransform(protectedFields);
 
-    // options.toObject = Object.assign({ transform: pTransformFn }, options.toObject);
     options.toJSON = Object.assign({ transform: pTransformFn }, options.toJSON);
 
     let s = new Schema(schema, options);

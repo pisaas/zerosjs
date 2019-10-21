@@ -12,6 +12,7 @@ module.exports = function (app) {
 
     oid: { type: String, required: true, maxlength: 50 }, // 所属组织org id
     ocode: { type: String, required: true, maxlength: 50 }, // 所属组织编号org code
+    owner: { type: String, required: true, maxlength: 50 },  // 所属成员
 
     logo: { type: String, maxlength: 200 },
     desc: { type: String, maxlength: 500 },
@@ -20,6 +21,15 @@ module.exports = function (app) {
     frzn: { type: Boolean, default: false },
   }, {
     docName: 'apps',
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+      transform (doc, ret) {
+        if (ret.logo) {
+          ret.logo = zero.$resc.fullUrl(`${ret.logo}`);
+        }
+        
+        return ret;
+      }
+    }
   });
 };

@@ -1,7 +1,7 @@
-exports.CoreService = class CoreService {
+exports.OpenService = class OpenService {
   constructor (options, app) {
     this.options = Object.assign({
-      basePath: 'core',
+      basePath: 'open',
       disabledRest: true
     }, options);
 
