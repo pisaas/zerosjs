@@ -48,9 +48,22 @@ function dbClient (app) {
 
     protectedFields = protectedFields.concat((options.protectedFields || []));
 
+    let toJSONOptions = Object.assign({}, options.toJSON);
+
     let pTransformFn = protectFieldsTransform(protectedFields);
 
-    options.toJSON = Object.assign({ transform: pTransformFn }, options.toJSON);
+    if (toJSONOptions.transform) {
+      let origTransformFn = toJSONOptions.transform;
+
+      toJSONOptions.transform = (doc, ret, options) => {
+        pTransformFn (doc, ret, options);
+        origTransformFn(doc, ret, options);
+      };
+    } else {
+      toJSONOptions.transform = pTransformFn;
+    }
+
+    options.toJSON = toJSONOptions;
 
     let s = new Schema(schema, options);
 

@@ -1,5 +1,5 @@
 const { Service } = require('feathers-mongoose');
-const { genId, fuzzySearch } = require('./hooks');
+const { fuzzySearch, preEntityCreate } = require('./hooks');
 
 exports.EntityService = class EntityService extends Service {
   constructor (options, app) {
@@ -8,7 +8,6 @@ exports.EntityService = class EntityService extends Service {
     options = Object.assign({
       id: 'id',
       basePath: 'data',
-      autoId: true, // 自动生成id
       disabledRest: true,
       lean: false,
       paginate
@@ -20,7 +19,7 @@ exports.EntityService = class EntityService extends Service {
   }
 
   register (path, options) {
-    let { basePath, autoId, id } = this.options;
+    let { basePath } = this.options;
 
     let opts = Object.assign({
       basePath,
@@ -28,9 +27,7 @@ exports.EntityService = class EntityService extends Service {
     }, options);
 
     // 添加自动生成Id Hook
-    if (autoId !== false) {
-      opts.hooks =zero.$service.prependHook(opts.hooks, 'before.create', genId(id));
-    }
+    opts.hooks =zero.$service.prependHook(opts.hooks, 'before.create', preEntityCreate(opts));
 
     let { fuzzySearchFields } = opts;
 

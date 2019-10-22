@@ -10,15 +10,16 @@ module.exports = function (app) {
     code: { type: String, required: true, unique: true, maxlength: 50 },
     name: { type: String, required: true, unique: true, maxlength: 100 },
 
-    oid: { type: String, required: true, maxlength: 50 }, // 所属组织org id
-    ocode: { type: String, required: true, maxlength: 50 }, // 所属组织编号org code
-    owner: { type: String, required: true, maxlength: 50 },  // 所属成员
+    oid: { type: String, maxlength: 50 }, // 所属组织org id
+    ocode: { type: String, maxlength: 50 }, // 所属组织编号org code
 
     logo: { type: String, maxlength: 200 },
     desc: { type: String, maxlength: 500 },
     data: Types.Mixed,
     pubed: { type: Boolean, default: false },
     frzn: { type: Boolean, default: false },
+
+    owner: { type: String, required: true, maxlength: 50 },  // 所属成员, 一般为创建人id
   }, {
     docName: 'apps',
     timestamps: true,

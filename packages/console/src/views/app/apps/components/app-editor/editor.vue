@@ -16,7 +16,7 @@
     </Row>
     <Row>
       <i-col span="12">
-        <FormItem label="所属组织" required prop="oid">
+        <FormItem label="所属组织" prop="oid">
           <Select v-model="formModel.oid"
             :loading="orgLoading" filterable remote :remote-method="onOrgFilter">
             <Option v-for="it in orgData" :value="it.id" :key="it.id">{{ it.name }}</Option>

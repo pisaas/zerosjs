@@ -17,7 +17,6 @@ if (clientType === 'rest') {
   initIoClient(client)
 }
 
-
 client.configure(feathers.authentication({
   storageKey: 'zero-token'
 }))

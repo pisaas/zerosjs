@@ -1,32 +1,41 @@
-const { get, set, cloneDeep } = require('lodash');
+const { cloneDeep } = require('lodash');
 const { protectFields } = require('../../hooks');
 
 exports.protectFields = protectFields;
 
 exports.fuzzySearch = require('../../hooks/fuzzy-search');
 
-exports.genId = function (field) {
-  if (!field) {
-    field = 'id';
-  }
+exports.preEntityCreate = function (options) {
+  let opts = Object.assign({
+    idField: 'id',
+    ownerField: 'owner',
+    autoId: true,
+    autoOwner: false
+  }, options);
+
+  let { idField, ownerField, autoId, autoOwner } = opts;
 
   return async (context) => {
     if (context.type !== 'before') {
-      throw new Error('The \'hashPassword\' hook should only be used as a \'before\' hook');
+      throw new Error('The \'preEntityCreate\' hook should only be used as a \'before\' hook');
     }
 
-    const { app, data } = context;
-    const id = get(data, field);
+    const { data, params } = context;
 
-    if (!data || id) {
-      return context;
+    let newData = cloneDeep(data);
+
+    if (data && !data[idField] && autoId !== false) {
+      const idsService = zero.service('core/ids');
+      const newId = await idsService.gen();
+      newData[idField] = newId;
     }
 
-    const idsService = zero.service('core/ids');
-    const newId = await idsService.gen();
+    if (data && !data[ownerField] && params.user && autoOwner === true) {
+      newData[ownerField] = params.user.id;
+    }
 
     // eslint-disable-next-line require-atomic-updates
-    context.data = set(cloneDeep(data), field, newId);
+    context.data = newData;
 
     return context;
   };

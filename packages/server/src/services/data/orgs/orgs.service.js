@@ -6,6 +6,7 @@ module.exports = function (app) {
   const Model = createModel(app);
 
   new Orgs({ Model }, app).register('orgs', {
+    autoOwner: true,
     fuzzySearchFields: [ 'code', 'name' ]
   });
 };

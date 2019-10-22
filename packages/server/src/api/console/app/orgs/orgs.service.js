@@ -10,4 +10,9 @@ module.exports = function (app) {
 };
 
 class Orgs extends ApiService {
+  async find (params) {
+    console.log('find ------->', params.user);
+
+    return await this.adapterService.find(params);
+  }
 }

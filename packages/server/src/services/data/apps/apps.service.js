@@ -5,6 +5,7 @@ module.exports = function (app) {
   const Model = createModel(app);
 
   new Apps({ Model }, app).register('apps', {
+    autoOwner: true,
     fuzzySearchFields: [ 'code', 'name' ]
   });
 };

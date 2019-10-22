@@ -1,9 +1,8 @@
+const { authenticate } = require('@feathersjs/authentication');
 const debug = require('debug')('@zero/server/api');
 
 exports.ApiService = class ApiService {
   constructor (options) {
-    this.app = null;
-
     Object.assign(this, {
       basePath: 'api'
     }, options);
@@ -16,23 +15,28 @@ exports.ApiService = class ApiService {
     return zero.service(this.adapterServicPath);
   }
 
-  _setup (app) {
-    if (!this.app) {
-      this.app = app;
-    }
+  _setup () {
   }
 
   register (app, path, options) {
     debug(`register api service "${path}"`, app, options);
-    
-    this.app = app;
 
     let opts = Object.assign({
-      basePath: this.basePath
+      basePath: this.basePath,
+      authenticate: {
+        strategies: [ 'jwt' ]
+      },
+      hooks: {}
     }, options);
 
     if (opts.adapterService) {
       this._registerAdapterService(app, opts.adapterService);
+    }
+
+    let authOptions = opts.authenticate;
+    if (authOptions) {
+      // let hookPaths 
+      opts.hooks = zero.$service.prependHook(opts.hooks, 'before.all', authenticate(authOptions));
     }
 
     let protoService = zero.$service.register(app, path, this, opts);

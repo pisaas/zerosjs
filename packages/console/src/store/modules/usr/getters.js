@@ -16,6 +16,6 @@ export function displayName (state) {
   if (!state.basic) {
     return 'unknown'
   }
-  let { nickname, email } = state.basic
-  return nickname || email || '?'
+  let { displayName } = state.basic
+  return displayName || '?'
 }

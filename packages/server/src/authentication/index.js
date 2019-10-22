@@ -4,7 +4,7 @@ const { LocalStrategy } = require('./strategies/local');
 
 module.exports = app => {
   const authentication = new AuthenticationService(app);
-
+  
   authentication.register('jwt', new JWTStrategy());
   authentication.register('local', new LocalStrategy());
 

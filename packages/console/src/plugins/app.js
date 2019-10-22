@@ -46,8 +46,8 @@ function initApp (app, Vue) {
    * @return {[type]}       [description]
    */
   function rescUrl (path) {
-    let { code, rescDomain } = appBasic()
-    return `${rescDomain}/apps/${code}/${path}`
+    let { id, rescDomain } = appBasic()
+    return `${rescDomain}/apps/${id}/${path}`
   }
 
   /**
