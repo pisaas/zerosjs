@@ -44,13 +44,9 @@ function feathersExpress (feathersApp, expressApp = express()) {
         (service && typeof service[name] === 'function')
       );
 
-      // options.disabledRest 为true则不附加到 express
-      if (!service || !service.options || service.options.disabledRest !== true) {
-        // Check for service (any object with at least one service method)
-        if (hasMethod(['handle', 'set']) || !hasMethod(this.methods.concat('setup'))) {
-          debug('Passing app.use call to Express app');
-          return this._super.apply(this, arguments);
-        }
+      if (hasMethod(['handle', 'set']) || !hasMethod(this.methods.concat('setup'))) {
+        debug('Passing app.use call to Express app');
+        return this._super.apply(this, arguments);
       }
 
       debug('Registering service with middleware', middleware);

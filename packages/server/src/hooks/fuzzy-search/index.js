@@ -1,5 +1,3 @@
-const errors = require('@zero/errors');
-
 module.exports = function (opts = {}) {
   // if escape is undefined -> escape = true
   opts.escape = opts.escape !== false;
@@ -84,7 +82,7 @@ function transformSearchFieldsInQuery (query, options, fieldName) {
       // Field should either be included, or not excluded
       if ((options.fields.length && !options.fields.includes(key)) ||
           options.excludedFields.includes(key)) {
-        throw new errors.BadRequest('You are not allowed to perform $search on field ' + key);
+        throw new zero.$errors.BadRequest('You are not allowed to perform $search on field ' + key);
       }
 
       /**

@@ -41,6 +41,48 @@ exports.register = (app, path, service, options) => {
   return protoService;
 };
 
+exports.getParamsByArgs = (method, args) => {
+  if (args.length < 0) {
+    return;
+  }
+
+  let paramsArg = null;
+
+  if (['get', 'remove', 'create'].includes(method)) {
+    paramsArg = args[1];
+  } else if (['find', 'create'].includes(method)) {
+    paramsArg = args[0];
+  }
+
+  return paramsArg;
+};
+
+exports.innerInvoke = (service, method, ...args) => {
+  let origService = service;
+
+  if (typeof service === 'string') {
+    origService = zero.service(path);
+  }
+
+  if (args.length && typeof args[0] === 'function') {
+    args = args.slice(1);
+  }
+
+  let paramsArgs = null;
+
+  if (['get', 'remove', 'create'].includes(method)) {
+    paramsArgs = args[1];
+  } else if (['find', 'create'].includes(method)) {
+    paramsArgs = args[0];
+  }
+
+  if (paramsArgs && paramsArgs.provider) {
+    paramsArgs.inner = true;
+  }
+
+  return origService[method](...paramsArgs);
+};
+
 exports.prependHook = (hooks, path, hook) => {
   if (!path || !hook) {
     return hooks;

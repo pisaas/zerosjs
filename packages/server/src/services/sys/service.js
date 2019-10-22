@@ -1,8 +1,7 @@
 exports.SysService = class SysService {
   constructor (options, app) {
     this.options = Object.assign({
-      basePath: 'sys',
-      disabledRest: true
+      basePath: 'sys'
     }, options);
 
     this.app = app;

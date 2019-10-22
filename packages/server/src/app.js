@@ -6,9 +6,8 @@ const cors = require('cors');
 const { logger } = require('./common');
 
 const feathers = require('@feathersjs/feathers');
-const socketio = require('@feathersjs/socketio');
+const socketio = require('@zero/socketio');
 const express = require('@zero/express');
-
 
 const configuration = require('./configuration');
 const middleware = require('./middleware');

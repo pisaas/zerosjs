@@ -1,8 +1,7 @@
 exports.OpenService = class OpenService {
   constructor (options, app) {
     this.options = Object.assign({
-      basePath: 'open',
-      disabledRest: true
+      basePath: 'open'
     }, options);
 
     this.app = app;

@@ -87,6 +87,7 @@ class LocalStrategy extends AuthenticationBaseStrategy {
     }
 
     return entityService.get(result[entityId], {
+      inner: true,
       ...params,
       [entity]: result
     });

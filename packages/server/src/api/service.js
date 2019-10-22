@@ -1,18 +1,23 @@
-const { authenticate } = require('@feathersjs/authentication');
+const { authenticate } = require('../authentication/hooks');
 const debug = require('debug')('@zero/server/api');
 
 exports.ApiService = class ApiService {
   constructor (options) {
-    Object.assign(this, {
+    this.options = Object.assign({
+      public: true,
       basePath: 'api'
     }, options);
   }
 
   get adapterService () {
-    if (!this.adapterServicPath) {
+    if (!this.options.adapterServicPath) {
       return null;
     }
-    return zero.service(this.adapterServicPath);
+    return zero.service(this.options.adapterServicPath);
+  }
+  
+  get basePath () {
+    return this.options.basePath;
   }
 
   _setup () {
@@ -51,7 +56,7 @@ exports.ApiService = class ApiService {
    */
   _registerAdapterService (app, options) {
     let { path, methods } = options;
-    this.adapterServicPath = path;
+    this.options.adapterServicPath = path;
 
     const AdapterMethods = ['find', 'get', 'create', 'update', 'patch', 'remove'];
 

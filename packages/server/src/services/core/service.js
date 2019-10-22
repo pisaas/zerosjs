@@ -1,8 +1,7 @@
 exports.CoreService = class CoreService {
   constructor (options, app) {
     this.options = Object.assign({
-      basePath: 'core',
-      disabledRest: true
+      basePath: 'core'
     }, options);
 
     this.app = app;

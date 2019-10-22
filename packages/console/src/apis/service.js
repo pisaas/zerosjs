@@ -5,7 +5,8 @@ import { ErrorCodes } from '@/utils/errors'
 
 import { apiDomain } from '../env'
 
-const clientType = 'rest'
+// const clientType = 'rest'
+const clientType = 'io'
 let apiBaseUrl = 'api'
 
 const client = feathers()

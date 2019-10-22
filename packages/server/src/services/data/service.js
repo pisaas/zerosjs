@@ -8,7 +8,6 @@ exports.EntityService = class EntityService extends Service {
     options = Object.assign({
       id: 'id',
       basePath: 'data',
-      disabledRest: true,
       lean: false,
       paginate
     }, options);
@@ -29,8 +28,8 @@ exports.EntityService = class EntityService extends Service {
     // 添加自动生成Id Hook
     opts.hooks =zero.$service.prependHook(opts.hooks, 'before.create', preEntityCreate(opts));
 
+    // 添加模糊删除Hook
     let { fuzzySearchFields } = opts;
-
     if (fuzzySearchFields && fuzzySearchFields.length) {
       opts.hooks =zero.$service.prependHook(opts.hooks, 'before.find', fuzzySearch({ fields: fuzzySearchFields }));
     }

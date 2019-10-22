@@ -9,6 +9,7 @@
   },
   "extends": "eslint:recommended",
   "globals": {
+    "_": "readonly",
     "zero": "readonly"
   },
   "rules": {
