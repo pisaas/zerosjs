@@ -1,18 +1,22 @@
 <template>
   <div v-if="topRoute" class="layout-side-menu fs">
-    <div v-show="!collapsed" class="menu-top">
-      <span class="q-ml-sm">{{ util.menuTitle(topRoute) }}</span>
+    <div class="menu-header">
+      <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
+      <div class="logo flex-center" @click="$app.goHome()">
+        <img :src="`${appLogo}-avatar`" />
+        <!-- <div>{{ appName }}</div> -->
+      </div>
     </div>
     <extended-menu
       v-show="!collapsed"
-      :routes="subVisibleRoutes"
+      :routes="topVisibleRoutes"
       :iconSize="iconSize"
       :defaultIcon="defaultIcon"
       @on-change="onChange">
     </extended-menu>
     <collapsed-menu
       v-show="collapsed"
-      :routes="subVisibleRoutes"
+      :routes="topVisibleRoutes"
       :iconSize="iconSize"
       :iconColor="iconColor"
       :defaultIcon="defaultIcon"
@@ -59,8 +63,18 @@ export default {
   },
 
   computed: {
+    appLogo () {
+      return this.$app.appBasic('logo')
+    },
+
     topRoute () {
       return this.$app.topRoute()
+    },
+
+    topVisibleRoutes () {
+      let topRoutes = this.$store.getters['app/topRoutes']
+      let vRoutes = this.retrieveVisibleRoutes(topRoutes)
+      return vRoutes
     },
 
     subVisibleRoutes () {
@@ -110,15 +124,21 @@ export default {
 <style lang="less" scoped>
 .layout-side-menu {
   overflow: scroll;
-}
 
-.menu-top {
-  display: flex;
-  align-items: center;
-  color: white;
-  font-size: 16px;
-  padding: 10px 40px;
-  font-weight: bold;
+  .menu-header {
+    height: 50px;
+    line-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .logo {
+      img {
+        height: 30px;
+        width: auto;
+      }
+    }
+  }
 }
 </style>
 
@@ -133,11 +153,18 @@ export default {
 
     &.ivu-menu-vertical {
       .ivu-menu-item {
+        opacity: 0.5;
+        padding: 14px 20px;
+
         &:hover {
           opacity: 0.8;
+          color: white;
         }
 
         &-active {
+          opacity: 1;
+          color: white;
+          font-weight: bold;
           background: lighten(@layout-sider-background, 5%);
         }
       }

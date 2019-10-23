@@ -14,7 +14,7 @@ const client = feathers()
 if (clientType === 'rest') {
   initRestClient(client)
 } else {
-  apiBaseUrl = 'api/console'
+  apiBaseUrl = 'api/admin'
   initIoClient(client)
 }
 

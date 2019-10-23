@@ -11,7 +11,7 @@
       </div>
     </div>
     <Row class="q-mt-md">
-      <Table ref="pgTable" border size="small" :columns="tableColumns" :data="tableItems">
+      <Table ref="pgTable" size="small" :columns="tableColumns" :data="tableItems">
         <div slot-scope="{ row }" slot="ops" >
           <Button class="text-link" ghost size="small" @click="onEdit(row)">编辑</Button>
           <Button v-if="isAllowed(row, 'freeze')" class="text-link" ghost size="small" @click="onFreeze(row)">冻结</Button>
