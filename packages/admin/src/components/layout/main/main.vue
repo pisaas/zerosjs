@@ -1,7 +1,7 @@
 <template>
   <Layout class="main-layout fs">
     <Sider class="layout-sider" v-model="collapsed" collapsible
-      :width="110" :collapsed-width="70">
+      :width="100" :collapsed-width="70">
       <side-menu ref="sideMenu" :collapsed="collapsed" @on-change="turnToPage" />
     </Sider>
     <Layout>
@@ -9,7 +9,7 @@
         <div class="layout-header row">
           <div class="flex-main">
             <span class="module-title">
-              {{ util.menuTitle($route) }}
+              {{ displayTitle }}
             </span>
           </div>
 
@@ -18,21 +18,29 @@
           </div>
         </div>
       </Header>
-      <Content class="layout-content">
-        <div class="content-container">
-          <div class="content-body">
-            <router-view />
+
+      <Layout>
+        <Sider v-if="isSubmenu" class="layout-sub-sider" :width="130">
+          <sub-menu ref="subMenu" :subRoutes="subVisibleRoutes" @on-change="turnToPage" />
+        </Sider>
+        
+        <Content class="layout-content">
+          <div class="content-container">
+            <div class="content-body">
+              <router-view />
+            </div>
           </div>
-        </div>
-      </Content>
+        </Content>
+      </Layout>
     </Layout>
   </Layout>
 </template>
 
 <script>
-import util from './util'
+import { menuTitle, retrieveVisibleRoutes } from './util'
 
-import { SideMenu, SubMenu } from './side-menu'
+import SideMenu from './side-menu'
+import SubMenu from './sub-menu'
 import UserDropdown from './user-dropdown'
 
 export default {
@@ -44,21 +52,38 @@ export default {
 
   data () {
     return {
-      util,
       collapsed: false,
       currentReg: null
     }
   },
 
   computed: {
+    displayTitle () {
+      return menuTitle(this.$route)
+    },
+
+    isSubmenu () {
+      return this.subVisibleRoutes.length
+    },
+
+    topRoute () {
+      return this.$app.topRoute()
+    },
+
+    subVisibleRoutes () {
+      let topRoute = this.topRoute
+      if (!topRoute) {
+        return []
+      }
+      let vRoutes = retrieveVisibleRoutes(topRoute.children)
+      return vRoutes
+    }
   },
 
   mounted () {
     if (this.$env.viewSizeName() === 'xs') {
       this.collapsed = true
     }
-
-    
   },
 
   methods: {
@@ -92,6 +117,10 @@ export default {
   .module-title {
     font-size: 16px;
   }
+}
+
+.layout-sub-sider {
+  background: @bg-color;
 }
 
 .layout-content {

@@ -66,14 +66,14 @@ const routes = [
   { path: '/stats', name: 'stats', redirect: '/stats/report', component: Main,
     meta: { title: '数据', icon: 'md-analytics', level: 0 },
     children: [
-      { path: '/stats/report', name: 'stats:report',
+      { path: '/stats/report', redirect: '/stats/report/m1', name: 'stats:report',
         meta: { title: '报表', icon: 'md-stats' },
         component: Parent,
         children: [
-          { path: '/admins1', name: 'stats:report:m1', component: load('sys/staffs'),
+          { path: 'm1', name: 'stats:report:m1', component: load('sys/staffs'),
             meta: { title: '报表1' },
           },
-          { path: '/admins2', name: 'stats:report:m2', component: load('sys/staffs'),
+          { path: 'm1', name: 'stats:report:m2', component: load('sys/staffs'),
             meta: { title: '报表2' },
           }
         ]

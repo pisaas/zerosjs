@@ -22,53 +22,35 @@ export default {
 
   data () {
     return {
-      util,
-      activeName: null
+      util
     }
   },
 
   computed: {
     routeName () {
       return this.$route.name
-    }
-  },
+    },
 
-  watch: {
-    $route () {
-      this.onRouteChange()
+    activeName () {
+      let routeName = this.$route.name || ''
+
+      let activeName = routeName
+      
+      let nameParts = routeName.split(':')
+      if (nameParts.length > 1) {
+        activeName = nameParts[0]
+      }
+      
+      return activeName
     }
   },
 
   mounted () {
-    this.onRouteChange()
   },
 
   methods: {
     onMenuSelect (active) {
       this.$emit('on-change', active)
-    },
-
-    onRouteChange () {
-      this.$nextTick(() => {
-        this.routeChange()
-      })
-    },
-
-    routeChange () {
-      let routeName = this.$route.name
-      if (!routeName) {
-        return
-      }
-
-      let activeName = routeName
-      
-      let nameParts = routeName.split(':')
-
-      if (nameParts.length > 1) {
-        activeName = nameParts.slice(0, 1)
-      }
-
-      this.activeName = activeName
     }
   },
 

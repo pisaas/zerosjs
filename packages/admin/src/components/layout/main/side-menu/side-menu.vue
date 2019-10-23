@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import util from '../util'
+import { retrieveVisibleRoutes } from '../util'
 
 import ExtendedMenu from './extended-menu.vue'
 import CollapsedMenu from './collapsed-menu.vue'
@@ -58,7 +58,6 @@ export default {
 
   data () {
     return {
-      util
     }
   },
 
@@ -73,16 +72,7 @@ export default {
 
     topVisibleRoutes () {
       let topRoutes = this.$store.getters['app/topRoutes']
-      let vRoutes = this.retrieveVisibleRoutes(topRoutes)
-      return vRoutes
-    },
-
-    subVisibleRoutes () {
-      let topRoute = this.topRoute
-      if (!topRoute) {
-        return []
-      }
-      let vRoutes = this.retrieveVisibleRoutes(topRoute.children)
+      let vRoutes = retrieveVisibleRoutes(topRoutes)
       return vRoutes
     }
   },
@@ -90,32 +80,6 @@ export default {
   methods: {
     onChange (name) {
       this.$emit('on-change', name)
-    },
-
-    retrieveVisibleRoutes (routes) {
-      let thiz = this
-
-      if (!routes || !routes.length) {
-        return []
-      }
-
-      let vRoutes = []
-
-      routes.forEach((r) => {
-        if (!r) {
-          return
-        }
-
-        if (r.meta && r.meta.hideInMenu === true) {
-          return
-        }
-        
-        let vr = Object.assign({}, r)
-        vr.children = thiz.retrieveVisibleRoutes(r.children)
-        vRoutes.push(vr)
-      })
-
-      return vRoutes;
     }
   }
 }
@@ -154,7 +118,7 @@ export default {
     &.ivu-menu-vertical {
       .ivu-menu-item {
         opacity: 0.5;
-        padding: 14px 20px;
+        padding: 10px 15px;
 
         &:hover {
           opacity: 0.8;
