@@ -1,28 +1,29 @@
 import Vue from 'vue'
 
-import createApp from './app.js'
+import uni from '../utils/uni'
+import createZero from './zero'
 
-// import pValidator from '../plugins/validator.js'
-// import pIO        from '../plugins/io.js'
-import pApp       from '../plugins/app.js'
-import pMedia     from '../plugins/media.js'
-import pCmpt      from '../plugins/cmpt.js'
-// import pResc      from '../plugins/resc.js'
+// import pValidator from '../plugins/validator'
+// import pIO        from '../plugins/io'
+import pZero         from '../plugins/zero'
+import pMedia        from '../plugins/media'
+import pCmpt         from '../plugins/cmpt'
+// import pResc      from '../plugins/resc'
 
 Vue.config.devtools = true
 Vue.config.productionTip = false
 
-const { app, store, router } = createApp()
+const { zero, store, router } = createZero()
 
 ;[
   // pValidator, pIO,
-  pApp,
+  pZero,
   pMedia,
   pCmpt,
   // pResc
 ].forEach(plugin => {
   plugin({
-    app,
+    zero,
     router,
     store,
     Vue,
@@ -30,9 +31,19 @@ const { app, store, router } = createApp()
   })
 })
 
-app.store.dispatch('app/load', {
-  // initialState
-}).then(() => {
-  app.store.commit('app/setAppInitialized', true)
-  new Vue(app)
+store.dispatch('zero/load').then(() => {
+  function newVue () {
+    new Vue(zero)
+  }
+  
+  uni.getDefAppId().then((id) => {
+    if (!id) {
+      return
+    }
+    return store.dispatch('app/load', { id })
+  }).then(() => {
+    newVue()
+  }).catch(() => {
+    newVue()
+  })
 })

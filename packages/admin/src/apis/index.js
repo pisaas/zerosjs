@@ -1,12 +1,12 @@
 import service from './service'
-import app from './app'
+import zero from './zero'
 
 export default {
   get service() {
     return service
   },
 
-  get app () {
-    return app
+  get zero () {
+    return zero
   },
 }

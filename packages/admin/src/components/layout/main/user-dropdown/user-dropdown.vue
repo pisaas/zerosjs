@@ -4,7 +4,6 @@
       <Avatar :src="user.avatar" size="small" />
       <Icon :size="18" type="md-arrow-dropdown"></Icon>
       <DropdownMenu slot="list">
-        <DropdownItem name="apps">切换应用</DropdownItem>
         <DropdownItem name="account">账号信息</DropdownItem>
         <DropdownItem name="logout">退出</DropdownItem>
       </DropdownMenu>
@@ -24,7 +23,7 @@ export default {
 
   computed: {
     user () {
-      return this.$app.userBasic()
+      return this.$zero.userBasic()
     },
 
     // 是否小页面
@@ -49,9 +48,7 @@ export default {
     },
 
     logout () {
-      this.$service.logout().then(() => {
-        this.$uni.reload()
-      })
+      this.$zero.logout()
     }
   }
 }

@@ -1,7 +1,6 @@
 <template>
-  <div class="page-home page-view">
-    HOME
-    {{ $store.getters['usr/isLogin'] }}
+  <div class="page page-overview">
+    Overview : {{ $store.getters['usr/isLogin'] }}
   </div>
 </template>
 

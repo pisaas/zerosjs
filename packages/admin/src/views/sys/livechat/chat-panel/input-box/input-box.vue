@@ -68,7 +68,7 @@ export default {
         return
       }
 
-      this.$app.confirm({
+      this.$zero.confirm({
         title: '确认发送图片',
         content: '发送后将无法撤回无法撤回，确认继续发送？',
         onConfirm: () => {

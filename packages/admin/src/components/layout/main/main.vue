@@ -1,52 +1,42 @@
 <template>
   <Layout class="main-layout fs">
-    <Sider class="layout-sider" v-model="collapsed" collapsible
-      :width="100" :collapsed-width="70">
-      <side-menu ref="sideMenu" :collapsed="collapsed" @on-change="turnToPage" />
-    </Sider>
-    <Layout>
-      <Header>
-        <div class="layout-header row">
-          <div class="flex-main">
-            <span class="module-title">
-              {{ displayTitle }}
-            </span>
-          </div>
+    <Header>
+      <div class="layout-header row">
+        <div class="flex-main">
+          <router-view name="header" />
 
-          <div class="q-pr-sm">
-            <user-dropdown />
-          </div>
+          <span v-if="!showSide" class="header-logo">
+            <img :src="`${admLogo}-avatar`" />
+          </span>
+
+          <span class="header-title">
+            {{ displayTitle }}
+          </span>
         </div>
-      </Header>
 
-      <Layout>
-        <Sider v-if="isSubmenu" class="layout-sub-sider" :width="130">
-          <sub-menu ref="subMenu" :subRoutes="subVisibleRoutes" @on-change="turnToPage" />
-        </Sider>
-        
-        <Content class="layout-content">
-          <div class="content-container">
-            <div class="content-body">
-              <router-view />
-            </div>
-          </div>
-        </Content>
-      </Layout>
-    </Layout>
+        <div class="q-pr-sm">
+          <user-dropdown />
+        </div>
+      </div>
+    </Header>
+
+    <Content class="layout-content">
+      <div class="content-container">
+        <div class="content-body">
+          <router-view />
+        </div>
+      </div>
+    </Content>
   </Layout>
 </template>
 
 <script>
 import { menuTitle, retrieveVisibleRoutes } from './util'
 
-import SideMenu from './side-menu'
-import SubMenu from './sub-menu'
 import UserDropdown from './user-dropdown'
 
 export default {
   components: {
-    SideMenu,
-    SubMenu,
     UserDropdown
   },
 
@@ -58,8 +48,23 @@ export default {
   },
 
   computed: {
+    admLogo () {
+      return this.$zero.zeroBasic('logo')
+    },
+
     displayTitle () {
       return menuTitle(this.$route)
+    },
+
+    showSide () {
+      let showSide = true
+      let routeMeta = this.$route.meta
+
+      if (routeMeta && routeMeta.hideSide === true) {
+        showSide = false
+      }
+
+      return showSide
     },
 
     isSubmenu () {
@@ -67,7 +72,7 @@ export default {
     },
 
     topRoute () {
-      return this.$app.topRoute()
+      return this.$zero.topRoute()
     },
 
     subVisibleRoutes () {
@@ -114,7 +119,15 @@ export default {
   padding: 0 15px;
   border-bottom: 1px solid @border-color;
 
-  .module-title {
+  .header-logo {
+    float: left;
+    padding: 10px;
+    img {
+      height: 30px;
+    }
+  }
+
+  .header-title {
     font-size: 16px;
   }
 }

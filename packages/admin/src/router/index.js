@@ -8,6 +8,25 @@ import routes from './routes'
 Vue.use(Router)
 
 const LOGIN_PAGE_NAME = 'login'
+const APP_HOME_PAGE_NAME = 'app:home'
+const APP_LIST_PAGE_NAME = 'main:apps'
+
+const routesMap = {}
+
+function getRoutesMap (r, m) {
+  if (r.name) {
+    m[r.name] = r
+  }
+  if (r.children) {
+    r.children.forEach((child) => {
+      getRoutesMap(child, m)
+    })
+  }
+}
+
+routes.forEach((r) => {
+  getRoutesMap(r, routesMap)
+})
 
 export default function () {
   const router = new Router({
@@ -16,10 +35,93 @@ export default function () {
     routes
   })
 
+  router.routesMap = () => {
+    return routesMap
+  }
+
+  router.topRoutes = (prefix) => {
+    if (prefix && !prefix.endsWith(':')) {
+      prefix += ':'
+    }
+
+    let topRoutes = routes.filter((r) => {
+      if (!r || !r.name || !r.meta || r.meta.hideInMenu) {
+        return false
+      }
+
+      let nameParts = r.name.split(':')
+      
+      if (!prefix) {
+        return nameParts.length <= 1
+      }
+
+      if (r.name.indexOf(prefix) !== 0) {
+        return false
+      }
+
+      let prefixParts = prefix.split(':')
+
+      return nameParts.length === prefixParts.length
+    })
+
+    return topRoutes
+  }
+
+  router.tryPush = (location) => {
+    return router.push(location).catch(() => {})
+  }
+
+  router.tryReplace = (location) => {
+    return router.push(location).catch(() => {})
+  }
+
+  router.isAppPageName = (name) => {
+    if (!name) {
+      return false
+    }
+
+    return (name === 'app' || (name.indexOf('app:') === 0))
+  }
+
+  // topRoute - 获取当前level级别的顶级菜单
+  router.topRoute = (routeName, level) => {
+    if (!routeName) {
+      return null
+    }
+
+    let topRoutePartsLength = level + 1
+    let routeParts = routeName.split(':')
+
+    if (routeParts.length < topRoutePartsLength) {
+      return null
+    }
+
+    let topRouteName = routeParts.slice(0, topRoutePartsLength).join(':')
+    let topRoute = routesMap[topRouteName]
+    
+    return topRoute
+  }
+
+  /**
+   * topRoute - 获取当前顶级菜单
+   *
+   * @return {type}  description
+   */
+  // function topRoute () {
+  //   let routerApp = zero.router.app
+  //   if (!routerApp || !routerApp.$route || !routerApp.$route.name) {
+  //     return null
+  //   }
+  //   let topRouteName = routerApp.$route.name.split(':')[0]
+  //   let topRoute = zero.store.getters['zero/routesMap'][topRouteName]
+  //   return topRoute || null
+  // }
+
   router.beforeEach(function (to, from, next) {
     LoadingBar.start()
 
     const isLogin = router.app.$store.getters['usr/isLogin']
+    const isAppLoaded = router.app.$store.getters['app/isLoaded']
 
     // 未登陆
     if (!isLogin) {
@@ -34,16 +136,16 @@ export default function () {
       return next()
     }
 
-    if (to.name === LOGIN_PAGE_NAME) {
-      // 已登录且要跳转的页面是登录页
-      return next({ name: 'home' })  // 则跳转到home页
+    const isAppPage = router.isAppPageName(to.name)
+
+    if (isAppPage && !isAppLoaded) {
+      return next({ name: APP_LIST_PAGE_NAME })
     }
 
-    // store.dispatch('getUserInfo').then(user => {
-    //   // 拉取用户信息，通过用户权限和跳转的页面的name来判断是否有权限访问;access必须是一个数组，如：['super_admin'] ['super_admin', 'admin']
-    //   if (canTurnTo(to.name, user.access, routes)) next() // 有权限，可访问
-    //   else next({ replace: true, name: 'error_401' }) // 无权限，重定向到401页面
-    // })
+    if (to.name === LOGIN_PAGE_NAME) {
+      // 已登录且要跳转的页面是登录页
+      return next({ name: APP_HOME_PAGE_NAME })  // 则跳转到home页
+    }
 
     next()
   })

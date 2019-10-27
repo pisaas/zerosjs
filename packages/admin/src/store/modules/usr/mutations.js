@@ -3,7 +3,7 @@
  * @param {[type]} state   [description]
  * @param {[type]} payload [description]
  */
-export function setUserBasic (state, payload) {
+export function setBasic (state, payload) {
   if (!payload) {
     return
   }
@@ -16,7 +16,7 @@ export function setUserBasic (state, payload) {
  * @param {[type]} state   [description]
  * @param {[type]} payload [description]
  */
-export function setUserAddr (state, payload) {
+export function setAddr (state, payload) {
   if (!state.basic) {
     return
   }
@@ -28,7 +28,7 @@ export function setUserAddr (state, payload) {
 }
 
 // 设置用户avatar
-export function setUserAvatar (state, payload) {
+export function setAvatar (state, payload) {
   if (!state.basic || !payload) {
     return
   }

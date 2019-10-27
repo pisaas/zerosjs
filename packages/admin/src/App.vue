@@ -16,27 +16,27 @@ export default {
     }
   },
 
-  methods: {
-    setTitle (title) {
-      // if (!title) {
-      //   title = this.$app.appBasic('name')
-      // }
-      // document.title = title
-    }
-  },
-
   mounted () {
-    // this.$store.commit('app/setAppMain', this)
-
+    // this.$store.commit('zero/setMain', this)
     this.setTitle()
   },
 
   beforeDestroy () {
-    // this.$store.commit('app/setAppMain', null)
+    // this.$store.commit('zero/setMain', null)
+  },
+
+  methods: {
+    setTitle (title) {
+      // if (!title) {
+      //   title = this.$zero.zeroBasic('name')
+      // }
+      // document.title = title
+    }
   }
 }
 </script>
 
 <style lang="less">
 @import './styles/app.less';
+@import './styles/ivu.less';
 </style>

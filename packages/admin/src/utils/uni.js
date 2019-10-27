@@ -1,6 +1,9 @@
 
 import { LoadingBar, Message, Modal } from 'view-design'
 import HttpRequest from './http'
+import Storage from './storage'
+
+const DefaultAppIdKey = '__default_app_id'
 
 export function showToast (options) {
   if (typeof options === 'string') {
@@ -44,6 +47,34 @@ export function showModal (options) {
   }, options)
 
   Modal[opts.type](opts)
+}
+
+export function setStorage (key, val) {
+  return Storage.setItem(key, val)
+}
+
+export function getStorage (key) {
+  return Storage.getItem(key)
+}
+
+export function removeStorage (key) {
+  return Storage.removeItem(key)
+}
+
+export function clearStorage () {
+  return Storage.clear()
+}
+
+export function getDefAppId () {
+  return getStorage(DefaultAppIdKey).then((res) => {
+    return res
+  })
+}
+
+export function setDefAppId (val) {
+  return setStorage(DefaultAppIdKey, val).then(() => {
+    return val
+  })
 }
 
 // 重新加载页面(兼容微信端刷新)
@@ -150,6 +181,12 @@ export default {
   showToast,
   showLoading,
   showModal,
+  setStorage,
+  getStorage,
+  getDefAppId,
+  setDefAppId,
+  removeStorage,
+  clearStorage,
   reload,
   request
 }

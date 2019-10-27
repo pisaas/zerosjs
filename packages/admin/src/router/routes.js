@@ -1,5 +1,6 @@
-import Main from '@c/layout/main'
 import Parent from '@c/layout/parent'
+import Main from '@c/layout/main'
+import App from '@c/layout/app'
 
 let __routeCmpts = {}
 
@@ -23,63 +24,64 @@ const routes = [
   { path: '/login', name: 'login', component: load('login'),
     meta: { title: '登录', hideInMenu: true }
   },
-  { path: '/', name: 'home', redirect: '/home', component: Main,
-    meta: { title: '概览', icon: 'md-home', level: 0 },
+
+  { path: '/', name: 'main', redirect: '/app', component: Main,
+    meta: { title: '应用列表', hideInMenu: true, icon: 'md-desktop' },
     children: [
-      { path: '/home', name: 'home:overview', component: load('home'),
-        meta: { hideInMenu: true, title: '概览' }
-      } 
+      { path: '/apps', name: 'main:apps', component: load('apps'),
+        meta: { title: '应用列表', hideInMenu: true, hideSide: true }
+      }
     ]
   },
-  {
-    path: '/app', name: 'app', redirect: '/app/apps', component: Main,
-    meta: { title: '应用', icon: 'md-cube', level: 0 },
+
+  { path: '/app', name: 'app:home', redirect: '/home', component: App,
+    meta: { title: '概览', icon: 'md-cube' },
     children: [
-      { path: 'apps', name: 'app:apps', component: load('app/apps'),
-        meta: { title: '应用列表', },
-      },
-      { path: 'orgs', name: 'app:orgs', component: load('app/orgs'),
-        meta: { title: '组织管理', icon: 'ios-people' }
-      },
+      { path: '/home', name: 'app:home:overview', component: load('home'),
+        meta: { title: '概览', hideInMenu: true }
+      }
     ]
   },
-  { path: '/sys', name: 'sys', redirect: '/sys/regs', component: Main,
-    meta: { title: '系统', icon: 'md-cog', level: 0 },
+
+  { path: '/sys', name: 'app:sys', redirect: '/sys/regs', component: App,
+    meta: { title: '系统', icon: 'md-cog' },
     children: [
-      { path: '/sys/regs', name: 'sys:regs', component: load('sys/regs'),
+      { path: 'regs', name: 'app:sys:regs', component: load('sys/logs'),
         meta: { title: '注册信息', icon: 'md-snow' }
       },
-      { path: '/sys/logs', name: 'sys:logs', component: load('sys/logs'),
+      { path: 'logs', name: 'app:sys:logs', component: load('sys/logs'),
         meta: { title: '系统日志', icon: 'md-list' }
       },
-      { path: '/sys/staffs', name: 'sys:staffs', component: load('sys/staffs'),
+      { path: 'staffs', name: 'app:sys:staffs', component: load('sys/staffs'),
         meta: { title: '系统成员', icon: 'md-people' },
       },
-      { path: '/sys/livechat', name: 'sys:livechat', component: load('sys/livechat'),
+      { path: 'livechat', name: 'app:sys:livechat', component: load('sys/livechat'),
         meta: { title: '在线客服', icon: 'ios-chatbubbles' },
       },
-      { path: '/sys/feedback', name: 'sys:feedback', component: load('sys/feedback'),
+      { path: 'feedback', name: 'app:sys:feedback', component: load('sys/feedback'),
         meta: { title: '建议反馈', icon: 'ios-mail' },
       },
     ]
   },
-  { path: '/stats', name: 'stats', redirect: '/stats/report', component: Main,
-    meta: { title: '数据', icon: 'md-analytics', level: 0 },
+  
+  { path: '/stats', name: 'app:stats', redirect: '/stats/report', component: App,
+    meta: { title: '数据', icon: 'md-analytics' },
     children: [
-      { path: '/stats/report', redirect: '/stats/report/m1', name: 'stats:report',
+      { path: 'report', redirect: '/stats/report/m1', name: 'app:stats:report',
         meta: { title: '报表', icon: 'md-stats' },
         component: Parent,
         children: [
-          { path: 'm1', name: 'stats:report:m1', component: load('sys/staffs'),
+          { path: 'm1', name: 'app:stats:report:m1', component: load('sys/staffs'),
             meta: { title: '报表1' },
           },
-          { path: 'm1', name: 'stats:report:m2', component: load('sys/staffs'),
+          { path: 'm1', name: 'app:stats:report:m2', component: load('sys/staffs'),
             meta: { title: '报表2' },
           }
         ]
       },
     ]
   },
+  
   { path: '/error/:code', name: 'error_view', component: load('error/40X'),
     meta: { title: '错误', hideInMenu: true },
   },

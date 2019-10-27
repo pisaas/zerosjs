@@ -3,13 +3,13 @@
     <div class="page-bg-mask" :style="{background: `url(${loginBg})`}"></div>
     <div class="login-panel clearfix">
       <div class="caption">
-        <div class="title">{{ appName }}控制台</div>
-        <div class="logo"><img :src="appLogo"></div>
+        <div class="title">{{ title }}</div>
+        <div class="logo"><img :src="logoUrl"></div>
       </div>
       <div class="body">
         <div class="caption clearfix">
-          <div class="logo"><img :src="appLogo"></div>
-          <div class="title">{{ appName }}控制台</div>
+          <div class="logo"><img :src="logoUrl"></div>
+          <div class="title">{{ title }}</div>
         </div>
 
         <Card :bordered="false">
@@ -76,14 +76,16 @@ export default {
   },
 
   computed: {
-    appName () {
-      return this.$app.appBasic('name')
+    title () {
+      return this.$zero.zeroBasic('name')
     },
-    appLogo () {
-      return this.$app.appBasic('logo')
+    
+    logoUrl () {
+      return this.$zero.zeroBasic('logo')
     },
+
     loginBg () {
-      return this.$app.rescUrl('console/login_bg')
+      return this.$zero.zeroBasic('loginBg')
     }
   },
 
@@ -104,8 +106,8 @@ export default {
     },
 
     login () {
-      this.$store.dispatch('app/login', this.form).then((res) => {
-        this.$app.goHome()
+      this.$store.dispatch('zero/login', this.form).then((res) => {
+        this.$zero.goHome()
       }).catch((err) => {
         if (err.message) {
           this.loginError = err.message
@@ -150,9 +152,10 @@ export default {
     width: 300px;
     height: 300px;
     float: left;
+    text-align: center;
 
     &>.title {
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       font-weight: bold;
       color: white;
     }

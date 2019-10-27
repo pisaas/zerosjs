@@ -67,8 +67,21 @@ hr.separator { border: 0; border-top: 1px solid lighten(@border-color, 5%); }
   border-radius: 5px;
 }
 
-.app-page { height: 100%; }
-.page-view { padding: 16px; }
+.page {
+  padding: 16px;
+  overflow: scroll;
+
+  &.page_margin {
+    display: flex;
+    justify-content: center;
+    .page__bd {
+      display: flex;
+      justify-content: center;
+      width: 1200px;
+    }
+  }
+}
+
 .page-section { margin-top: 10px; }
 .page-actions {
   &>.actions-wrapper {
@@ -180,6 +193,12 @@ button.action-button {
       button.ivu-btn-small {
         padding: 0 2px;
       }
+    }
+  }
+
+  &-card {
+    &.full-body &-body {
+      height: 100%;
     }
   }
 }

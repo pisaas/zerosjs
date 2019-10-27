@@ -2,25 +2,20 @@ import uni from '@/utils/uni'
 import apis from '@/apis'
 
 export function load ({ commit, state }, payload) {
-  const { type, initialState } = (payload || { type: 'initial' })
+  let { id } = payload
 
-  return apis.service.reAuthenticate().then((res) => {
-    let data = res || {}
-    if (data.user) {
-      this.commit('usr/setUserBasic', data.user)
+  return apis.service('apps').get(id).then((res) => {
+    if (!res || !res.id) {
+      return null
     }
-  }).catch((err) => {
-    console.log(err)
-  })
-}
 
-export function login ({ commit, state }, payload) {
-  let data = Object.assign({
-    strategy: 'local',
-    silentError: true
-  }, payload)
-
-  return apis.service.authenticate(data).then((res) => {
-    uni.reload()
+    let data = res
+    commit('setBasic', data)
+    
+    return uni.setDefAppId(data.id).then(() => {
+      return data
+    })
+  }).catch(() => {
+    return null
   })
 }
