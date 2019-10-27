@@ -1,8 +1,8 @@
-export default ({ app, router, Vue }) => {
-  Vue.prototype.$media = mediaLib(app, Vue)
+export default ({ zero, router, Vue }) => {
+  Vue.prototype.$media = initialize(zero, Vue)
 }
 
-function mediaLib (app, Vue) {
+function initialize (zero, Vue) {
   // 缩放照片(file，文件，)
   // spec: {
   //   MimeType: 'image/jpeg', // 图片格式

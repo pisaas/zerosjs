@@ -14,9 +14,9 @@
           <span class="layout-text">{{ util.menuTitle(item) }}</span>
         </template>
         <template v-for="child in item.children">
-          <MenuItem :name="child.name" :key="child.name">
-            <Icon :type="util.menuTitle(child)" :size="iconSize"></Icon>
+          <MenuItem :name="child.name" :key="child.name" class="submenu-item-2">
             <span class="layout-text">{{ util.menuTitle(child) }}</span>
+            <Icon class="active-arrow" type="md-arrow-dropright" :size="iconSize"></Icon>
           </MenuItem>
         </template>
       </Submenu>
@@ -136,15 +136,31 @@ export default {
         right: 0;
       }
     }
+
     .ivu-menu-item {
-      padding: 5px 5px;
-      padding-left: 0px !important;
-      text-align: center;
+      padding: 8px 5px;
       border-radius: 3px;
 
       &-active {
         &:after {
           display: none !important;
+        }
+      }
+
+      &.submenu-item-2 {
+        padding-left: 15px !important;
+      }
+
+      .active-arrow {
+        display: none;
+        float: right;
+        line-height: 18px;
+        margin-right: 0;
+      }
+
+      &-active.submenu-item-2 {
+        .active-arrow {
+          display: block;
         }
       }
     }

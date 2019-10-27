@@ -25,7 +25,8 @@ const routes = [
     meta: { title: '登录', hideInMenu: true }
   },
 
-  { path: '/', name: 'main', redirect: '/app', component: Main,
+  { path: '/', name: 'main', component: Main,
+    redirect: '/app', 
     meta: { title: '应用列表', hideInMenu: true, icon: 'md-desktop' },
     children: [
       { path: '/apps', name: 'main:apps', component: load('apps'),
@@ -34,7 +35,8 @@ const routes = [
     ]
   },
 
-  { path: '/app', name: 'app:home', redirect: '/home', component: App,
+  { path: '/app', name: 'app:home', component: App,
+    redirect: '/home',
     meta: { title: '概览', icon: 'md-cube' },
     children: [
       { path: '/home', name: 'app:home:overview', component: load('home'),
@@ -42,42 +44,80 @@ const routes = [
       }
     ]
   },
-
-  { path: '/sys', name: 'app:sys', redirect: '/sys/regs', component: App,
-    meta: { title: '系统', icon: 'md-cog' },
+  
+  { path: '/customize', name: 'app:customize', component: App,
+    redirect: '/customize/content',
+    meta: { title: '定制', icon: 'md-aperture' },
     children: [
-      { path: 'regs', name: 'app:sys:regs', component: load('sys/logs'),
-        meta: { title: '注册信息', icon: 'md-snow' }
-      },
-      { path: 'logs', name: 'app:sys:logs', component: load('sys/logs'),
-        meta: { title: '系统日志', icon: 'md-list' }
-      },
-      { path: 'staffs', name: 'app:sys:staffs', component: load('sys/staffs'),
-        meta: { title: '系统成员', icon: 'md-people' },
-      },
-      { path: 'livechat', name: 'app:sys:livechat', component: load('sys/livechat'),
-        meta: { title: '在线客服', icon: 'ios-chatbubbles' },
-      },
-      { path: 'feedback', name: 'app:sys:feedback', component: load('sys/feedback'),
-        meta: { title: '建议反馈', icon: 'ios-mail' },
+      { path: 'content', name: 'app:customize:content', component: Parent,
+        redirect: '/customize/content/pages',
+        meta: { title: '内容', icon: 'md-color-palette' },
+        children: [
+          { path: 'pages', name: 'app:customize:content:pages', component: load('settings/logs'),
+            meta: { title: '页面' },
+          }
+        ]
       },
     ]
   },
+
+  { path: '/stream', name: 'app:stream', component: App,
+    redirect: '/stream/topic',
+    meta: { title: '活动', icon: 'md-bonfire' },
+    children: [
+      { path: 'topic', name: 'app:topic:categories', component: Parent,
+        redirect: '/stream/topic/categories',
+        meta: { title: '话题', icon: 'ios-book' },
+        children: [
+          { path: 'categories', name: 'app:stream:topic:categories', component: load('settings/staffs'),
+            meta: { title: '分类' },
+          }
+        ]
+      }
+    ]
+  },
+
+  { path: '/members', name: 'app:members',  component: App,
+    meta: { title: '用户', icon: 'md-people' },
+    children: [
+    ]
+  },
   
-  { path: '/stats', name: 'app:stats', redirect: '/stats/report', component: App,
+  
+  { path: '/stats', name: 'app:stats', component: App,
+    redirect: '/stats/report',
     meta: { title: '数据', icon: 'md-analytics' },
     children: [
-      { path: 'report', redirect: '/stats/report/m1', name: 'app:stats:report',
+      { path: 'report', name: 'app:stats:report', component: Parent,
+        redirect: '/stats/report/m1',
         meta: { title: '报表', icon: 'md-stats' },
-        component: Parent,
         children: [
-          { path: 'm1', name: 'app:stats:report:m1', component: load('sys/staffs'),
+          { path: 'm1', name: 'app:stats:report:m1', component: load('settings/staffs'),
             meta: { title: '报表1' },
           },
-          { path: 'm1', name: 'app:stats:report:m2', component: load('sys/staffs'),
+          { path: 'm1', name: 'app:stats:report:m2', component: load('settings/staffs'),
             meta: { title: '报表2' },
           }
         ]
+      },
+    ]
+  },
+
+  { path: '/settings', name: 'app:settings', component: App,
+    redirect: '/settings/logs',
+    meta: { title: '设置', icon: 'md-cog' },
+    children: [
+      { path: 'logs', name: 'app:settings:logs', component: load('settings/logs'),
+        meta: { title: '系统日志', icon: 'md-list' }
+      },
+      { path: 'api', name: 'app:settings:api', component: load('settings/staffs'),
+        meta: { title: 'API', icon: 'md-cloud' },
+      },
+      { path: 'livechat', name: 'app:settings:livechat', component: load('settings/livechat'),
+        meta: { title: '在线客服', icon: 'ios-chatbubbles' },
+      },
+      { path: 'feedback', name: 'app:settings:feedback', component: load('settings/feedback'),
+        meta: { title: '建议反馈', icon: 'ios-mail' },
       },
     ]
   },

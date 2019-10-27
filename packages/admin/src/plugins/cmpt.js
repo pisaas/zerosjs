@@ -2,15 +2,15 @@ import ViewUI  from 'view-design'
 
 import { routeCmpts } from '../router/routes'
 
-export default ({ app, router, Vue }) => {
+export default ({ zero, router, Vue }) => {
   Vue.use(ViewUI, {
     // i18n: (key, value) => i18n.t(key, value)
   })
 
-  Vue.prototype.$cmpt = cmptLib(app, Vue)
+  Vue.prototype.$cmpt = initialize(zero, Vue)
 }
 
-function cmptLib (app, Vue) {
+function initialize (zero, Vue) {
   function getRouteCmpt (path) {
     return routeCmpts[path]
   }
