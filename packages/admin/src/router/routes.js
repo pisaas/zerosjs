@@ -37,7 +37,7 @@ const routes = [
 
   { path: '/app', name: 'app:home', component: App,
     redirect: '/home',
-    meta: { title: '概览', icon: 'md-cube' },
+    meta: { title: '概览', icon: 'ios-browsers' },
     children: [
       { path: '/home', name: 'app:home:overview', component: load('home'),
         meta: { title: '概览', hideInMenu: true }
@@ -78,16 +78,37 @@ const routes = [
     ]
   },
 
-  { path: '/members', name: 'app:members',  component: App,
+  { path: '/users', name: 'app:usr',  component: App,
+    redirect: '/users/management',
     meta: { title: '用户', icon: 'md-people' },
     children: [
+      { path: 'management', name: 'app:usr:mgmt', component: Parent,
+        redirect: '/users/management/list',
+        meta: { title: '用户管理', icon: 'md-contact' },
+        children: [
+          { path: 'list', name: 'app:usr:mgmt:list', component: load('settings/staffs'),
+            meta: { title: '用户列表' },
+          },
+        ]
+      },
+      { path: 'satisfaction', name: 'app:usr:sat', component: Parent,
+        redirect: '/users/satisfaction/feedback',
+        meta: { title: '满意度', icon: 'md-star' },
+        children: [
+          { path: 'feedback', name: 'app:usr:sat:feedback', component: load('settings/feedback'),
+            meta: { title: '建议反馈', icon: 'ios-mail' },
+          },
+          { path: 'livechat', name: 'app:usr:sat:livechat', component: load('settings/livechat'),
+            meta: { title: '在线客服', icon: 'ios-chatbubbles' },
+          },
+        ]
+      },
     ]
   },
   
-  
   { path: '/stats', name: 'app:stats', component: App,
     redirect: '/stats/report',
-    meta: { title: '数据', icon: 'md-analytics' },
+    meta: { title: '统计', icon: 'md-analytics' },
     children: [
       { path: 'report', name: 'app:stats:report', component: Parent,
         redirect: '/stats/report/m1',
@@ -104,21 +125,36 @@ const routes = [
     ]
   },
 
-  { path: '/settings', name: 'app:settings', component: App,
-    redirect: '/settings/logs',
+  { path: '/settings', name: 'app:set', component: App,
+    redirect: '/settings/gen',
     meta: { title: '设置', icon: 'md-cog' },
     children: [
-      { path: 'logs', name: 'app:settings:logs', component: load('settings/logs'),
-        meta: { title: '系统日志', icon: 'md-list' }
+      { path: 'gen', name: 'app:set:gen', component: Parent,
+        redirect: '/settings/gen/app',
+        meta: { title: '通用设置', icon: 'ios-construct' },
+        children: [
+          { path: 'app', name: 'app:set:gen:app', component: load('settings/logs'),
+            meta: { title: '应用信息' }
+          },
+          { path: 'staffs', name: 'app:set:gen:staffs', component: load('settings/staffs'),
+            meta: { title: '成员管理' },
+          },
+        ]
       },
-      { path: 'api', name: 'app:settings:api', component: load('settings/staffs'),
-        meta: { title: 'API', icon: 'md-cloud' },
-      },
-      { path: 'livechat', name: 'app:settings:livechat', component: load('settings/livechat'),
-        meta: { title: '在线客服', icon: 'ios-chatbubbles' },
-      },
-      { path: 'feedback', name: 'app:settings:feedback', component: load('settings/feedback'),
-        meta: { title: '建议反馈', icon: 'ios-mail' },
+      { path: 'sys', name: 'app:set:sys', component: Parent,
+        redirect: '/settings/sys/logs',
+        meta: { title: '系统设置', icon: 'md-code-working' },
+        children: [
+          { path: 'logs', name: 'app:set:sys:logs', component: load('settings/logs'),
+            meta: { title: '系统日志' }
+          },
+          { path: 'api', name: 'app:set:sys:api', component: load('settings/staffs'),
+            meta: { title: 'API' },
+          },
+          { path: 'workflow', name: 'app:set:sys:workflow', component: load('settings/staffs'),
+            meta: { title: '工作流' },
+          },
+        ]
       },
     ]
   },
