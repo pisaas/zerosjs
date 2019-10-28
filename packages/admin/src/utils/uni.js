@@ -183,6 +183,7 @@ export default {
   showModal,
   setStorage,
   getStorage,
+  DefaultAppIdKey,
   getDefAppId,
   setDefAppId,
   removeStorage,

@@ -8,7 +8,7 @@ exports.fuzzySearch = require('../../hooks/fuzzy-search');
 exports.preEntityCreate = function (options) {
   let opts = Object.assign({
     idField: 'id',
-    ownerField: 'owner',
+    ownerField: 'uid',
     autoId: true,
     autoOwner: false
   }, options);

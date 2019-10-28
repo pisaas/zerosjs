@@ -1,6 +1,6 @@
 const feathers = require('@feathersjs/client')
 
-import { showToast } from '@/utils/uni'
+import { showToast, DefaultAppIdKey } from '@/utils/uni'
 import { ErrorCodes } from '@/utils/errors'
 
 import { apiDomain } from '../env'
@@ -23,11 +23,22 @@ client.configure(feathers.authentication({
 }))
 
 client.hooks({
+  before: preServiceRequest,
   error: handleServiceError
 })
 
 function clientService(path) {
+  this.app = client
+
   return client.service(`${apiBaseUrl}/${path}`)
+}
+
+clientService.setDefAppId = (appId) => {
+  return client.set(DefaultAppIdKey, appId)
+}
+
+clientService.getDefAppId = () => {
+  return client.get(DefaultAppIdKey)
 }
 
 Object.assign(clientService, client, {
@@ -98,6 +109,23 @@ function getSearchQuery (query, options) {
 }
 
 /**
+ * 服务提交前
+ */
+function preServiceRequest (ctx) {
+  let query = Object.assign({}, ctx.params.query)
+
+  let appId = clientService.getDefAppId()
+
+  if (appId && !query.appid) {
+    query.appid = appId
+  }
+
+  ctx.params.query = query
+
+  return ctx
+}
+
+/**
  * 处理服务错误
  */
 function handleServiceError (ctx) {
@@ -116,23 +144,23 @@ function handleServiceError (ctx) {
 
   let errorMsg = '请求数据错误'
 
-  if (error.message) {
-    errorMsg = error.message
-  } else if (error.name) {
-    switch (error.name) {
-      case 'NotAuthenticated':
-        errorMsg = '您还没有登录或登录已超时，请重新登录'
-        break
-      case 'NotFound':
-        errorMsg = '接口访问失败，请稍后再试'
-        break
-      default:
-        if (ErrorCodes[error.code]) {
-          errorMsg = ErrorCodes[error.code].desc
-        }
-        break
-    }
+  switch (error.name) {
+    case 'NotAuthenticated':
+      errorMsg = '您还没有登录或登录已超时，请重新登录'
+      break
+    case 'NotFound':
+      errorMsg = '接口访问失败，请稍后再试'
+      break
+    default:
+      if (error.message) {
+        errorMsg = error.message
+      } else if (ErrorCodes[error.code]) {
+        errorMsg = ErrorCodes[error.code].desc
+      }
+      break
   }
+
+  
 
   if (!silent) {
     showToast({

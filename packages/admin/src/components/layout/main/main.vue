@@ -146,7 +146,7 @@ export default {
 
     .content-body {
       overflow: scroll;
-      height: calc(100% - 50px);
+      height: 100%;
     }
   }
 }

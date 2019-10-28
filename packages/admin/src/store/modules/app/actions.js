@@ -11,7 +11,9 @@ export function load ({ commit, state }, payload) {
 
     let data = res
     commit('setBasic', data)
-    
+
+    apis.service.setDefAppId(data.id)
+
     return uni.setDefAppId(data.id).then(() => {
       return data
     })

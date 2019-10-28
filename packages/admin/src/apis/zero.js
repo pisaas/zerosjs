@@ -12,7 +12,7 @@ export default {
  * @return {[type]}        [description]
  */
 export function getUptoken (params) {
-  return service('rescs').get('uptoken', {
+  return service('resc').get('uptoken', {
     query: params
   }).then((uploadData) => {
     let token = uploadData.token

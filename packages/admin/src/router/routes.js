@@ -45,15 +45,15 @@ const routes = [
     ]
   },
   
-  { path: '/customize', name: 'app:customize', component: App,
-    redirect: '/customize/content',
+  { path: '/custom', name: 'app:custom', component: App,
+    redirect: '/custom/c',
     meta: { title: '定制', icon: 'md-aperture' },
     children: [
-      { path: 'content', name: 'app:customize:content', component: Parent,
-        redirect: '/customize/content/pages',
+      { path: 'c', name: 'app:custom:cont', component: Parent,
+        redirect: '/custom/c/pages',
         meta: { title: '内容', icon: 'md-color-palette' },
         children: [
-          { path: 'pages', name: 'app:customize:content:pages', component: load('settings/logs'),
+          { path: 'pages', name: 'app:custom:cont:pages', component: load('settings/logs'),
             meta: { title: '页面' },
           }
         ]
@@ -61,15 +61,16 @@ const routes = [
     ]
   },
 
-  { path: '/stream', name: 'app:stream', component: App,
-    redirect: '/stream/topic',
+  { path: '/act', name: 'app:act', component: App,
+    redirect: '/act/t',
     meta: { title: '活动', icon: 'md-bonfire' },
     children: [
-      { path: 'topic', name: 'app:topic:categories', component: Parent,
-        redirect: '/stream/topic/categories',
+      { path: 't', name: 'app:act:topic', component: Parent,
+        redirect: '/act/t/categories',
         meta: { title: '话题', icon: 'ios-book' },
         children: [
-          { path: 'categories', name: 'app:stream:topic:categories', component: load('settings/staffs'),
+          { path: 'categories', name: 'app:act:topic:cat',
+            component: load('activities/categories'),
             meta: { title: '分类' },
           }
         ]

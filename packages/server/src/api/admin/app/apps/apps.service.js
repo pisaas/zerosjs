@@ -1,20 +1,20 @@
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
-  new Apps().register(app, 'apps', {
+  new Service().register(app, 'apps', {
     adapterService: {
       path: 'data/apps'
     }
   });
 };
 
-class Apps extends ApiService {
+class Service extends ApiService {
   async get (id, params) {
     let { user } = params;
 
     let app = await this.adapterService.get(id);
 
-    if (!app || app.owner !== user.id) {
+    if (!app || app.uid !== user.id) {
       throw new zero.$errors.BadRequest('无法获取应用');
     }
 
@@ -25,7 +25,7 @@ class Apps extends ApiService {
     let { query, user } = params;
     
     query = Object.assign({}, params.query);
-    query.owner = user.id;
+    query.uid = user.id;
 
     let apps = await this.adapterService.find({
       query
@@ -37,8 +37,7 @@ class Apps extends ApiService {
   async create (data, params) {
     let { user } = params;
 
-    data.owner = user.id;
-
+    data.uid = user.id;
     let app = await this.adapterService.create(data);
 
     return app;
@@ -49,7 +48,7 @@ class Apps extends ApiService {
 
     let app = await this.adapterService.get(id);
 
-    if (!app || app.owner !== user.id) {
+    if (!app || app.uid !== user.id) {
       throw new zero.$errors.BadRequest('无法获取应用');
     }
 

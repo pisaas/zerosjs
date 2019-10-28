@@ -1,5 +1,5 @@
 <template>
-  <div class="page page_margin page-apps">
+  <div class="page margin">
     <div class="page__bd">
       <div class="list-container fs">
         <app-list ref="appList"></app-list>

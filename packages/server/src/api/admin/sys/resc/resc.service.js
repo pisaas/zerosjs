@@ -2,14 +2,14 @@ const errors = require('@zero/errors');
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
-  new RescService().register(app, 'rescs', {
+  new Service().register(app, 'resc', {
     adapterService: {
       path: 'sys/resc'
     }
   });
 };
 
-class RescService extends ApiService {
+class Service extends ApiService {
   async get (id, params) {
     if (!id) {
       throw new errors.BadRequest('请提供资源类型ID。');

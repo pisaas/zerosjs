@@ -7,6 +7,8 @@ module.exports = function (app) {
 
   return register({
     id: { type: String, required: true, unique: true, maxlength: 50 },
+    uid: { type: String, required: true, maxlength: 50 },  // 一般为创建人id
+    
     code: { type: String, required: true, unique: true, maxlength: 50 },
     name: { type: String, required: true, unique: true, maxlength: 100 },
 
@@ -15,8 +17,6 @@ module.exports = function (app) {
     data: Types.Mixed,
     pubed: { type: Boolean, default: false },
     frzn: { type: Boolean, default: false },
-
-    owner: { type: String, required: true, maxlength: 50 },  // 所属成员, 一般为创建人id
   }, {
     docName: 'orgs',
     timestamps: true

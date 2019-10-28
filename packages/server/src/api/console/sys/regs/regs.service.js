@@ -11,9 +11,9 @@ module.exports = function (app) {
 };
 
 const RootData = [
-  { id: 'app', code: 'app', name: '应用', sn: 10, owner: '0', modes: [ 'c' ], ctrls: { locked: true } },
-  { id: 'plat', code: 'plat', name: '平台', sn: 20, owner: '0', modes: [ 'c' ], ctrls: { locked: true } },
-  { id: 'sys', code: 'sys', name: '系统', sn: 30, owner: '0', modes: [ 'c' ], ctrls: { locked: true } }
+  { id: 'app', code: 'app', name: '应用', sn: 10, uid: '0', modes: [ 'c' ], ctrls: { locked: true } },
+  { id: 'plat', code: 'plat', name: '平台', sn: 20, uid: '0', modes: [ 'c' ], ctrls: { locked: true } },
+  { id: 'sys', code: 'sys', name: '系统', sn: 30, uid: '0', modes: [ 'c' ], ctrls: { locked: true } }
 ];
 
 const RootDataIds = RootData.map(it => it.id);

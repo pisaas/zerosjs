@@ -8,12 +8,14 @@ module.exports = function (app) {
   return register({
     id: { type: String, required: true, unique: true, maxlength: 50 },
     type: { type: Number, required: true, protected: true },  // 用户类型（0: 系统, 10: 个人，20: 企业，）
-
+    
     uname: { type: String, sparseUnique: true, maxlength: 50 },
     mobile: { type: String, sparseUnique: true },
     email: { type: String, sparseUnique: true, lowercase: true, trim: true },
     weixin: { type: String, sparseUnique: true, lowercase: true, trim: true },
     password: { type: String, protected: true },
+
+    level: { type: Number, protected: true, default: 10 },  // trust level, 默认: 10
 
     weOpenId: { type: String, protected: true, sparseUnique: true, maxlength: 100 },
     wxOpenId: { type: String, protected: true, sparseUnique: true, maxlength: 100 },
@@ -40,7 +42,9 @@ module.exports = function (app) {
       protected: true,
       ip: { type: String, maxlength: 50 },
       ts: { type: Date }
-    }
+    },
+
+    referrer: { type: String, maxlength: 50 },  // 推荐人id
   }, {
     docName: 'users',
     timestamps: true,

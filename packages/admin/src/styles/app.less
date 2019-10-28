@@ -37,6 +37,7 @@ hr.separator { border: 0; border-top: 1px solid lighten(@border-color, 5%); }
 .relative { position: relative; }
 .inline { display: inline-block; }
 .no-selection { user-select: none; }
+.no-padding { padding: 0 !important; }
 
 .row, .column, .col, .flex {
   display: flex;
@@ -69,9 +70,10 @@ hr.separator { border: 0; border-top: 1px solid lighten(@border-color, 5%); }
 
 .page {
   padding: 16px;
+  height: 100%;
   overflow: scroll;
 
-  &.page_margin {
+  &.margin {
     display: flex;
     justify-content: center;
     .page__bd {

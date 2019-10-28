@@ -31,9 +31,17 @@ const { zero, store, router } = createZero()
   })
 })
 
-store.dispatch('zero/load').then(() => {
+store.dispatch('zero/load', {
+  silent: true
+}).then(() => {
   function newVue () {
     new Vue(zero)
+  }
+
+  let isLogin = store.getters['usr/isLogin']
+
+  if (!isLogin) {
+    return newVue()
   }
   
   uni.getDefAppId().then((id) => {

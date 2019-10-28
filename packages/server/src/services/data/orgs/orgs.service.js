@@ -1,6 +1,6 @@
 const { EntityService } = require('../service');
 
-const createModel = require('../../../models/orgs.model');
+const createModel = require('../../../models/org.model');
 
 module.exports = function (app) {
   const Model = createModel(app);

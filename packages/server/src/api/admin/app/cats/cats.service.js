@@ -2,14 +2,14 @@ const errors = require('@zero/errors');
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
-  new Cats().register(app, 'cats', {
+  new Service().register(app, 'cats', {
     adapterService: {
       path: 'data/cats'
     }
   });
 };
 
-class Cats extends ApiService {
+class Service extends ApiService {
   async get (id, params) {
     if (!id) {
       throw new errors.BadRequest('分类不存在。');
@@ -40,20 +40,15 @@ class Cats extends ApiService {
       throw new errors.BadRequest('请提供父分类。');
     }
 
-    let pReg;
     let regData = Object.assign({}, data);
 
-    if (RootDataIds.includes(pid)) {
-      regData.path = pid;
-    } else {
-      pReg = await this.adapterService.get(pid);
+    let pReg = await this.adapterService.get(pid);
 
-      if (!pReg) {
-        throw new errors.BadRequest('未找到对应父节点');
-      }
-
-      regData.path = `${pReg.path}.${pReg.id}`;
+    if (!pReg) {
+      throw new errors.BadRequest('未找到对应父节点');
     }
+    
+    regData.path = `${pReg.path}.${pReg.id}`;
 
     if (!data.sn || isNaN(data.sn) || data.sn === '0') {
       regData.sn = 1000;

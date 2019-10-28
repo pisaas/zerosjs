@@ -84,7 +84,7 @@ function initialize (zero, Vue) {
    */
   function logout () {
     apis.service.logout().then(() => {
-      uni.clearStorage().catch(() => {})
+      // uni.clearStorage().catch(() => {})
     }).then(() => {
       uni.reload()
     })
