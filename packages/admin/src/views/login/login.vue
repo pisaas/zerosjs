@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import uni from '../../utils/uni'
 export default {
   data () {
     return {
@@ -89,6 +90,10 @@ export default {
     }
   },
 
+  mounted () {
+    // this.$router.tryReplace('/error/500')
+  },
+
   methods: {
     wechatLogin () {
     },
@@ -109,11 +114,8 @@ export default {
       this.$store.dispatch('zero/login', this.form).then((res) => {
         this.$zero.goHome()
       }).catch((err) => {
-        if (err.message) {
-          this.loginError = err.message
-        } else {
-          this.loginError = (err.statusText || err.data || '未知登陆错误')
-        }
+        let errorMsg = this.$uni.getReqErrorMessage(err) || '未知登陆错误'
+        this.loginError = errorMsg
       })
     }
   }

@@ -14,3 +14,10 @@ export function main (state) {
 export function localAddress (state) {
   return state.localAddress
 }
+
+export function error (state) {
+  if (!state.error) {
+    return null
+  }
+  return state.error
+}

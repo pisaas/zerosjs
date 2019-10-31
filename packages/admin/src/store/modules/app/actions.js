@@ -13,8 +13,6 @@ export function load ({ commit, state }, payload) {
     commit('setBasic', data)
 
     return data
-  }).catch((ex) => {
-    return null
   })
 }
 

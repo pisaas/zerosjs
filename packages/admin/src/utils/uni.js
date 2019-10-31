@@ -1,5 +1,6 @@
 
 import { LoadingBar, Message, Modal } from 'view-design'
+import { ErrorCodes } from './errors'
 import HttpRequest from './http'
 import Storage from './storage'
 
@@ -178,6 +179,49 @@ function handleReqError (error, options) {
   return respData
 }
 
+export function getReqErrorMessage (error) {
+  if (!error) {
+    return null
+  }
+  
+  let errorMsg = '请求数据错误'
+
+  switch (error.name) {
+    case 'NotAuthenticated':
+      errorMsg = '您还没有登录或登录已超时，请重新登录'
+      break
+    case 'NotFound':
+      errorMsg = '接口访问失败，请稍后再试'
+      break
+    default:
+      if (error.message) {
+        if (isErrorPageMessage(error.message)) {
+          errorMsg = '服务器错误，请稍后再试。如有疑问，请联系管理员。'
+        } else {
+          errorMsg = error.message
+        }
+      } else if (ErrorCodes[error.code]) {
+        errorMsg = ErrorCodes[error.code].desc
+      }
+      break
+  }
+
+  return errorMsg
+}
+
+// 消息为错误页面
+export function isErrorPageMessage (message) {
+  if (!message) {
+    return false
+  }
+
+  if (message.indexOf('<') === 0 && message.length > 100) {
+    return true
+  }
+
+  return false
+}
+
 export default {
   TokenKey,
   AppIdKey,
@@ -191,5 +235,7 @@ export default {
   removeStorage,
   clearStorage,
   reload,
-  request
+  request,
+  isErrorPageMessage,
+  getReqErrorMessage
 }

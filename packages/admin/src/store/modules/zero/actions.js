@@ -11,8 +11,6 @@ export function load ({ commit, state }, payload) {
     }
 
     commit('setInitialized', true)
-  }).catch((err) => {
-    console.log(err)
   })
 }
 

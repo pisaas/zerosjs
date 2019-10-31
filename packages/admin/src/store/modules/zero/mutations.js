@@ -2,6 +2,11 @@ export function setBasic (state, payload) {
   state.basic = Object.assign({}, state.basic, payload)
 }
 
+// 设置App加载错误
+export function setError (state, payload) {
+  state.error = payload
+}
+
 /**
  * 设置App是否已初始化
  * @param {[type]} state   [description]

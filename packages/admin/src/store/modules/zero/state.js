@@ -10,6 +10,8 @@ export default {
 
   // smscodeInterval: 100, // 发送验证码间隔，默认100秒
 
+  error: null,
+
   basic: {
     appId: env.appId,
     name: '应用管理平台',

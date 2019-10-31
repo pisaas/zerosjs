@@ -1,7 +1,6 @@
 const feathers = require('@feathersjs/client')
 
 import uni, { showToast, AppIdKey, TokenKey } from '@/utils/uni'
-import { ErrorCodes } from '@/utils/errors'
 
 import { apiDomain } from '../env'
 
@@ -177,25 +176,7 @@ function onServiceError (ctx) {
     silent = true
   }
 
-  let errorMsg = '请求数据错误'
-
-  switch (error.name) {
-    case 'NotAuthenticated':
-      errorMsg = '您还没有登录或登录已超时，请重新登录'
-      break
-    case 'NotFound':
-      errorMsg = '接口访问失败，请稍后再试'
-      break
-    default:
-      if (error.message) {
-        errorMsg = error.message
-      } else if (ErrorCodes[error.code]) {
-        errorMsg = ErrorCodes[error.code].desc
-      }
-      break
-  }
-
-  
+  let errorMsg = uni.getReqErrorMessage(error)
 
   if (!silent) {
     showToast({

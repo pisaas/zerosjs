@@ -30,13 +30,14 @@ const { zero, store, router } = createZero()
   })
 })
 
+function newVue (config) {
+  config = Object.assign(zero, config)
+  new Vue(config)
+}
+
 store.dispatch('zero/load', {
   silent: true
-}).then(() => {
-  function newVue () {
-    new Vue(zero)
-  }
-
+}).then((res) => {
   let isLogin = store.getters['usr/isLogin']
 
   if (!isLogin) {
@@ -47,7 +48,9 @@ store.dispatch('zero/load', {
     force: true
   }).then(() => {
     newVue()
-  }).catch(() => {
-    newVue()
   })
+}).catch((error) => {
+  store.commit('zero/error', error)
+  
+  newVue()
 })
