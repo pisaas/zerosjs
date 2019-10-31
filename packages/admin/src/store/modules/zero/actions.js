@@ -3,7 +3,7 @@ import apis from '@/apis'
 
 export function load ({ commit, state }, payload) {
   const { type } = (payload || { type: 'initial' })
-
+  
   return apis.service.reAuthenticate().then((res) => {
     let data = res || {}
     if (data.user) {

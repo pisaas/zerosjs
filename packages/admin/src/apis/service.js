@@ -1,6 +1,6 @@
 const feathers = require('@feathersjs/client')
 
-import { showToast, DefaultAppIdKey } from '@/utils/uni'
+import uni, { showToast, AppIdKey, TokenKey } from '@/utils/uni'
 import { ErrorCodes } from '@/utils/errors'
 
 import { apiDomain } from '../env'
@@ -19,26 +19,53 @@ if (clientType === 'rest') {
 }
 
 client.configure(feathers.authentication({
-  storageKey: 'zero-token'
+  storageKey: TokenKey
 }))
 
 client.hooks({
   before: preServiceRequest,
-  error: handleServiceError
+  error: onServiceError
 })
 
 function clientService(path) {
-  this.app = client
+  if (!path) {
+    return this
+  }
 
   return client.service(`${apiBaseUrl}/${path}`)
 }
 
-clientService.setDefAppId = (appId) => {
-  return client.set(DefaultAppIdKey, appId)
+clientService.loadApp = (appId) => {
+  return clientService('app').get(appId, {
+    query: { verb: 'load' }
+  }).then((res) => {
+    if (!res || !res.id) {
+      return null
+    }
+
+    return uni.setAppId(appId).then(() => {
+      clientService.setAppId(appId)
+      return res
+    })
+  })
 }
 
-clientService.getDefAppId = () => {
-  return client.get(DefaultAppIdKey)
+clientService.reloadApp = () => {
+  let appId = clientService.getAppId()
+
+  if (!appId) {
+    return Promise.resolve(null)
+  }
+  
+  return clientService.loadApp(appId)
+}
+
+clientService.setAppId = (appId) => {
+  return client.set(AppIdKey, appId)
+}
+
+clientService.getAppId = () => {
+  return client.get(AppIdKey)
 }
 
 Object.assign(clientService, client, {
@@ -49,9 +76,18 @@ export default clientService
 
 function initIoClient (client) {
   const io = require('socket.io-client')
-  const socket = io(`${apiDomain}`)
+  const socket = io(`${apiDomain}`, {
+    // transports: ['websocket']
+    // transports: ['polling']
+  })
 
-  client.configure(feathers.socketio(socket))
+  socket.on('connect', () => {
+    clientService.reloadApp()
+  })
+
+  client.configure(feathers.socketio(socket, {
+    timeout: 300000
+  }))
 
   return client
 }
@@ -112,15 +148,14 @@ function getSearchQuery (query, options) {
  * 服务提交前
  */
 function preServiceRequest (ctx) {
-  let query = Object.assign({}, ctx.params.query)
+  let appid = clientService.getAppId()
 
-  let appId = clientService.getDefAppId()
-
-  if (appId && !query.appid) {
-    query.appid = appId
+  if (appid) {
+    // rest
+    if (ctx.params.headers) {
+      ctx.params.headers[AppIdKey] = appid
+    }
   }
-
-  ctx.params.query = query
 
   return ctx
 }
@@ -128,7 +163,7 @@ function preServiceRequest (ctx) {
 /**
  * 处理服务错误
  */
-function handleServiceError (ctx) {
+function onServiceError (ctx) {
   let error = ctx.error
 
   if (!error) {

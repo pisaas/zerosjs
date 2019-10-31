@@ -2,11 +2,7 @@ const errors = require('@zero/errors');
 const { ApiService } = require('../../../service');
 
 module.exports = function (app) {
-  new Service().register(app, 'app', {
-    adapterService: {
-      path: 'sys/apps'
-    }
-  });
+  new Service().register(app, 'api');
 };
 
 class Service extends ApiService {

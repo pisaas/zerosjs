@@ -1,5 +1,5 @@
 const errors = require('@zero/errors');
-const { ApiService } = require('../service');
+const { ApiService } = require('../../service');
 
 exports.Users = class Users extends ApiService {
   async get(code, params) {

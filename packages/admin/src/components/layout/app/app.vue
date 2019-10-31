@@ -26,9 +26,11 @@
       </Header>
 
       <Layout>
-        <Sider v-show="isSubmenu" class="layout-sub-sider" :width="130">
-          <sub-menu ref="subMenu" :routes="subVisibleRoutes" @on-change="turnToPage" />
-        </Sider>
+        <transition name="slide-left">
+          <Sider v-show="isSubmenu && !collapsed" class="layout-sub-sider" :width="130">
+            <sub-menu ref="subMenu" :routes="subVisibleRoutes" @on-change="turnToPage" />
+          </Sider>
+        </transition>
         <Content class="layout-content">
           <div class="content-container">
             <div class="content-body">
@@ -180,6 +182,7 @@ export default {
     }
   }
 }
+
 </style>
 
 <style lang="less" scoped>

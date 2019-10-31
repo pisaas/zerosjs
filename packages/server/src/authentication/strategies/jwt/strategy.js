@@ -7,7 +7,6 @@ class JWTStrategy extends FJWTStrategy {
    * @param params Service call parameters
    */
   getEntity (id, params) {
-    params.inner = true;
     return super.getEntity(id, params);
   }
 }

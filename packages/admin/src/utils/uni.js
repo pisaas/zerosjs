@@ -3,7 +3,8 @@ import { LoadingBar, Message, Modal } from 'view-design'
 import HttpRequest from './http'
 import Storage from './storage'
 
-const DefaultAppIdKey = '__default_app_id'
+export const AppIdKey = 'zero-appid'
+export const TokenKey = 'zero-token'
 
 export function showToast (options) {
   if (typeof options === 'string') {
@@ -65,14 +66,14 @@ export function clearStorage () {
   return Storage.clear()
 }
 
-export function getDefAppId () {
-  return getStorage(DefaultAppIdKey).then((res) => {
+export function getAppId () {
+  return getStorage(AppIdKey).then((res) => {
     return res
   })
 }
 
-export function setDefAppId (val) {
-  return setStorage(DefaultAppIdKey, val).then(() => {
+export function setAppId (val) {
+  return setStorage(AppIdKey, val).then(() => {
     return val
   })
 }
@@ -178,14 +179,15 @@ function handleReqError (error, options) {
 }
 
 export default {
+  TokenKey,
+  AppIdKey,
+  getAppId,
+  setAppId,
   showToast,
   showLoading,
   showModal,
   setStorage,
   getStorage,
-  DefaultAppIdKey,
-  getDefAppId,
-  setDefAppId,
   removeStorage,
   clearStorage,
   reload,

@@ -26,8 +26,7 @@ const { zero, store, router } = createZero()
     zero,
     router,
     store,
-    Vue,
-    ssrContext: null
+    Vue
   })
 })
 
@@ -44,11 +43,8 @@ store.dispatch('zero/load', {
     return newVue()
   }
   
-  uni.getDefAppId().then((id) => {
-    if (!id) {
-      return
-    }
-    return store.dispatch('app/load', { id })
+  return store.dispatch('app/reload', {
+    force: true
   }).then(() => {
     newVue()
   }).catch(() => {

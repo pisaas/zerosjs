@@ -89,8 +89,9 @@ function runMethod (app, connection, path, method, args) {
 
     const { service, params: route = {} } = lookup;
 
+    // ZERO: added public flag
     if (!service.options || service.options.public !== true) {
-      return Promise.reject(new errors.NotFound(`Service '${path}' not public`));
+      return Promise.reject(new errors.NotFound(`Service '${path}' is not public`));
     }
 
     // Only service methods are allowed

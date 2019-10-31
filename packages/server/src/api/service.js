@@ -40,7 +40,7 @@ exports.ApiService = class ApiService {
 
     let authOptions = opts.authenticate;
     if (authOptions) {
-      // let hookPaths 
+      // let hookPaths
       opts.hooks = zero.$service.prependHook(opts.hooks, 'before.all', authenticate(authOptions));
     }
 

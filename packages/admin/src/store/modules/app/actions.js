@@ -4,7 +4,7 @@ import apis from '@/apis'
 export function load ({ commit, state }, payload) {
   let { id } = payload
 
-  return apis.service('apps').get(id).then((res) => {
+  return apis.service.loadApp(id).then((res) => {
     if (!res || !res.id) {
       return null
     }
@@ -12,12 +12,38 @@ export function load ({ commit, state }, payload) {
     let data = res
     commit('setBasic', data)
 
-    apis.service.setDefAppId(data.id)
-
-    return uni.setDefAppId(data.id).then(() => {
-      return data
-    })
-  }).catch(() => {
+    return data
+  }).catch((ex) => {
     return null
   })
+}
+
+// 重新加载
+export async function reload(context, payload) {
+  const { commit, getters } = context
+  let { id, force } = payload
+  id = id || apis.service.getAppId()
+
+  if (!id) {
+    id = await uni.getAppId()
+  }
+  
+  let appBasic = getters['basic']
+
+  if (!id) {
+    if (force === true) {
+      commit('setBasic', null)
+      appBasic = null
+    }
+
+    return appBasic
+  }
+
+  if (force !== true && appBasic && appBasic.id === id) {
+    return appBasic
+  }
+
+  appBasic = await load(context, { id })
+  
+  return appBasic
 }

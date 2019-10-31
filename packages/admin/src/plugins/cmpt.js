@@ -6,7 +6,7 @@ export default ({ zero, router, Vue }) => {
   Vue.use(ViewUI, {
     // i18n: (key, value) => i18n.t(key, value)
   })
-
+  
   Vue.prototype.$cmpt = initialize(zero, Vue)
 }
 
