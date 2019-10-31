@@ -7,6 +7,7 @@ const { logger } = require('./common');
 
 const feathers = require('@feathersjs/feathers');
 const socketio = require('@zero/socketio');
+const socketioRedis = require('socket.io-redis');
 const express = require('@zero/express');
 
 const configuration = require('./configuration');
@@ -36,7 +37,9 @@ app.use('/', express.static(app.get('public')));
 
 // Set up Plugins and providers
 app.configure(express.rest());
-app.configure(socketio());
+app.configure(socketio((io) => {
+  io.adapter(socketioRedis(app.get('socketio').redis));
+}));
 
 app.configure(data);
 

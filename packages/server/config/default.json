@@ -7,6 +7,9 @@
     "max": 50
   },
   "mongodb": "mongodb://localhost:27017/zero",
+  "socketio": {
+    "redis": "redis://localhost:6379/0"
+  },
   "authentication": {
     "entity": "user",
     "service": "data/users",
