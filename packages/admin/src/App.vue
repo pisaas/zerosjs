@@ -17,12 +17,10 @@ export default {
   },
 
   mounted () {
-    // this.$store.commit('zero/setMain', this)
     this.setTitle()
   },
 
   beforeDestroy () {
-    // this.$store.commit('zero/setMain', null)
   },
 
   methods: {

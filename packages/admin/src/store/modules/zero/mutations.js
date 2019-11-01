@@ -33,15 +33,3 @@ export function setConnected (state, payload) {
 export function setSubscribed (state, payload) {
   state.subscribed = payload
 }
-
-/**
- * 设置当前城市信息
- * @param {[type]} city [description]
- */
-export function setLocalAddress (state, payload) {
-  if (!payload) {
-    return
-  }
-
-  state.localAddress = payload
-}

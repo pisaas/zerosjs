@@ -7,14 +7,6 @@ export function basic (state) {
   return state.basic
 }
 
-export function main (state) {
-  return state.appMain
-}
-
-export function localAddress (state) {
-  return state.localAddress
-}
-
 export function error (state) {
   if (!state.error) {
     return null

@@ -24,8 +24,8 @@ exports.appLoad = () => {
 
     if (appId) {
       let loadResult = await appService.get(appId, { user });
-      
-      handleAppLoad(loadResult, context);
+
+      await handleAppLoad(loadResult, context);
     }
 
     return context;

@@ -8,7 +8,7 @@ exports.handleConnection = () => {
 
     // 加载app
     if (query && query.verb === 'load') {
-      handleAppLoad(app, context);
+      await handleAppLoad(app, context);
     }
 
     return context;

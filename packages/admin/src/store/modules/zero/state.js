@@ -28,7 +28,5 @@ export default {
   connected: false,
 
   // 是否正确订阅消息
-  subscribed: false,
-
-  localAddress: null
+  subscribed: false
 }

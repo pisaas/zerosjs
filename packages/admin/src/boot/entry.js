@@ -43,11 +43,17 @@ store.dispatch('zero/load', {
   if (!isLogin) {
     return newVue()
   }
-  
-  return store.dispatch('app/reload', {
-    force: true
-  }).then(() => {
-    newVue()
+
+  return uni.getAppId().then((appId) => {
+    if (!appId) {
+      return newVue()
+    }
+
+    return store.dispatch('app/load', {
+      id: appId
+    }).then(() => {
+      newVue()
+    })
   })
 }).catch((error) => {
   store.commit('zero/error', error)
