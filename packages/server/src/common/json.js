@@ -1,4 +1,4 @@
-const debug = require('debug')('@zero/server/common/json');
+const debug = require('debug')('@zerojs/server/common/json');
 const stringify = require('json-stringify-safe');
 
 exports.stringify = stringify;

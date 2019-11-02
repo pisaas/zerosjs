@@ -2,7 +2,7 @@
 /* tslint:disable:no-unused-expression */
 const express = require('express');
 
-const errors = require('@zero/errors');
+const errors = require('@zerojs/errors');
 const request = require('request');
 const fs = require('fs');
 const { join } = require('path');

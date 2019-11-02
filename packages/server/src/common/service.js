@@ -3,6 +3,20 @@ const { get, set } = require('lodash');
 const includeAll = require('include-all');
 const { stripSlashes } = require('@feathersjs/commons');
 
+exports.retrieveHooks = (dirname, options) => {
+  dirname = dirname || path.join(__dirname, '.');
+
+  options = Object.assign({
+    dirname :  dirname,
+    filter  :  /(.+hook)\.js$/,
+    flatten : true
+  }, options);
+
+  const hooks = includeAll(options);
+
+  return hooks;
+};
+
 exports.configureDir = (app, dirname, options) => {
   dirname = dirname || path.join(__dirname, '.');
 

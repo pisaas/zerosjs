@@ -1,5 +1,5 @@
 // Application hooks that run for every service
-const watchDog = require('./hooks/watch-dog');
+const watchDog = require('./plugins/watch-dog');
 
 module.exports = {
   before: {

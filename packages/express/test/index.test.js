@@ -4,11 +4,11 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
-const feathers = require('@feathersjs/feathers');
+const zero = require('@zerojs/zero');
 
 const expressify = require('../lib');
 
-describe('@zero/express', () => {
+describe('@zerojs/express', () => {
   const service = {
     get (id) {
       return Promise.resolve({ id });
@@ -24,14 +24,14 @@ describe('@zero/express', () => {
   });
 
   it('returns an Express application', () => {
-    const app = expressify(feathers());
+    const app = expressify(zero());
 
     assert.strictEqual(typeof app, 'function');
   });
 
   it('allows to use an existing Express instance', () => {
     const expressApp = express();
-    const app = expressify(feathers(), expressApp);
+    const app = expressify(zero(), expressApp);
 
     assert.strictEqual(app, expressApp);
   });
@@ -52,30 +52,30 @@ describe('@zero/express', () => {
     try {
       expressify({});
     } catch (e) {
-      assert.strictEqual(e.message, '@zero/express requires a valid Feathers application instance');
+      assert.strictEqual(e.message, '@zerojs/express requires a valid Feathers application instance');
     }
 
     try {
-      const app = feathers();
+      const app = zero();
       app.version = '2.9.9';
 
       expressify(app);
     } catch (e) {
-      assert.strictEqual(e.message, '@zero/express requires an instance of a Feathers application version 3.x or later (got 2.9.9)');
+      assert.strictEqual(e.message, '@zerojs/express requires an instance of a Feathers application version 3.x or later (got 2.9.9)');
     }
 
     try {
-      const app = feathers();
+      const app = zero();
       delete app.version;
 
       expressify(app);
     } catch (e) {
-      assert.strictEqual(e.message, '@zero/express requires an instance of a Feathers application version 3.x or later (got unknown)');
+      assert.strictEqual(e.message, '@zerojs/express requires an instance of a Feathers application version 3.x or later (got unknown)');
     }
   });
 
   it('Can use Express sub-apps', () => {
-    const app = expressify(feathers());
+    const app = expressify(zero());
     const child = express();
 
     app.use('/path', child);
@@ -83,13 +83,13 @@ describe('@zero/express', () => {
   });
 
   it('Can use express.static', () => {
-    const app = expressify(feathers());
+    const app = expressify(zero());
 
     app.use('/path', expressify.static(__dirname));
   });
 
   it('has Feathers functionality', () => {
-    const app = expressify(feathers());
+    const app = expressify(zero());
 
     app.use('/myservice', service);
 
@@ -118,7 +118,7 @@ describe('@zero/express', () => {
   });
 
   it('can register a service and start an Express server', done => {
-    const app = expressify(feathers());
+    const app = expressify(zero());
     const response = {
       message: 'Hello world'
     };
@@ -137,7 +137,7 @@ describe('@zero/express', () => {
   });
 
   it('.listen calls .setup', done => {
-    const app = expressify(feathers());
+    const app = expressify(zero());
     let called = false;
 
     app.use('/myservice', {
@@ -167,9 +167,9 @@ describe('@zero/express', () => {
   });
 
   it('passes middleware as options', () => {
-    const feathersApp = feathers();
-    const app = expressify(feathersApp);
-    const oldUse = feathersApp.use;
+    const zeroApp = zero();
+    const app = expressify(zeroApp);
+    const oldUse = zeroApp.use;
     const a = (req, res, next) => next();
     const b = (req, res, next) => next();
     const c = (req, res, next) => next();
@@ -179,7 +179,7 @@ describe('@zero/express', () => {
       }
     };
 
-    feathersApp.use = function (path, serviceArg, options) {
+    zeroApp.use = function (path, serviceArg, options) {
       assert.strictEqual(path, '/myservice');
       assert.strictEqual(serviceArg, service);
       assert.deepStrictEqual(options.middleware, {
@@ -193,8 +193,8 @@ describe('@zero/express', () => {
   });
 
   it('throws an error for invalid middleware options', () => {
-    const feathersApp = feathers();
-    const app = expressify(feathersApp);
+    const zeroApp = zero();
+    const app = expressify(zeroApp);
     const service = {
       get (id) {
         return Promise.resolve({ id });
@@ -218,7 +218,7 @@ describe('@zero/express', () => {
       }
     };
 
-    const app = expressify(feathers())
+    const app = expressify(zero())
       .configure(expressify.rest())
       .use('/secureTodos', todoService);
 

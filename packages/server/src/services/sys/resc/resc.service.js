@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const errors = require('@zero/errors');
+const errors = require('@zerojs/errors');
 
 const { SysService } = require('../service');
 

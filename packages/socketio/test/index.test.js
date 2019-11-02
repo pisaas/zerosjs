@@ -1,16 +1,16 @@
 const feathers = require('@feathersjs/feathers');
-const express = require('@zero/express');
+const express = require('@zerojs/express');
 const assert = require('assert');
 const _ = require('lodash');
 const io = require('socket.io-client');
 const request = require('request');
-const { Service } = require('@zero/tests/lib/fixture');
+const { Service } = require('@zerojs/tests/lib/fixture');
 
 const methodTests = require('./methods.js');
 const eventTests = require('./events');
 const socketio = require('../lib');
 
-describe('@zero/socketio', () => {
+describe('@zerojs/socketio', () => {
   let app;
   let server;
   let socket;

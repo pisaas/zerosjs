@@ -3,7 +3,7 @@ const assert = require('assert');
 const errors = require('../lib');
 const { convert } = errors;
 
-describe('@zero/errors', () => {
+describe('@zerojs/errors', () => {
   it('is CommonJS compatible', () => {
     assert.strictEqual(typeof require('../lib'), 'object');
     assert.strictEqual(typeof require('../lib').ZeroError, 'function');
@@ -106,6 +106,10 @@ describe('@zero/errors', () => {
       assert.notStrictEqual(typeof errors.Unavailable, 'undefined', 'has Unavailable');
     });
 
+    it('InnerError', () => {
+      assert.notStrictEqual(typeof errors.InnerError, 'undefined', 'has InnerError');
+    });
+
     it('400', () => {
       assert.notStrictEqual(typeof errors[400], 'undefined', 'has BadRequest alias');
     });
@@ -168,6 +172,10 @@ describe('@zero/errors', () => {
 
     it('503', () => {
       assert.notStrictEqual(typeof errors[503], 'undefined', 'has Unavailable alias');
+    });
+
+    it('509', () => {
+      assert.notStrictEqual(typeof errors[509], 'undefined', 'has InnerError alias');
     });
 
     it('instantiates every error', () => {

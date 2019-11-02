@@ -1,8 +1,8 @@
-const debug = require('debug')('@zero/server/services/open/qiniu');
+const debug = require('debug')('@zerojs/server/services/open/qiniu');
 
 const _ = require('lodash');
 const qiniu = require('qiniu');
-const errors = require('@zero/errors');
+const errors = require('@zerojs/errors');
 
 const { OpenService } = require('../service');
 

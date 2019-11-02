@@ -1,5 +1,5 @@
 const { flatten, merge } = require('lodash');
-const debug = require('debug')('@zero/express/authentication');
+const debug = require('debug')('@zerojs/express/authentication');
 
 const normalizeStrategy = (_settings = [], ..._strategies) =>
   typeof _settings === 'string'

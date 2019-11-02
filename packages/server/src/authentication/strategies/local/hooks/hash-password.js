@@ -1,8 +1,8 @@
 const { get, set, cloneDeep } = require('lodash');
-const { BadRequest } = require('@zero/errors');
+const { BadRequest } = require('@zerojs/errors');
 const Debug = require('debug');
 
-const debug = Debug('@zero/server/authentication/strategies/local/hooks/hash-password');
+const debug = Debug('@zerojs/server/authentication/strategies/local/hooks/hash-password');
 
 /**
  * 

@@ -1,4 +1,4 @@
-# @zero/errors
+# @zerojs/errors
 
 > Pisaas Zero项目通用错误类型，参考@feathers/errors
 

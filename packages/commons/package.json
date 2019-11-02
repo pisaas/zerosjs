@@ -1,0 +1,25 @@
+{
+  "name": "@zerojs/commons",
+  "version": "0.0.1",
+  "description": "Shared Zero utility functions",
+  "author": "rayl <rayl@pistech.com>",
+  "homepage": "https://bitbucket.org/pisaas/zero#readme",
+  "license": "MIT",
+  "main": "lib/",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/pisaas/zero.git"
+  },
+  "scripts": {
+    "test": "npx jest test"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
+}

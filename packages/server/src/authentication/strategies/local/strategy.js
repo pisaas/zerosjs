@@ -1,9 +1,9 @@
 const { get, omit, isArray } = require('lodash');
 const Debug = require('debug');
-const { NotAuthenticated } = require('@zero/errors');
+const { NotAuthenticated } = require('@zerojs/errors');
 const { AuthenticationBaseStrategy } = require('@feathersjs/authentication');
 
-const debug = Debug('@zero/server/authentication/strategies/local');
+const debug = Debug('@zerojs/server/authentication/strategies/local');
 
 class LocalStrategy extends AuthenticationBaseStrategy {
   verifyConfiguration () {

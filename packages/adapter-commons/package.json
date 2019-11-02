@@ -1,0 +1,30 @@
+{
+  "name": "@zerojs/adapter-commons",
+  "version": "0.0.1",
+  "description": "> TODO: description",
+  "author": "rayl <rayl@pistech.com>",
+  "homepage": "https://bitbucket.org/pisaas/zero#readme",
+  "license": "ISC",
+  "main": "lib/adapter-commons.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/pisaas/zero.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@zerojs/commons": "^0.0.1",
+    "@zerojs/errors": "^0.0.1",
+    "@zerojs/zero": "^0.0.1"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
+}

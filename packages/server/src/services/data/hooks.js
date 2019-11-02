@@ -3,7 +3,7 @@ const { protectFields } = require('../../hooks');
 
 exports.protectFields = protectFields;
 
-exports.fuzzySearch = require('../../hooks/fuzzy-search');
+exports.fuzzySearch = require('../../plugins/mongoose/hooks/fuzzy-search');
 
 exports.preEntityCreate = function (options) {
   let opts = Object.assign({

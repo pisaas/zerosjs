@@ -1,6 +1,6 @@
-const errors = require('@zero/errors');
-const { omit } = require('@feathersjs/commons')._;
-const debug = require('debug')('@zero/express/rest');
+const errors = require('@zerojs/errors');
+const { omit } = require('@zerojs/commons')._;
+const debug = require('debug')('@zerojs/express/rest');
 
 const statusCodes = {
   created: 201,

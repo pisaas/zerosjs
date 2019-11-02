@@ -1,5 +1,5 @@
 {
-  "name": "@zero/socketio",
+  "name": "@zerojs/socketio",
   "version": "0.0.1",
   "description": "The Zero Socket.io real-time API provider. Forked from feathersjs.",
   "author": "rayl <rayl@pistech.com>",
@@ -18,7 +18,7 @@
   "dependencies": {
     "@feathersjs/transport-commons": "^4.3.3",
     "@types/socket.io": "^2.1.2",
-    "@zero/errors": "^0.0.1",
+    "@zerojs/errors": "^0.0.1",
     "debug": "^4.1.1",
     "lodash": "^4.17.15",
     "socket.io": "^2.2.0",
@@ -27,8 +27,8 @@
   "devDependencies": {
     "@feathersjs/commons": "^4.3.0",
     "@feathersjs/feathers": "^4.3.3",
-    "@zero/express": "^0.0.1",
-    "@zero/tests": "^0.0.2-alpha.0",
+    "@zerojs/express": "^0.0.1",
+    "@zerojs/tests": "^0.0.1",
     "feathers-memory": "^4.0.0",
     "jest": "^24.9.0",
     "lodash": "^4.17.15",

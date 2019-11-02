@@ -1,5 +1,5 @@
 {
-  "name": "@zero/express",
+  "name": "@zerojs/express",
   "description": "Express framework bindings and REST provider. Forked from feathersjs.",
   "version": "0.0.1",
   "private": true,
@@ -19,8 +19,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@feathersjs/commons": "^4.3.0",
-    "@zero/errors": "^0.0.1",
+    "@zerojs/commons": "^0.0.1",
+    "@zerojs/errors": "^0.0.1",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "lodash": "^4.17.15",
@@ -29,8 +29,8 @@
   "devDependencies": {
     "@feathersjs/authentication": "^4.3.3",
     "@feathersjs/authentication-local": "^4.3.3",
-    "@feathersjs/feathers": "^4.3.3",
-    "@zero/tests": "^0.0.2-alpha.0",
+    "@zerojs/zero": "^0.0.1",
+    "@zerojs/tests": "^0.0.1",
     "axios": "^0.19.0",
     "feathers-memory": "^4.0.1",
     "jest": "^24.9.0",

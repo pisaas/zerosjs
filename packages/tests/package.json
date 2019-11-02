@@ -1,8 +1,8 @@
 {
-  "name": "@zero/tests",
+  "name": "@zerojs/tests",
   "private": true,
   "description": "Core module common tests. Forked from feathers.",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.1",
   "engines": {
     "node": ">= 6"
   },
@@ -20,10 +20,7 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@feathersjs/feathers": "^4.3.3",
-    "jest": "^24.9.0",
-    "shx": "^0.3.2",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.5.3"
+    "@zerojs/zero": "^0.0.1",
+    "jest": "^24.9.0"
   }
 }

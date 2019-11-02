@@ -6,12 +6,12 @@ const cors = require('cors');
 const { logger } = require('./common');
 
 const feathers = require('@feathersjs/feathers');
-const socketio = require('@zero/socketio');
+
+const socketio = require('@zerojs/socketio');
 const socketioRedis = require('socket.io-redis');
-const express = require('@zero/express');
+const express = require('@zerojs/express');
 
 const configuration = require('./configuration');
-const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
@@ -19,7 +19,7 @@ const channels = require('./channels');
 const authentication = require('./authentication');
 
 const data = require('./data');
-const api = require('./api');
+const apis = require('./apis');
 
 const app = express(feathers());
 
@@ -43,16 +43,16 @@ app.configure(socketio((io) => {
 
 app.configure(data);
 
-// Configure other middleware (see `middleware/index.js`)
-app.configure(middleware);
 app.configure(authentication);
+
 // Set up our services (see `services/index.js`)
 app.configure(services);
+
 // Set up event channels (see `channels/index.js`)
 app.configure(channels);
 
-// Set up api (see `api/index.js`)
-app.configure(api);
+// Set up apis (see `apis/index.js`)
+app.configure(apis);
 
 // Configure a middleware for 404s and the error handler
 app.use(express.notFound());

@@ -1,7 +1,7 @@
 const socketio = require('socket.io');
 const Proto = require('uberproto');
 const http = require('http');
-const debug = require('debug')('@zero/socketio');
+const debug = require('debug')('@zerojs/socketio');
 
 const transport = require('./transport');
 const middleware = require('./middleware');

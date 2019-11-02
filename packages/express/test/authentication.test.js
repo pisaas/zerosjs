@@ -1,15 +1,15 @@
 const assert = require('assert');
 const _axios = require('axios');
-const feathers = require('@feathersjs/feathers');
+const zero = require('@zerojs/zero');
 const getApp = require('./authentication-local-fixture');
-const { authenticate } = require('@feathersjs/authentication');
+const { authenticate } = require('@zerojs/authentication');
 
 const expressify = require('../lib');
 const axios = _axios.create({
   baseURL: 'http://localhost:9876/'
 });
 
-describe('@zero/express/authentication', () => {
+describe('@zerojs/express/authentication', () => {
   const email = 'expresstest@authentication.com';
   const password = 'superexpress';
 
@@ -19,7 +19,7 @@ describe('@zero/express/authentication', () => {
   let authResult;
 
   beforeAll(() => {
-    const expressApp = expressify(feathers())
+    const expressApp = expressify(zero())
       .use(expressify.json())
       .configure(expressify.rest());
 

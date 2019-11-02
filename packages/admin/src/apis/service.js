@@ -76,8 +76,8 @@ export default clientService
 function initIoClient (client) {
   const io = require('socket.io-client')
   const socket = io(`${apiDomain}`, {
-    // transports: ['websocket']
-    // transports: ['polling']
+    transports: ['websocket'],
+    upgrade: false
   })
 
   socket.on('connect', () => {

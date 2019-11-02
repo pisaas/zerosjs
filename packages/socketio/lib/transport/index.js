@@ -2,7 +2,7 @@ const { channels } = require('@feathersjs/transport-commons/lib/channels');
 const { routing } = require('@feathersjs/transport-commons/lib/routing');
 const { getDispatcher, runMethod } = require('./utils');
 
-const debug = require('debug')('@zero/socketio/transport');
+const debug = require('debug')('@zerojs/socketio/transport');
 
 module.exports = function socketTransport ({ done, emit, socketMap, socketKey, getParams }) {
   return (app) => {

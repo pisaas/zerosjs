@@ -1,23 +1,23 @@
 const express = require('express');
 const Proto = require('uberproto');
-const debug = require('debug')('@zero/express');
+const debug = require('debug')('@zerojs/express');
 
 const errorHandler = require('./error-handler');
 const authentication = require('./authentication');
 const notFound = require('./not-found-handler');
 const rest = require('./rest');
 
-function feathersExpress (feathersApp, expressApp = express()) {
-  if (!feathersApp) {
+function zeroExpress (zeroApp, expressApp = express()) {
+  if (!zeroApp) {
     return expressApp;
   }
 
-  if (typeof feathersApp.setup !== 'function') {
-    throw new Error('@zero/express requires a valid Feathers application instance');
+  if (typeof zeroApp.setup !== 'function') {
+    throw new Error('@zerojs/express requires a valid Feathers application instance');
   }
 
-  if (!feathersApp.version || feathersApp.version < '3.0.0') {
-    throw new Error(`@zero/express requires an instance of a Feathers application version 3.x or later (got ${feathersApp.version || 'unknown'})`);
+  if (!zeroApp.version || zeroApp.version < '3.0.0') {
+    throw new Error(`@zerojs/express requires an instance of a Feathers application version 3.x or later (got ${zeroApp.version || 'unknown'})`);
   }
 
   // An Uberproto mixin that provides the extended functionality
@@ -51,7 +51,7 @@ function feathersExpress (feathersApp, expressApp = express()) {
 
       debug('Registering service with middleware', middleware);
       // Since this is a serivce, call Feathers `.use`
-      feathersApp.use.call(this, location, service, { middleware });
+      zeroApp.use.call(this, location, service, { middleware });
 
       return this;
     },
@@ -68,8 +68,8 @@ function feathersExpress (feathersApp, expressApp = express()) {
 
   // Copy all non-existing properties (including non-enumerables)
   // that don't already exist on the Express app
-  Object.getOwnPropertyNames(feathersApp).forEach(prop => {
-    const feathersProp = Object.getOwnPropertyDescriptor(feathersApp, prop);
+  Object.getOwnPropertyNames(zeroApp).forEach(prop => {
+    const feathersProp = Object.getOwnPropertyDescriptor(zeroApp, prop);
     const expressProp = Object.getOwnPropertyDescriptor(expressApp, prop);
 
     if (expressProp === undefined && feathersProp !== undefined) {
@@ -80,10 +80,10 @@ function feathersExpress (feathersApp, expressApp = express()) {
   return Proto.mixin(mixin, expressApp);
 }
 
-module.exports = feathersExpress;
+module.exports = zeroExpress;
 
 Object.assign(module.exports, express, authentication, {
-  default: feathersExpress,
+  default: zeroExpress,
   original: express,
   rest,
   notFound,

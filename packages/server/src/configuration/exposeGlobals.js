@@ -1,4 +1,4 @@
-const errors = require('@zero/errors');
+const errors = require('@zerojs/errors');
 const lodash = require('lodash');
 const { json, logger, service } = require('../common');
 

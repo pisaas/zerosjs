@@ -1,6 +1,6 @@
 const { flatten, omit, merge } = require('lodash');
 
-const debug = require('debug')('@zero/authentication/hooks/authenticate');
+const debug = require('debug')('@zerojs/authentication/hooks/authenticate');
 
 module.exports = (originalSettings, ...originalStrategies) => {
   const settings = typeof originalSettings === 'string'

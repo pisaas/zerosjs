@@ -1,4 +1,4 @@
-const feathers = require('@feathersjs/feathers');
+const feathers = require('@zerojs/zero');
 const memory = require('feathers-memory');
 const { AuthenticationService, JWTStrategy } = require('@feathersjs/authentication');
 
