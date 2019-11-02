@@ -20,6 +20,5 @@
   },
   "devDependencies": {
     "jest": "^24.9.0"
-  },
-  "gitHead": "37d84aacb72c041c6476ec8242f00c69a20119e8"
+  }
 }

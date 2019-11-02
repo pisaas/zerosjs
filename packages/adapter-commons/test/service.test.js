@@ -137,8 +137,8 @@ describe('@zerojs/adapter-commons/service', () => {
     });
   });
 
-  it('allowsMulti', () => {
-    context('with true', () => {
+  describe('allowsMulti', () => {
+    describe('with true', () => {
       const service = new AdapterService({multi: true});
 
       it('does return true for multible methodes', () => {
@@ -154,7 +154,7 @@ describe('@zerojs/adapter-commons/service', () => {
       });
     });
 
-    context('with false', () => {
+    describe('with false', () => {
       const service = new AdapterService({multi: false});
 
       it('does return false for multible methodes', () => {
@@ -170,7 +170,7 @@ describe('@zerojs/adapter-commons/service', () => {
       });
     });
 
-    context('with array', () => {
+    describe('with array', () => {
       const service = new AdapterService({multi: ['create', 'get', 'other']});
 
       it('does return true for specified multible methodes', () => {

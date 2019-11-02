@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { sorter } = require('../lib');
 
-describe('@feathersjs/adapter-commons', () => {
+describe('@zerojs/adapter-commons', () => {
   describe('sorter', () => {
     it('simple sorter', () => {
       const array = [{

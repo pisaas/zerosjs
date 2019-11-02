@@ -17,7 +17,7 @@
     "url": "git+ssh://git@bitbucket.org/pisaas/zero.git"
   },
   "scripts": {
-    "test": "npx jest test"
+    "test": "jest test"
   },
   "devDependencies": {
     "jest": "^24.9.0"

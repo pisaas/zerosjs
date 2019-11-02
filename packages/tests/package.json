@@ -20,7 +20,6 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@zerojs/zero": "^0.0.1",
     "jest": "^24.9.0"
   }
 }

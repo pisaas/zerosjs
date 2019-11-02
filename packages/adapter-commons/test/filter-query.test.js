@@ -1,8 +1,8 @@
-import assert from 'assert';
-import { ObjectId } from 'mongodb';
-import { filterQuery } from '../src';
+const assert = require('assert');
+const { ObjectId } = require('mongodb');
+const { filterQuery } = require('../lib');
 
-describe('@feathersjs/adapter-commons/filterQuery', () => {
+describe('@zerojs/adapter-commons/filterQuery', () => {
   describe('$sort', () => {
     it('returns $sort when present in query', () => {
       const originalQuery = { $sort: { name: 1 } };
@@ -57,7 +57,7 @@ describe('@feathersjs/adapter-commons/filterQuery', () => {
   });
 
   describe('$limit', () => {
-    let testQuery: any;
+    let testQuery;
 
     beforeEach(() => {
       testQuery = { $limit: 1 };
@@ -111,7 +111,7 @@ describe('@feathersjs/adapter-commons/filterQuery', () => {
   });
 
   describe('$skip', () => {
-    let testQuery: any;
+    let testQuery;
 
     beforeEach(() => {
       testQuery = { $skip: 1 };
@@ -142,7 +142,7 @@ describe('@feathersjs/adapter-commons/filterQuery', () => {
   });
 
   describe('$select', () => {
-    let testQuery: any;
+    let testQuery;
 
     beforeEach(() => {
       testQuery = { $select: 1 };
@@ -217,7 +217,7 @@ describe('@feathersjs/adapter-commons/filterQuery', () => {
       const { filters } = filterQuery({
         $known: 1,
         $select: 1
-      }, { filters: { $known: (value: any) => value.toString() } });
+      }, { filters: { $known: (value) => value.toString() } });
 
       assert.strictEqual(filters.$unknown, undefined);
       assert.strictEqual(filters.$known, '1');
