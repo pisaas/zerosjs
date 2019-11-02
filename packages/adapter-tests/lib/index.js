@@ -26,7 +26,7 @@ module.exports = testNames => {
     };
 
     describe(`Adapter tests for '${serviceName}' service with '${idProp}' id property`, () => {
-      after(() => {
+      afterAll(() => {
         console.log('\n');
         testNames.forEach(name => {
           if (!allTests.includes(name)) {

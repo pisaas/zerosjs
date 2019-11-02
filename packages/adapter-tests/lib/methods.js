@@ -476,7 +476,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
     describe('doesn\'t call public methods internally', () => {
       let throwing;
 
-      before(() => {
+      beforeAll(() => {
         throwing = app.service(serviceName).extend({
           get store () {
             return app.service(serviceName).store;

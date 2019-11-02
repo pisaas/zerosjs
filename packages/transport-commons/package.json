@@ -1,13 +1,13 @@
 {
-  "name": "@zerojs/adapter-commons",
+  "name": "@zerojs/transport-commons",
   "version": "0.0.1",
   "description": "> TODO: description",
   "author": "rayl <rayl@pistech.com>",
   "homepage": "https://bitbucket.org/pisaas/zero#readme",
-  "license": "ISC",
   "main": "lib",
   "directories": {
-    "lib": "lib"
+    "lib": "lib",
+    "test": "test"
   },
   "files": [
     "lib"
@@ -22,10 +22,12 @@
   "dependencies": {
     "@zerojs/commons": "^0.0.1",
     "@zerojs/errors": "^0.0.1",
-    "@zerojs/zero": "^0.0.1"
+    "debug": "^4.1.1",
+    "lodash": "^4.17.15",
+    "radix-router": "^3.0.1"
   },
   "devDependencies": {
-    "jest": "^24.9.0",
-    "mongodb": "^3.3.3"
+    "@zerojs/zero": "^0.0.1",
+    "jest": "^24.9.0"
   }
 }
