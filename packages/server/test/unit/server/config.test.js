@@ -22,7 +22,7 @@ describe('\'config\' load', () => {
 });
 
 function loadConfig (cb) {
-  let configPath = path.join(__dirname, '../../../../config1');
+  let configPath = path.join(__dirname, '../../../config1');
   // let configEnv = 'production';
   let configEnv = undefined;
 

@@ -1,7 +1,3 @@
-/**
- * Module dependencies.
- */
-
 const _ = require('lodash');
 
 module.exports = function(zeros) {
@@ -11,11 +7,6 @@ module.exports = function(zeros) {
   return new Configuration();
 
   function Configuration() {
-    /**
-     * Load the configuration modules
-     *
-     * @api private
-     */
     this.load = require('./load')(zeros);
 
     // Bind the context of all instance methods

@@ -5,15 +5,14 @@
 var util = require('util');
 var _ = require('lodash');
 var async = require('async');
-var defaultsDeep = require('merge-defaults');// « TODO: Get rid of this
-var __plugins = require('../../plugins');
+var __plugin = require('./plugin');
 
 /**
  * @param  {ZerosApp} zeros
  * @returns {Function}
  */
 module.exports = function(zeros) {
-  var Plugin = __plugins(zeros);
+  var Plugin = __plugin(zeros);
 
   // Keep an array of all the plugin timeouts.
   // This way if a plugin fails to load, we can clear all the timeouts at once.
@@ -38,12 +37,6 @@ module.exports = function(zeros) {
       if (rawPluginFn === false) {
         delete plugins[id];
         return;
-      }
-
-      // Handle folder-defined modules (default to index.js)
-      // Since a plugin definition must be a function
-      if (_.isObject(rawPluginFn) && !_.isArray(rawPluginFn) && !_.isFunction(rawPluginFn)) {
-        rawPluginFn = rawPluginFn.index;
       }
 
       if (!_.isFunction(rawPluginFn)) {
@@ -88,7 +81,7 @@ module.exports = function(zeros) {
         delete plugin.defaults.__configKey__;
       }
 
-      defaultsDeep(zeros.config, defaults);
+      _.defaultsDeep(zeros.config, defaults);
     }
 
     /**
@@ -162,20 +155,9 @@ module.exports = function(zeros) {
     // Now do a few things, one after another.
     async.series(
       {
-        // First load the moduleloader (if any)
-        moduleloader: function(cb) {
-          if (!plugins.moduleloader) {
-            return cb();
-          }
-          preparePlugin('moduleloader');
-          applyDefaults(plugins['moduleloader']);
-          plugins['moduleloader'].configure();
-          loadPlugin('moduleloader', cb);
-        },
-
         // Prepare all other plugins
         prepare: function(cb) {
-          async.each(_.without(_.keys(plugins), 'moduleloader'), function (id, cb) {
+          async.each(_.keys(plugins), function (id, cb) {
             preparePlugin(id);
             // Defer to next tick to allow other stuff to happen
             process.nextTick(cb);
@@ -184,7 +166,7 @@ module.exports = function(zeros) {
 
         // Apply the default config for all other plugins
         defaults: function(cb) {
-          async.each(_.without(_.keys(plugins), 'moduleloader'), function (id, cb) {
+          async.each(_.keys(plugins), function (id, cb) {
             var plugin = plugins[id];
             applyDefaults(plugin);
             // Defer to next tick to allow other stuff to happen
@@ -194,7 +176,7 @@ module.exports = function(zeros) {
 
         // Run configuration method for all other plugins
         configure: function(cb) {
-          async.each(_.without(_.keys(plugins), 'moduleloader'), function (id, cb) {
+          async.each(_.keys(plugins), function (id, cb) {
             var plugin = plugins[id];
             try {
               plugin.configure();
@@ -208,7 +190,7 @@ module.exports = function(zeros) {
 
         // Load all other plugins
         load: function(cb) {
-          async.each(_.without(_.keys(plugins), 'moduleloader'), function (id, cb) {
+          async.each(_.keys(plugins), function (id, cb) {
             zeros.log.silly('Loading plugin: ' + id);
             loadPlugin(id, cb);
           }, cb);

@@ -7,7 +7,7 @@ const async = require('async');
 const flaverr = require('flaverr');
 
 const __Configuration = require('./configuration');
-const __initializePlugins = require('./private/loadPlugins');
+const __Plugins = require('./plugins');
 
 /**
  * @param  {ZerosApp} zeros
@@ -15,7 +15,7 @@ const __initializePlugins = require('./private/loadPlugins');
  */
 module.exports = function(zeros) {
   var Configuration = __Configuration(zeros);
-  var initializePlugins = __initializePlugins(zeros);
+  var Plugins = __Plugins(zeros);
 
   /**
    * Expose loader start point.
@@ -57,7 +57,7 @@ module.exports = function(zeros) {
 
     // Optionally expose services, models, zeros, _, async, etc. as globals as soon as the
     // config loads.
-    zeros.on('plugin:config:loaded', zeros.exposeGlobals);
+    zeros.on('configs:loaded', zeros.exposeGlobals);
 
     async.auto({
       // Apply core defaults and plugin-agnostic configuration,
@@ -75,59 +75,14 @@ module.exports = function(zeros) {
       }],
 
       // Load plugins into memory, with their hooks
-      plugins: ['verifyEnv', 'config', loadPlugins]
+      plugins: ['verifyEnv', 'config', () => {
+        Plugins.load(cb);
+      }]
     }, ready__(cb));
 
     // Makes `app.load()` chainable
     return zeros;
   };
-
-  /**
-   * Load plugins in parallel
-   * let them work out dependencies themselves,
-   * taking advantage of events fired from the zeros object
-   *
-   * @api private
-   */
-  function loadPlugins(results, cb) {
-    zeros.plugins = {};
-
-    async.series([
-      function(cb) {
-        loadPluginDefinitions(zeros.plugins, cb);
-      },
-
-      function(cb) {
-        initializePlugins(zeros.plugins, cb);
-      }
-    ], function(err) {
-      if (err) { return cb(err); }
-
-      // Inform any listeners that the initial, built-in plugins
-      // are finished loading
-      zeros.emit('plugins:ready');
-      zeros.log.silly('Plugins are ready.');
-      return cb();
-    });
-  }
-
-  /**
-   * Load built-in plugin definitions
-   * and put them into `plugins` (`zeros.config.plugins`)
-   *
-   * @api private
-   */
-  function loadPluginDefinitions(plugins, cb) {
-    // Mix in user-configured plugin definitions
-    _.extend(plugins, zeros.config.plugins);
-
-    // Make sure these changes to the plugins object get applied
-    // to zeros.config.plugins to keep logic consistent
-    // (I think we can get away w/o this, but leaving as a stub)
-    // zeros.config.plugins = plugins;
-
-    return cb();
-  }
 
   function verifyEnvironment() {
     // At this point, the Zeros environment is set to its final value,
@@ -163,11 +118,6 @@ module.exports = function(zeros) {
       }
 
       zeros.log.silly('All plugins were loaded successfully.');
-
-      // If userconfig plugin is turned off, still load globals.
-      if (zeros.config.plugins) {
-        zeros.exposeGlobals();
-      }
 
       // If the Zeros environment is set to "production" but the Node environment isn't,
       // log a warning.

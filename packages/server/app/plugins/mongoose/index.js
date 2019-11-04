@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
 const { logger } = require('../../common');
 
-module.exports = function () {
+module.exports = function (zeros) {
   return {
+    initialize: function (next) {
+      return next();
+    },
+
     fn (app) {
       mongoose.connect(
         app.get('mongodb'),

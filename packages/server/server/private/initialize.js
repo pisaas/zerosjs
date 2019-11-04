@@ -1,18 +1,3 @@
-/**
- * Module dependencies
- */
-
-/**
- * Zeros.prototype.initialize()
- *
- * Start the Zeros server
- * NOTE: zeros.load() should be run first.
- *
- * @param {Function?} callback  [optional]
- *
- * @api private
- */
-
 module.exports = function initialize(cb) {
   var zeros = this;
 

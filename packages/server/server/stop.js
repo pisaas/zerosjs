@@ -1,21 +1,6 @@
-/**
- * Module dependencies.
- */
-
 var _ = require('lodash');
 var async = require('async');
 
-
-/**
- * Zeros.prototype.stop()
- *
- * The inverse of `start()`, this method
- * shuts down all attached servers.
- *
- * It also unbinds listeners and terminates child processes.
- *
- * @api public
- */
 module.exports = function stop(options, cb) {
   var zeros = this;
 
@@ -46,7 +31,6 @@ module.exports = function stop(options, cb) {
 
   // Wait until beforeShutdown logic runs
   beforeShutdown(function(err) {
-
     // If an error occurred, don't stop-- still go ahead and take care of other teardown tasks.
     if (err) {
       zeros.log.error(err);
@@ -58,21 +42,15 @@ module.exports = function stop(options, cb) {
       try {
         childProcess.kill('SIGINT');
       } catch (e) {
-        zeros.log.error('While lowering Sails zeros: received error killing child process:', e.stack);
+        zeros.log.error('While lowering Zeros zeros: received error killing child process:', e.stack);
       }
     });
 
     // Shut down HTTP server
-    zeros.emit('lower');
-    // (Note for future: would be cleaner to provide a way to defer this to the http
-    // and sockets hooks-- i.e. having hooks expose a `teardown(cb)` interceptor. Keep
-    // in mind we'd need a way to distinguish between a graceful shutdown and a force
-    // kill.  In a force kill situation, it's never ok for the process to hang.)
+    zeros.emit('stop');
 
     async.series([
-
       function shutdownSockets(cb) {
-
         // If the sockets hook is disabled, skip this.
         // Also skip if the socket server is piggybacking on the main HTTP server, to avoid
         // the onClose event possibly being called multiple times (because you can't tell
@@ -171,28 +149,16 @@ module.exports = function stop(options, cb) {
         }
         zeros._processListeners = null;
 
-        // If `zeros.config.process.removeAllListeners` is set, do that.
-        // This is no longer necessary due to https://github.com/balderdashy/zeros/pull/2693
-        // Deprecating for v0.12.
-        if (zeros.config && zeros.config.process && zeros.config.process.removeAllListeners) {
-          zeros.log.debug('zeros.config.process.removeAllListeners is deprecated; please remove listeners indivually!');
-          process.removeAllListeners();
-        }
-
         cb();
       },
     ], function (err) {
       if (err) {
         // This should never hzerosen because `err` is never passed in any of the async
         // functions above.  Still, just to be safe, we set up an error log.
-        zeros.log.error('While lowering Sails zeros: received unexpected error:', err.stack);
+        zeros.log.error('While stoping Zeros zeros: received unexpected error:', err.stack);
         return cb(err);
       }
-
       return cb();
-
-    });//</async.series>
-
-  });//</beforeShutdown()>
-
+    });
+  });
 };

@@ -2,21 +2,47 @@
  * Module dependencies.
  */
 
+const path = require('path');
 const _ = require('lodash');
 const async = require('async');
-const CaptainsLog = require('captains-log');
 const includeAll = require('include-all');
 
+const JsFileExts = {
+  code: ['js', 'ts'],
+  config: ['json']
+};
+
+const BasicJsFileExts = JsFileExts.code;
+const ConfigJsFileExts = JsFileExts.config.concat(BasicJsFileExts);
+
 module.exports = function(zeros) {
-  
   return function loadConfig(cb) {
+    let appPath = zeros.config.appPath ? path.resolve(zeros.config.appPath) : process.cwd();
+    let appEnv = zeros.config.environment || process.env.NODE_ENV || 'development';
+
+    let cfgPath = path.resolve(appPath, 'config');
+    let pluginsPath = path.resolve(appPath, 'app/plugins');
+
+    let defaults = {
+      appPath,
+      environment: appEnv,
+      paths: {
+        config: cfgPath,
+        plugins: pluginsPath,
+        models: path.resolve(appPath, 'app/models'),
+        services: path.resolve(appPath, 'app/services'),
+        channels: path.resolve(appPath, 'app/channels'),
+        apis: path.resolve(appPath, 'app/apis')
+      }
+    };
+
     async.auto({
-      'config/*': function loadOtherConfigFiles (cb) {
+      'config/*': function loadConfigFiles (cb) {
         includeAll.aggregate({
-          dirname   : configPath,
+          dirname   : cfgPath,
           exclude   : ['locales', /local\..+/],
           excludeDirs: /(locales|env)$/,
-          filter    : new RegExp('^(.+)\\.(' + SUPPORTED_FILE_EXTENSIONS_FOR_CONFIG.join('|') + ')$'),
+          filter    : new RegExp('^(.+)\\.(' + ConfigJsFileExts.join('|') + ')$'),
           flatten   : true,
           keepDirectoryPath: true,
           identity  : false
@@ -25,8 +51,8 @@ module.exports = function(zeros) {
     
       'config/local' : function loadLocalOverrideFile (cb) {
         includeAll.aggregate({
-          dirname   : configPath,
-          filter    : new RegExp('^local\\.(' + SUPPORTED_FILE_EXTENSIONS_FOR_CONFIG.join('|') + ')$'),
+          dirname   : cfgPath,
+          filter    : new RegExp('^local\\.(' + ConfigJsFileExts.join('|') + ')$'),
           identity  : false
         }, cb);
       },
@@ -36,10 +62,10 @@ module.exports = function(zeros) {
         // If there's an environment already set in sails.config, then it came from the environment
         // or the command line, so that takes precedence.  Otherwise, check the config/local.js file
         // for an environment setting.  Lastly, default to development.
-        var env = configEnv || asyncData['config/local'].environment || 'development';
+        var env = appEnv || asyncData['config/local'].environment || 'development';
         includeAll.aggregate({
-          dirname   : path.resolve( configPath, 'env', env ),
-          filter    : new RegExp('^(.+)\\.(' + SUPPORTED_FILE_EXTENSIONS_FOR_CONFIG.join('|') + ')$'),
+          dirname   : path.resolve( cfgPath, 'env', env ),
+          filter    : new RegExp('^(.+)\\.(' + ConfigJsFileExts.join('|') + ')$'),
           optional  : true,
           flatten   : true,
           keepDirectoryPath: true,
@@ -52,24 +78,23 @@ module.exports = function(zeros) {
         // If there's an environment already set in sails.config, then it came from the environment
         // or the command line, so that takes precedence.  Otherwise, check the config/local.js file
         // for an environment setting.  Lastly, default to development.
-        var env = configEnv || asyncData['config/local'].environment || 'development';
+        var env = appEnv || asyncData['config/local'].environment || 'development';
         includeAll.aggregate({
-          dirname   : path.resolve( configPath, 'env' ),
-          filter    : new RegExp('^' + _.escapeRegExp(env) + '\\.(' + SUPPORTED_FILE_EXTENSIONS_FOR_CONFIG.join('|') + ')$'),
+          dirname   : path.resolve( cfgPath, 'env' ),
+          filter    : new RegExp('^' + _.escapeRegExp(env) + '\\.(' + ConfigJsFileExts.join('|') + ')$'),
           optional  : true,
           flatten   : true,
           keepDirectoryPath: true,
           identity  : false
         }, cb);
       }]
-    
     }, function (err, asyncData) {
       if (err) { return cb(err); }
-      // Save the environment override, if any.
-      var env = configEnv;
+
       // Merge the configs, with env/*.js files taking precedence over others, and local.js
       // taking precedence over everything.
       var config = _.merge(
+        defaults,
         asyncData['config/*'],
         asyncData['config/env/**'],
         asyncData['config/env/*'],
@@ -77,9 +102,13 @@ module.exports = function(zeros) {
       );
   
       // Set the environment, but don't allow env/* files to change it; that'd be weird.
-      config.environment = env || asyncData['config/local'].environment || 'development';
-      // Return the user config
-      cb(undefined, config);
+      config.environment = appEnv || asyncData['config/local'].environment || 'development';
+
+      zeros.config = config;
+
+      zeros.emit('configs:loaded', config);
+      
+      cb();
     });
   };
 };

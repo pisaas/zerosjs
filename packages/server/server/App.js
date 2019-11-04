@@ -5,11 +5,12 @@ const Proto = require('uberproto');
 const CaptainsLog = require('captains-log');
 const Zeros = require('@zerosjs/zeros');
 
-// const loadApp = require('./load');
+const loadApp = require('./load');
+const mixinAfter = require('./private/after');
 
-const Default = Proto.mixin({
+const App = Proto.mixin({
   log: CaptainsLog(),
-  // load: loadApp(this),
+
   start: require('./start'),
   stop: require('./stop'),
 
@@ -17,7 +18,11 @@ const Default = Proto.mixin({
   exposeGlobals: require('./private/exposeGlobals')
 }, Zeros());
 
-module.exports = Default;
+App.load = loadApp(App);
+
+mixinAfter(App);
+
+module.exports = App;
 
 // /**
 //  * Construct a Zeros (app) instance.
