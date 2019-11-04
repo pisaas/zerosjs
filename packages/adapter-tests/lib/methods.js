@@ -50,7 +50,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Got a NotFound Feathers error'
+            'Got a NotFound Zeros error'
           );
         }
       });
@@ -61,7 +61,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Error is a NotFound Feathers error'
+            'Error is a NotFound Zeros error'
           );
         }
       });
@@ -79,7 +79,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Got a NotFound Feathers error'
+            'Got a NotFound Zeros error'
           );
         }
 
@@ -120,7 +120,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Got a NotFound Feathers error'
+            'Got a NotFound Zeros error'
           );
         }
       });
@@ -169,7 +169,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Got a NotFound Feathers error'
+            'Got a NotFound Zeros error'
           );
         }
 
@@ -219,7 +219,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Got a NotFound Feathers error'
+            'Got a NotFound Zeros error'
           );
         }
       });
@@ -230,7 +230,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Error is a NotFound Feathers error'
+            'Error is a NotFound Zeros error'
           );
         }
       });
@@ -251,7 +251,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Got a NotFound Feathers error'
+            'Got a NotFound Zeros error'
           );
         }
 
@@ -297,7 +297,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Got a NotFound Feathers error'
+            'Got a NotFound Zeros error'
           );
         }
       });
@@ -374,7 +374,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Error is a NotFound Feathers error'
+            'Error is a NotFound Zeros error'
           );
         }
       });
@@ -394,7 +394,7 @@ module.exports = (test, app, errors, serviceName, idProp) => {
           throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
-            'Got a NotFound Feathers error'
+            'Got a NotFound Zeros error'
           );
         }
 

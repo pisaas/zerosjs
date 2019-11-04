@@ -2,7 +2,7 @@
   <div class="layout-side-menu fs">
     <div class="menu-header">
       <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
-      <div class="logo flex-center" @click="$zero.goHome()">
+      <div class="logo flex-center" @click="$zeros.goHome()">
         <img :src="`${admLogo}-avatar`" />
         <!-- <div>{{ appName }}</div> -->
       </div>
@@ -67,7 +67,7 @@ export default {
 
   computed: {
     admLogo () {
-      return this.$zero.zeroBasic('logo')
+      return this.$zeros.zerosBasic('logo')
     }
   },
 

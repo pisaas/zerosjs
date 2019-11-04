@@ -1,10 +1,10 @@
 const assert = require('assert');
-const zero = require('@zerojs/zero');
+const zeros = require('@zerosjs/zeros');
 const { channels, keys } = require('../../lib/channels');
 
-describe('zero-channels', () => {
+describe('zeros-channels', () => {
   it('has app.channel', () => {
-    const app = zero().configure(channels());
+    const app = zeros().configure(channels());
 
     assert.strictEqual(typeof app.channel, 'function');
     assert.strictEqual(typeof app[keys.CHANNELS], 'object');
@@ -12,7 +12,7 @@ describe('zero-channels', () => {
   });
 
   it('throws an error when called with nothing', () => {
-    const app = zero().configure(channels());
+    const app = zeros().configure(channels());
 
     try {
       app.channel();
@@ -23,13 +23,13 @@ describe('zero-channels', () => {
   });
 
   it('configuring twice does nothing', () => {
-    zero()
+    zeros()
       .configure(channels())
       .configure(channels());
   });
 
   it('does not add things to the service if `dispatch` exists', () => {
-    const app = zero()
+    const app = zeros()
       .configure(channels())
       .use('/test', {
         setup () {},

@@ -6,7 +6,7 @@
     "default": 10,
     "max": 50
   },
-  "mongodb": "mongodb://localhost:27017/zero",
+  "mongodb": "mongodb://localhost:27017/zeros",
   "socketio": {
     "redis": "redis://localhost:6379/0"
   },
@@ -28,7 +28,7 @@
         "typ": "access"
       },
       "audience": "https://pisaas.com",
-      "issuer": "zero",
+      "issuer": "zeros",
       "algorithm": "HS256",
       "expiresIn": "1d"
     },

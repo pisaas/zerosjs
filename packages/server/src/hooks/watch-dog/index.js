@@ -1,4 +1,4 @@
-const debug = require('debug')('@zerojs/server/hooks/watch-dog');
+const debug = require('debug')('@zerosjs/server/hooks/watch-dog');
 
 /**
  * 看门狗，主要防止外部应用访问内部服务

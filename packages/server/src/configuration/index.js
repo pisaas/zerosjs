@@ -2,7 +2,7 @@ const Debug = require('debug');
 const path = require('path');
 const config = require('config');
 
-const debug = Debug('@zerojs/server/configuration');
+const debug = Debug('@zerosjs/server/configuration');
 const separator = path.sep;
 
 const exposeGlobals = require('./exposeGlobals');

@@ -7,7 +7,7 @@ var async = require('async');
 var chalk = require('chalk');
 
 /**
- * Zero.prototype.start()
+ * Zeros.prototype.start()
  *
  * Load the app, then bind process listeners and emit the internal "ready" event.
  * The "ready" event is listened for by core hooks; for example, the HTTP hook uses
@@ -24,14 +24,14 @@ var chalk = require('chalk');
  *
  * A Node-style callback that wil be triggered when the lift has completed (one way or another)
  * > If the `done` callback is omitted, then:
- * >  • If the lift fails, Zero will log the underlying fatal error using `zero.log.error()`.
- * >  • Otherwise, Zero will log "App lifted successfully." using `zero.log.verbose()`.
+ * >  • If the lift fails, Zeros will log the underlying fatal error using `zeros.log.error()`.
+ * >  • Otherwise, Zeros will log "App lifted successfully." using `zeros.log.verbose()`.
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * @api public
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 module.exports = function start(configOverride, done) {
-  var zero = this;
+  var zeros = this;
 
   // configOverride is optional.
   if (_.isFunction(configOverride)) {
@@ -42,51 +42,53 @@ module.exports = function start(configOverride, done) {
   // Callback is optional (but recommended.)
   done = done || function defaultCallback(err) {
     if (err) {
-      zero.log.error('Failed to start app:',err);
+      zeros.log.error('Failed to start app:',err);
       return;
     }
 
-    zero.log.verbose('Zero app started successfully.');
+    zeros.log.verbose('Zeros app started successfully.');
   };
 
   async.series([
     function (next) {
-      zero.load(configOverride, next);
+      // zeros.load(configOverride, next);
+      next();
     },
 
     function (next){
-      zero.initialize(next);
+      // zeros.initialize(next);
+      next();
     },
-  ], function whenZeroIsReady(err) {
+  ], function whenZerosIsReady(err) {
     if (err) {
-      zero.stop(function (additionalErrStopingZero){
-        if (additionalErrStopingZero) {
-          zero.log.error('When trying to stop the app as a result of a failed start, encountered an error:', additionalErrStopingZero);
+      zeros.stop(function (additionalErrStopingZeros){
+        if (additionalErrStopingZeros) {
+          zeros.log.error('When trying to stop the app as a result of a failed start, encountered an error:', additionalErrStopingZeros);
         }
         return done(err);
       });
       return;
     }
 
-    zero.log.info(('Server started in `' + zero.config.appPath + '`'));
+    zeros.log.info(('Server started in `' + zeros.config.appPath + '`'));
 
-    zero.log.info(('To shut down Zero, press <CTRL> + C at any time.'));
-    zero.log.blank();
-    zero.log(chalk.grey(Array(56).join('-')));
-    zero.log(chalk.grey(':: ' + new Date()));
-    zero.log.blank();
-    zero.log('Environment : ' + zero.config.environment);
+    zeros.log.info(('To shut down Zeros, press <CTRL> + C at any time.'));
+    zeros.log.blank();
+    zeros.log(chalk.grey(Array(56).join('-')));
+    zeros.log(chalk.grey(':: ' + new Date()));
+    zeros.log.blank();
+    zeros.log('Environment : ' + zeros.config.environment);
 
-    zero.log('Port        : ' + zero.config.port); // 12 - 4 = 8 spaces
-    zero.log.verbose('NODE_ENV  : ' + (process.env.NODE_ENV||chalk.gray('(not set)'))); // 12 - 8 - 2 = 2 spaces
-    zero.log(chalk.grey(Array(56).join('-')));
+    zeros.log('Port        : ' + zeros.config.port); // 12 - 4 = 8 spaces
+    zeros.log.verbose('NODE_ENV  : ' + (process.env.NODE_ENV||chalk.gray('(not set)'))); // 12 - 8 - 2 = 2 spaces
+    zeros.log(chalk.grey(Array(56).join('-')));
 
     // Emit 'started' event.
-    zero.emit('started');
+    zeros.emit('started');
 
     // Set `isStarted` (private dignostic flag)
-    zero.isStarted = true;
+    zeros.isStarted = true;
 
-    return done(undefined, zero);
+    return done(undefined, zeros);
   });
 };

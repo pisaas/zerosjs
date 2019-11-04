@@ -1,6 +1,6 @@
 {
-  "name": "@zerojs/errors",
-  "description": "Common error types for Pisaas Zero apps. Forked from feathersjs.",
+  "name": "@zerosjs/errors",
+  "description": "Common error types for Pisaas Zeros apps.",
   "version": "0.0.1",
   "homepage": "https://pisaas.com",
   "main": "lib/",

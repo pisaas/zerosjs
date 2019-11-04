@@ -1,9 +1,9 @@
-const errors = require('@zerojs/errors');
+const errors = require('@zerosjs/errors');
 const lodash = require('lodash');
 const { json, logger, service } = require('../common');
 
 module.exports = function exposeGlobals(app) {
-  global['zero'] = app;
+  global['zeros'] = app;
   global['_'] = lodash;
 
   app.$json = json;

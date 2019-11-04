@@ -1,7 +1,7 @@
 const socketio = require('socket.io');
 const Proto = require('uberproto');
 const http = require('http');
-const debug = require('debug')('@zerojs/socketio');
+const debug = require('debug')('@zerosjs/socketio');
 
 const transport = require('./transport');
 const middleware = require('./middleware');
@@ -20,7 +20,7 @@ function configureSocketio (port, options, config) {
 
   return function (app) {
     // Function that gets the connection
-    const getParams = socket => socket.feathers;
+    const getParams = socket => socket.zeros;
     // A mapping from connection to socket instance
     const socketMap = new WeakMap();
 
@@ -50,7 +50,7 @@ function configureSocketio (port, options, config) {
             io.use(middleware.params(app, socketMap));
             io.use(middleware.authentication(app, getParams));
 
-            // In Feathers it is easy to hit the standard Node warning limit
+            // In Zeros it is easy to hit the standard Node warning limit
             // of event listeners (e.g. by registering 10 services).
             // So we set it to a higher number. 64 should be enough for everyone.
             io.sockets.setMaxListeners(64);

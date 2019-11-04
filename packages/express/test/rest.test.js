@@ -1,42 +1,42 @@
 const assert = require('assert');
 const axios = require('axios');
 
-const zero = require('@zerojs/zero');
-const { BadRequest } = require('@zerojs/errors');
-const { Service } = require('@zerojs/tests/lib/fixture');
-const { crud } = require('@zerojs/tests/lib/crud');
+const zeros = require('@zerosjs/zeros');
+const { BadRequest } = require('@zerosjs/errors');
+const { Service } = require('@zerosjs/tests/lib/fixture');
+const { crud } = require('@zerosjs/tests/lib/crud');
 
 const expressify = require('../lib');
 const { rest } = expressify;
 
-describe('@zerojs/express/rest provider', () => {
+describe('@zerosjs/express/rest provider', () => {
   describe('base functionality', () => {
     it('throws an error if you did not expressify', () => {
-      const app = zero();
+      const app = zeros();
 
       try {
         app.configure(rest());
         assert.ok(false, 'Should never get here');
       } catch (e) {
-        assert.strictEqual(e.message, '@zerojs/express/rest needs an Express compatible app. Feathers apps have to wrapped with zero-express first.');
+        assert.strictEqual(e.message, '@zerosjs/express/rest needs an Express compatible app. Zeros apps have to wrapped with zeros-express first.');
       }
     });
 
-    it('throws an error for incompatible Feathers version', () => {
+    it('throws an error for incompatible Zeros version', () => {
       try {
-        const app = expressify(zero());
+        const app = expressify(zeros());
 
-        app.version = '2.9.9';
+        app.version = '0.0.0';
         app.configure(rest());
 
         assert.ok(false, 'Should never get here');
       } catch (e) {
-        assert.strictEqual(e.message, '@zerojs/express/rest requires an instance of a Feathers application version 3.x or later (got 2.9.9)');
+        assert.strictEqual(e.message, `@zerosjs/express/rest requires an instance of a Zeros application version 0.x or later (got 0.0.0)`);
       }
     });
 
     it('lets you set the handler manually', () => {
-      const app = expressify(zero());
+      const app = expressify(zeros());
       const formatter = function (req, res) {
         res.format({
           'text/plain': function () {
@@ -64,7 +64,7 @@ describe('@zerojs/express/rest provider', () => {
     });
 
     it('lets you set no handler', () => {
-      const app = expressify(zero());
+      const app = expressify(zeros());
       const data = { fromHandler: true };
 
       app.configure(rest(null))
@@ -90,7 +90,7 @@ describe('@zerojs/express/rest provider', () => {
     let app;
 
     beforeAll(function () {
-      app = expressify(zero())
+      app = expressify(zeros())
         .configure(rest(rest.formatter))
         .use(expressify.json())
         .use('codes', {
@@ -267,11 +267,11 @@ describe('@zerojs/express/rest provider', () => {
         }
       };
 
-      let server = expressify(zero())
+      let server = expressify(zeros())
         .configure(rest(rest.formatter))
         .use(function (req, res, next) {
-          assert.ok(req.zero, 'Feathers object initialized');
-          req.zero.test = 'Happy';
+          assert.ok(req.zeros, 'Zeros object initialized');
+          req.zeros.test = 'Happy';
           next();
         })
         .use('service', service)
@@ -301,7 +301,7 @@ describe('@zerojs/express/rest provider', () => {
         description: 'Do dishes!',
         id: 'dishes'
       };
-      const app = expressify(zero());
+      const app = expressify(zeros());
 
       app.use(function defaultContentTypeMiddleware (req, res, next) {
         req.headers['content-type'] = req.headers['content-type'] || 'application/json';
@@ -333,7 +333,7 @@ describe('@zerojs/express/rest provider', () => {
     });
 
     it('allows middleware before and after a service', () => {
-      const app = expressify(zero());
+      const app = expressify(zeros());
 
       app.configure(rest())
         .use(expressify.json())
@@ -369,7 +369,7 @@ describe('@zerojs/express/rest provider', () => {
     });
 
     it('allows middleware arrays before and after a service', () => {
-      const app = expressify(zero());
+      const app = expressify(zeros());
 
       app.configure(rest())
         .use(expressify.json())
@@ -405,7 +405,7 @@ describe('@zerojs/express/rest provider', () => {
     });
 
     it('allows an array of middleware without a service', () => {
-      const app = expressify(zero());
+      const app = expressify(zeros());
       const middlewareArray = [
         function (req, res, next) {
           res.data = ['first'];
@@ -432,7 +432,7 @@ describe('@zerojs/express/rest provider', () => {
 
     it('formatter does nothing when there is no res.data', () => {
       const data = { message: 'It worked' };
-      const app = expressify(zero()).use('/test',
+      const app = expressify(zeros()).use('/test',
         rest.formatter,
         (req, res) => res.json(data)
       );
@@ -450,7 +450,7 @@ describe('@zerojs/express/rest provider', () => {
     let server;
 
     beforeAll(function () {
-      app = expressify(zero())
+      app = expressify(zeros())
         .configure(rest(rest.formatter))
         .use('todo', {
           get (id) {
@@ -529,7 +529,7 @@ describe('@zerojs/express/rest provider', () => {
     let app;
 
     beforeAll(() => {
-      app = expressify(zero())
+      app = expressify(zeros())
         .configure(rest())
         .use('/:appId/:id/todo', {
           get (id, params) {
@@ -588,15 +588,15 @@ describe('@zerojs/express/rest provider', () => {
     let app;
 
     beforeAll(() => {
-      app = expressify(zero())
+      app = expressify(zeros())
         .configure(rest())
         .use(expressify.json())
         .use('/todo', {
           get (id) {
             return id;
           },
-          // httpMethod is usable as a decorator: @httpMethod('POST', '/:__zeroId/custom-path')
-          custom: rest.httpMethod('POST')(zero.activateHooks(['id', 'data', 'params'])(
+          // httpMethod is usable as a decorator: @httpMethod('POST', '/:__zerosId/custom-path')
+          custom: rest.httpMethod('POST')(zeros.activateHooks(['id', 'data', 'params'])(
             (id, data, params = {}) => {
               return Promise.resolve({
                 id,
@@ -604,8 +604,8 @@ describe('@zerojs/express/rest provider', () => {
               });
             }
           )),
-          other: rest.httpMethod('PATCH', ':__zeroId/second-method')(
-            zero.activateHooks(['id', 'data', 'params'])(
+          other: rest.httpMethod('PATCH', ':__zerosId/second-method')(
+            zeros.activateHooks(['id', 'data', 'params'])(
               (id, data, params = {}) => {
                 return Promise.resolve({
                   id,

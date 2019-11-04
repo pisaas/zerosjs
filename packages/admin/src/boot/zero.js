@@ -18,8 +18,8 @@ export default function () {
   // Create the app instantiation Object.
   // Here we inject the router, store to all child components,
   // making them available everywhere as `this.$router` and `this.$store`.
-  const zero = {
-    el: '#pi-zero',
+  const zeros = {
+    el: '#pi-zeros',
     router,
     store,
     render: h => h(App)
@@ -29,7 +29,7 @@ export default function () {
   // note we are not mounting the app here, since bootstrapping will be
   // different depending on whether we are in a browser or on the server.
   return {
-    zero,
+    zeros,
     store,
     router
   }

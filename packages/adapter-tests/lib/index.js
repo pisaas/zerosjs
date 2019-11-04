@@ -34,7 +34,7 @@ module.exports = testNames => {
           }
         });
         if (skippedTests.length) {
-          console.log(`\nSkipped the following ${skippedTests.length} Feathers adapter test(s) out of ${allTests.length} total:`);
+          console.log(`\nSkipped the following ${skippedTests.length} Zeros adapter test(s) out of ${allTests.length} total:`);
           console.log(JSON.stringify(skippedTests, null, '  '));
         }
       });

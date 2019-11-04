@@ -1,7 +1,7 @@
 const assert = require('assert');
-const adapterTests = require('@zerojs/adapter-tests');
-const errors = require('@zerojs/errors');
-const zero = require('@zerojs/zero');
+const adapterTests = require('@zerosjs/adapter-tests');
+const errors = require('@zerosjs/errors');
+const zeros = require('@zerosjs/zeros');
 
 const memory = require('../lib');
 const testSuite = adapterTests([
@@ -69,9 +69,9 @@ const testSuite = adapterTests([
   '.find + paginate + params'
 ]);
 
-describe('Feathers Memory Service', () => {
+describe('Zeros Memory Service', () => {
   const events = [ 'testing' ];
-  const app = zero()
+  const app = zeros()
     .use('/people', memory({ events }))
     .use('/people-customid', memory({
       id: 'customid', events

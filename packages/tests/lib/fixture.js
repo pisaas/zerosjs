@@ -10,8 +10,9 @@ const findAllData = [{
   description: 'You have to do laundry'
 }];
 
-const Service = {
+exports.Service = {
   events: [ 'log' ],
+  options: { public: true },
 
   find () {
     return Promise.resolve(findAllData);
@@ -75,7 +76,7 @@ const Service = {
   }
 };
 
-const verify = {
+exports.verify = {
   find (data) {
     assert.deepStrictEqual(findAllData, clone(data), 'Data as expected');
   },
@@ -113,8 +114,3 @@ const verify = {
     assert.deepStrictEqual({ id }, clone(data), '.remove called');
   }
 };
-
-module.exports = {
-  Service,
-  verify
-}

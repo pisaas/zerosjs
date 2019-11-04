@@ -1,5 +1,5 @@
 const assert = require('assert');
-const zero = require('@zerojs/zero');
+const zeros = require('@zerosjs/zeros');
 const jwt = require('jsonwebtoken');
 
 const { AuthenticationBase } = require('../lib/core');
@@ -12,7 +12,7 @@ describe('authentication/core', () => {
   let auth;
 
   beforeEach(() => {
-    app = zero();
+    app = zeros();
     auth = new AuthenticationBase(app, 'authentication', {
       entity: 'user',
       service: 'users',
@@ -63,7 +63,7 @@ describe('authentication/core', () => {
 
       assert.ok(jwtOptions);
       assert.strictEqual(jwtOptions.expiresIn, '1d');
-      assert.strictEqual(jwtOptions.issuer, 'zero');
+      assert.strictEqual(jwtOptions.issuer, 'zeros');
 
       assert.deepStrictEqual(auth2.configuration.jwtOptions, auth2options.jwtOptions);
     });
@@ -73,7 +73,7 @@ describe('authentication/core', () => {
     });
 
     it('uses default configKey', () => {
-      const otherApp = zero();
+      const otherApp = zeros();
       const otherAuth = new AuthenticationBase(otherApp);
 
       assert.ok(otherAuth);

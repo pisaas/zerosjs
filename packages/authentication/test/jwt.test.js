@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { merge } = require('lodash');
-const zero = require('@zerojs/zero');
-const memory = require('@zerojs/adapter-memory');
+const zeros = require('@zerosjs/zeros');
+const memory = require('@zerosjs/adapter-memory');
 
 const { AuthenticationService, JWTStrategy, hooks } = require('../lib');
 
@@ -14,7 +14,7 @@ describe('authentication/jwt', () => {
   let payload;
 
   beforeEach(() => {
-    app = zero();
+    app = zeros();
 
     const authService = new AuthenticationService(app, 'authentication', {
       entity: 'user',

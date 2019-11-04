@@ -1,4 +1,4 @@
-# zero-console
+# zeros-console
 
 ## Project setup
 ```

@@ -4,11 +4,11 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
-const zero = require('@zerojs/zero');
+const zeros = require('@zerosjs/zeros');
 
 const expressify = require('../lib');
 
-describe('@zerojs/express', () => {
+describe('@zerosjs/express', () => {
   const service = {
     get (id) {
       return Promise.resolve({ id });
@@ -24,14 +24,14 @@ describe('@zerojs/express', () => {
   });
 
   it('returns an Express application', () => {
-    const app = expressify(zero());
+    const app = expressify(zeros());
 
     assert.strictEqual(typeof app, 'function');
   });
 
   it('allows to use an existing Express instance', () => {
     const expressApp = express();
-    const app = expressify(zero(), expressApp);
+    const app = expressify(zeros(), expressApp);
 
     assert.strictEqual(app, expressApp);
   });
@@ -52,30 +52,30 @@ describe('@zerojs/express', () => {
     try {
       expressify({});
     } catch (e) {
-      assert.strictEqual(e.message, '@zerojs/express requires a valid Feathers application instance');
+      assert.strictEqual(e.message, '@zerosjs/express requires a valid Zeros application instance');
     }
 
     try {
-      const app = zero();
-      app.version = '2.9.9';
+      const app = zeros();
+      app.version = '0.0.0';
 
       expressify(app);
     } catch (e) {
-      assert.strictEqual(e.message, '@zerojs/express requires an instance of a Feathers application version 3.x or later (got 2.9.9)');
+      assert.strictEqual(e.message, '@zerosjs/express requires an instance of a Zeros application version 0.x or later (got 0.0.0)');
     }
 
     try {
-      const app = zero();
+      const app = zeros();
       delete app.version;
 
       expressify(app);
     } catch (e) {
-      assert.strictEqual(e.message, '@zerojs/express requires an instance of a Feathers application version 3.x or later (got unknown)');
+      assert.strictEqual(e.message, '@zerosjs/express requires an instance of a Zeros application version 0.x or later (got unknown)');
     }
   });
 
   it('Can use Express sub-apps', () => {
-    const app = expressify(zero());
+    const app = expressify(zeros());
     const child = express();
 
     app.use('/path', child);
@@ -83,13 +83,13 @@ describe('@zerojs/express', () => {
   });
 
   it('Can use express.static', () => {
-    const app = expressify(zero());
+    const app = expressify(zeros());
 
     app.use('/path', expressify.static(__dirname));
   });
 
-  it('has Feathers functionality', () => {
-    const app = expressify(zero());
+  it('has Zeros functionality', () => {
+    const app = expressify(zeros());
 
     app.use('/myservice', service);
 
@@ -118,7 +118,7 @@ describe('@zerojs/express', () => {
   });
 
   it('can register a service and start an Express server', done => {
-    const app = expressify(zero());
+    const app = expressify(zeros());
     const response = {
       message: 'Hello world'
     };
@@ -137,7 +137,7 @@ describe('@zerojs/express', () => {
   });
 
   it('.listen calls .setup', done => {
-    const app = expressify(zero());
+    const app = expressify(zeros());
     let called = false;
 
     app.use('/myservice', {
@@ -167,9 +167,9 @@ describe('@zerojs/express', () => {
   });
 
   it('passes middleware as options', () => {
-    const zeroApp = zero();
-    const app = expressify(zeroApp);
-    const oldUse = zeroApp.use;
+    const zerosApp = zeros();
+    const app = expressify(zerosApp);
+    const oldUse = zerosApp.use;
     const a = (req, res, next) => next();
     const b = (req, res, next) => next();
     const c = (req, res, next) => next();
@@ -179,7 +179,7 @@ describe('@zerojs/express', () => {
       }
     };
 
-    zeroApp.use = function (path, serviceArg, options) {
+    zerosApp.use = function (path, serviceArg, options) {
       assert.strictEqual(path, '/myservice');
       assert.strictEqual(serviceArg, service);
       assert.deepStrictEqual(options.middleware, {
@@ -193,8 +193,8 @@ describe('@zerojs/express', () => {
   });
 
   it('throws an error for invalid middleware options', () => {
-    const zeroApp = zero();
-    const app = expressify(zeroApp);
+    const zerosApp = zeros();
+    const app = expressify(zerosApp);
     const service = {
       get (id) {
         return Promise.resolve({ id });
@@ -218,7 +218,7 @@ describe('@zerojs/express', () => {
       }
     };
 
-    const app = expressify(zero())
+    const app = expressify(zeros())
       .configure(expressify.rest())
       .use('/secureTodos', todoService);
 

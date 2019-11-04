@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const errors = require('@zerojs/errors');
+const errors = require('@zerosjs/errors');
 
 const { SysService } = require('../service');
 
@@ -48,7 +48,7 @@ class RescService extends SysService {
       return null;
     }
 
-    const idsService = zero.service('core/ids');
+    const idsService = zeros.service('core/ids');
     let srcIdKey = await idsService.gen();
 
     let srcKey = appId || '_';
@@ -69,7 +69,7 @@ class RescService extends SysService {
       srcKey += `/${extName}`;
     }
 
-    const qiniuService = zero.service('open/qiniu');
+    const qiniuService = zeros.service('open/qiniu');
     
     let uptoken = await qiniuService.getUptoken({
       bucketKey: bucket,
@@ -101,7 +101,7 @@ class RescService extends SysService {
       throw new errors.InnerError('获取资源键错误。');
     }
   
-    const qiniuService = zero.service('open/qiniu');
+    const qiniuService = zeros.service('open/qiniu');
     const rescKeyData = await store.getKey(data);
   
     if (data.tmpKey) {
@@ -153,7 +153,7 @@ class RescService extends SysService {
       throw new Error(`未找到名称为"${key}"的存储。`);
     }
 
-    const qiniuService = zero.service('open/qiniu');
+    const qiniuService = zeros.service('open/qiniu');
 
     await qiniuService.remove({
       bucket: 'resc',

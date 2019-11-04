@@ -1,12 +1,12 @@
 import service from './service'
-import zero from './zero'
+import zeros from './zeros'
 
 export default {
   get service() {
     return service
   },
 
-  get zero () {
-    return zero
+  get zeros () {
+    return zeros
   },
 }

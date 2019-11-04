@@ -108,12 +108,12 @@ export default function () {
    * @return {type}  description
    */
   // function topRoute () {
-  //   let routerApp = zero.router.app
+  //   let routerApp = zeros.router.app
   //   if (!routerApp || !routerApp.$route || !routerApp.$route.name) {
   //     return null
   //   }
   //   let topRouteName = routerApp.$route.name.split(':')[0]
-  //   let topRoute = zero.store.getters['zero/routesMap'][topRouteName]
+  //   let topRoute = zeros.store.getters['zeros/routesMap'][topRouteName]
   //   return topRoute || null
   // }
 

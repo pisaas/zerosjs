@@ -1,4 +1,4 @@
-const errors = require('@zerojs/errors');
+const errors = require('@zerosjs/errors');
 const { ApiService } = require('../../service');
 
 exports.Users = class Users extends ApiService {
@@ -9,7 +9,7 @@ exports.Users = class Users extends ApiService {
       throw new errors.Forbidden('只允许获取本人的信息');
     }
     
-    let usersService = zero.service('users');
+    let usersService = zeros.service('users');
     let userInfo = usersService.get(code);
 
     return userInfo;

@@ -1,6 +1,6 @@
-const errors = require('@zerojs/errors');
-const { _ } = require('@zerojs/commons');
-const { sorter, select, AdapterService } = require('@zerojs/adapter-commons');
+const errors = require('@zerosjs/errors');
+const { _ } = require('@zerosjs/commons');
+const { sorter, select, AdapterService } = require('@zerosjs/adapter-commons');
 const sift = require('sift').default;
 
 const _select = (data, ...args) => {

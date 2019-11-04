@@ -1,4 +1,4 @@
-const debug = require('debug')('@feathersjs/socketio/middleware');
+const debug = require('debug')('@zerosjs/socketio/middleware');
 
 exports.disconnect = (app, getParams) => (socket, next) => {
   socket.once('disconnect', () => app.emit('disconnect', getParams(socket)));
@@ -6,12 +6,12 @@ exports.disconnect = (app, getParams) => (socket, next) => {
 };
 
 exports.params = (app, socketMap) => (socket, next) => {
-  socket.feathers = {
+  socket.zeros = {
     provider: 'socketio',
     headers: socket.handshake.headers
   };
 
-  socketMap.set(socket.feathers, socket);
+  socketMap.set(socket.zeros, socket);
 
   next();
 };
@@ -33,7 +33,7 @@ exports.authentication = (app, getParams, settings = {}) => (socket, next) => {
     .then(async authentication => {
       if (authentication) {
         debug('Parsed authentication from HTTP header', authentication);
-        socket.feathers.authentication = authentication;
+        socket.zeros.authentication = authentication;
         await service.create(authentication, {
           provider: 'socketio',
           connection: getParams(socket)

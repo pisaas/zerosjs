@@ -1,9 +1,9 @@
-const { stripSlashes } = require('@zerojs/commons');
-const debug = require('debug')('@zerojs/express/rest');
+const { stripSlashes } = require('@zerosjs/commons');
+const debug = require('debug')('@zerosjs/express/rest');
 const { parseAuthentication } = require('../authentication');
 const getHandler = require('./getHandler');
 
-const HTTP_METHOD = Symbol('@zerojs/express/rest/HTTP_METHOD');
+const HTTP_METHOD = Symbol('@zerosjs/express/rest/HTTP_METHOD');
 
 function httpMethod (verb, uris) {
   return method => {
@@ -25,7 +25,7 @@ function httpMethod (verb, uris) {
 function getDefaultUri (path, methods, method) {
   return methods[method].indexOf('id') === -1
     ? `/${path}/${method}`
-    : `/${path}/:__feathersId/${method}`;
+    : `/${path}/:__zerosId/${method}`;
 }
 
 function parseRoute (path, methods, method, route) {
@@ -59,7 +59,7 @@ function getServiceRoutes (service, path, defaultRoutes) {
 }
 
 function getDefaultRoutes (uri) {
-  const idUri = `${uri}/:__feathersId`;
+  const idUri = `${uri}/:__zerosId`;
 
   return [
     { method: 'find', verb: 'GET', uri }, // find(params)
@@ -91,11 +91,11 @@ function rest (handler = formatter) {
     const app = this;
 
     if (typeof app.route !== 'function') {
-      throw new Error('@zerojs/express/rest needs an Express compatible app. Feathers apps have to wrapped with feathers-express first.');
+      throw new Error('@zerosjs/express/rest needs an Express compatible app. Zeros apps have to wrapped with zeros-express first.');
     }
 
-    if (!app.version || app.version < '3.0.0') {
-      throw new Error(`@zerojs/express/rest requires an instance of a Feathers application version 3.x or later (got ${app.version})`);
+    if (!app.version || app.version < '0.0.1') {
+      throw new Error(`@zerosjs/express/rest requires an instance of a Zeros application version 0.x or later (got ${app.version})`);
     }
 
     app.rest = {
@@ -108,10 +108,10 @@ function rest (handler = formatter) {
     };
 
     app.use(function (req, res, next) {
-      req.feathers = Object.assign({
+      req.zeros = Object.assign({
         provider: 'rest',
         headers: req.headers
-      }, req.feathers);
+      }, req.zeros);
       next();
     });
 

@@ -1,4 +1,4 @@
-const { NotAuthenticated } = require('@zerojs/errors');
+const { NotAuthenticated } = require('@zerosjs/errors');
 
 const { AuthenticationBaseStrategy } = require('../lib/strategy');
 

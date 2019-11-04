@@ -7,7 +7,8 @@ const async = require('async');
 const CaptainsLog = require('captains-log');
 const includeAll = require('include-all');
 
-module.exports = function(zero) {
+module.exports = function(zeros) {
+  
   return function loadConfig(cb) {
     async.auto({
       'config/*': function loadOtherConfigFiles (cb) {

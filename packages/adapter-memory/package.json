@@ -1,9 +1,9 @@
 {
-  "name": "@zerojs/adapter-memory",
+  "name": "@zerosjs/adapter-memory",
   "version": "0.0.1",
   "description": "> TODO: description",
   "author": "rayl <rayl@pistech.com>",
-  "homepage": "https://bitbucket.org/pisaas/zero#readme",
+  "homepage": "https://bitbucket.org/pisaas/zeros#readme",
   "license": "ISC",
   "main": "lib",
   "directories": {
@@ -15,19 +15,19 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/pisaas/zero.git"
+    "url": "git+ssh://git@bitbucket.org/pisaas/zeros.git"
   },
   "scripts": {
     "test": "jest test"
   },
   "dependencies": {
-    "@zerojs/adapter-commons": "^0.0.1",
-    "@zerojs/commons": "^0.0.1",
-    "@zerojs/errors": "^0.0.1",
+    "@zerosjs/adapter-commons": "^0.0.1",
+    "@zerosjs/commons": "^0.0.1",
+    "@zerosjs/errors": "^0.0.1",
     "sift": "^8.5.1"
   },
   "devDependencies": {
-    "@zerojs/adapter-tests": "^0.0.1",
-    "@zerojs/zero": "^0.0.1"
+    "@zerosjs/adapter-tests": "^0.0.1",
+    "@zerosjs/zeros": "^0.0.1"
   }
 }

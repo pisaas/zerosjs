@@ -1,1 +1,1 @@
-# @zerojs/tests
+# @zerosjs/tests

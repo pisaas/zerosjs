@@ -1,8 +1,8 @@
-const debug = require('debug')('@zerojs/server/services/open/qiniu');
+const debug = require('debug')('@zerosjs/server/services/open/qiniu');
 
 const _ = require('lodash');
 const qiniu = require('qiniu');
-const errors = require('@zerojs/errors');
+const errors = require('@zerosjs/errors');
 
 const { OpenService } = require('../service');
 
@@ -101,7 +101,7 @@ class QiniuService extends OpenService {
     let opts = {
       scope: `${name}:${srcKey}`,
       expires,
-      returnBody: zero.$json.stringify(returnBody)
+      returnBody: zeros.$json.stringify(returnBody)
     };
 
     const qiniuMac = this.getDigestMac();

@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { EventEmitter } = require('events');
-const errors = require('@zerojs/errors');
+const errors = require('@zerosjs/errors');
 const { Service } = require('../lib/client');
 
 describe('client', () => {
@@ -135,7 +135,7 @@ describe('client', () => {
     );
   });
 
-  it('converts to feathers-errors (#19)', () => {
+  it('converts to zeros-errors (#19)', () => {
     connection.once('create', (_path, _data, _params, callback) =>
       callback(new errors.NotAuthenticated('Test', { hi: 'me' }).toJSON())
     );

@@ -66,7 +66,7 @@ export default {
 
   computed: {
     admLogo () {
-      return this.$zero.zeroBasic('logo')
+      return this.$zeros.zerosBasic('logo')
     },
 
     displayTitle () {
@@ -117,7 +117,7 @@ export default {
   },
 
   beforeCreate () {
-    let isAppLoaded = this.$zero.isAppLoaded()
+    let isAppLoaded = this.$zeros.isAppLoaded()
     if (!isAppLoaded) {
       this.$router.tryPush('/apps')
     }

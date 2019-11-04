@@ -2,7 +2,7 @@ const assert = require('assert');
 const { ObjectId } = require('mongodb');
 const { filterQuery } = require('../lib');
 
-describe('@zerojs/adapter-commons/filterQuery', () => {
+describe('@zerosjs/adapter-commons/filterQuery', () => {
   describe('$sort', () => {
     it('returns $sort when present in query', () => {
       const originalQuery = { $sort: { name: 1 } };

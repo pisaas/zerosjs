@@ -1,7 +1,7 @@
 {
-  "name": "@zerojs/socketio",
+  "name": "@zerosjs/socketio",
   "version": "0.0.1",
-  "description": "The Zero Socket.io real-time API provider. Forked from feathersjs.",
+  "description": "The Zeros Socket.io real-time API provider. Forked from zerosjs.",
   "author": "rayl <rayl@pistech.com>",
   "homepage": "https://pisaas.com",
   "main": "lib/",
@@ -13,23 +13,22 @@
     "lib"
   ],
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "jest test"
   },
   "dependencies": {
-    "@feathersjs/transport-commons": "^4.3.3",
-    "@types/socket.io": "^2.1.2",
-    "@zerojs/errors": "^0.0.1",
+    "@zerosjs/errors": "^0.0.1",
+    "@zerosjs/transport-commons": "^0.0.1",
     "debug": "^4.1.1",
     "lodash": "^4.17.15",
     "socket.io": "^2.2.0",
     "uberproto": "^2.0.4"
   },
   "devDependencies": {
-    "@feathersjs/commons": "^4.3.0",
-    "@feathersjs/feathers": "^4.3.3",
-    "@zerojs/express": "^0.0.1",
-    "@zerojs/tests": "^0.0.1",
-    "feathers-memory": "^4.0.0",
+    "@zerosjs/adapter-memory": "^0.0.1",
+    "@zerosjs/commons": "^0.0.1",
+    "@zerosjs/express": "^0.0.1",
+    "@zerosjs/tests": "^0.0.1",
+    "@zerosjs/zeros": "^0.0.1",
     "jest": "^24.9.0",
     "lodash": "^4.17.15",
     "socket.io-client": "^2.2.0"

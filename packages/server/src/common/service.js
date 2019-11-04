@@ -46,7 +46,7 @@ exports.register = (app, path, service, options) => {
 
   app.use(servicePath, service);
 
-  const protoService = zero.service(servicePath);
+  const protoService = zeros.service(servicePath);
 
   if (hooks) {
     protoService.hooks(hooks);
@@ -75,7 +75,7 @@ exports.innerInvoke = (service, method, ...args) => {
   let origService = service;
 
   if (typeof service === 'string') {
-    origService = zero.service(path);
+    origService = zeros.service(path);
   }
 
   if (args.length && typeof args[0] === 'function') {

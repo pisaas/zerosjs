@@ -26,14 +26,14 @@ exports.EntityService = class EntityService extends Service {
     }, options);
 
     // 添加自动生成Id Hook
-    opts.hooks =zero.$service.prependHook(opts.hooks, 'before.create', preEntityCreate(opts));
+    opts.hooks =zeros.$service.prependHook(opts.hooks, 'before.create', preEntityCreate(opts));
 
     // 添加模糊删除Hook
     let { fuzzySearchFields } = opts;
     if (fuzzySearchFields && fuzzySearchFields.length) {
-      opts.hooks =zero.$service.prependHook(opts.hooks, 'before.find', fuzzySearch({ fields: fuzzySearchFields }));
+      opts.hooks =zeros.$service.prependHook(opts.hooks, 'before.find', fuzzySearch({ fields: fuzzySearchFields }));
     }
 
-    return zero.$service.register(this.app, path, this, opts);
+    return zeros.$service.register(this.app, path, this, opts);
   }
 };

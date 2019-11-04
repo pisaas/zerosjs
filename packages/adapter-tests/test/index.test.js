@@ -1,6 +1,6 @@
-// const memory = require('@zerojs/adapter-memory');
-const errors = require('@zerojs/errors');
-const zero = require('@zerojs/zero');
+// const memory = require('@zerosjs/adapter-memory');
+const errors = require('@zerosjs/errors');
+const zeros = require('@zerosjs/zeros');
 
 const adapterTests = require('../lib');
 const testSuite = adapterTests([
@@ -67,9 +67,9 @@ const testSuite = adapterTests([
   '.patch + id + query id'
 ]);
 
-describe('Feathers Memory Service', () => {
+describe('Zeros Memory Service', () => {
   // const events = [ 'testing' ];
-  // const app = zero()
+  // const app = zeros()
   //   .use('/people', memory({ events }))
   //   .use('/people-customid', memory({
   //     id: 'customid', events

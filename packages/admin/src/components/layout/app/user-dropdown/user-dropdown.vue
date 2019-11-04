@@ -24,7 +24,7 @@ export default {
 
   computed: {
     user () {
-      return this.$zero.userBasic()
+      return this.$zeros.userBasic()
     },
 
     // 是否小页面
@@ -56,7 +56,7 @@ export default {
     },
 
     logout () {
-      this.$zero.logout()
+      this.$zeros.logout()
     }
   }
 }

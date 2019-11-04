@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { EventEmitter } = require('events');
-const errors = require('@zerojs/errors');
-const zero = require('@zerojs/zero');
+const errors = require('@zerosjs/errors');
+const zeros = require('@zerosjs/zeros');
 
 const { routing } = require('../../lib/routing');
 const {
@@ -63,7 +63,7 @@ describe('socket commons utils', () => {
     );
 
     it('works with backwards compatible socketKey', done => {
-      const socketKey = Symbol('@zerojs/test');
+      const socketKey = Symbol('@zerosjs/test');
       const dispatcher = getDispatcher('emit', undefined, socketKey);
       const socket = new EventEmitter();
       const connection = {
@@ -186,7 +186,7 @@ describe('socket commons utils', () => {
     let app;
 
     beforeEach(() => {
-      app = zero().configure(routing());
+      app = zeros().configure(routing());
 
       app.use('/myservice', {
         get (id, params) {

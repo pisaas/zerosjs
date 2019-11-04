@@ -10,7 +10,7 @@
   "extends": "eslint:recommended",
   "globals": {
     "_": "readonly",
-    "zero": "readonly"
+    "zeros": "readonly"
   },
   "rules": {
     "indent": [ "error", 2 ],

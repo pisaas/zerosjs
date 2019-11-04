@@ -9,11 +9,11 @@ var defaultsDeep = require('merge-defaults');// « TODO: Get rid of this
 var __plugins = require('../../plugins');
 
 /**
- * @param  {ZeroApp} zero
+ * @param  {ZerosApp} zeros
  * @returns {Function}
  */
-module.exports = function(zero) {
-  var Plugin = __plugins(zero);
+module.exports = function(zeros) {
+  var Plugin = __plugins(zeros);
 
   // Keep an array of all the plugin timeouts.
   // This way if a plugin fails to load, we can clear all the timeouts at once.
@@ -47,14 +47,14 @@ module.exports = function(zero) {
       }
 
       if (!_.isFunction(rawPluginFn)) {
-        zero.log.error('Malformed plugin! (' + id + ')');
-        zero.log.error('Plugins should be a function with one argument (`zero`)');
-        zero.log.error('But instead, got:', rawPluginFn);
+        zeros.log.error('Malformed plugin! (' + id + ')');
+        zeros.log.error('Plugins should be a function with one argument (`zeros`)');
+        zeros.log.error('But instead, got:', rawPluginFn);
         process.exit(1);
       }
 
-      // Instantiate the zero
-      var def = rawPluginFn(zero);
+      // Instantiate the zeros
+      var def = rawPluginFn(zeros);
 
       // Mix in an `identity` property to plugin definition
       def.identity = id.toLowerCase();
@@ -79,7 +79,7 @@ module.exports = function(zero) {
     function applyDefaults(plugin) {
       // Get the plugin defaults
       var defaults = (_.isFunction(plugin.defaults) ?
-        plugin.defaults(zero.config) :
+        plugin.defaults(zeros.config) :
         plugin.defaults) || {};
 
       // Replace the special __configKey__ key with the actual config key
@@ -88,7 +88,7 @@ module.exports = function(zero) {
         delete plugin.defaults.__configKey__;
       }
 
-      defaultsDeep(zero.config, defaults);
+      defaultsDeep(zeros.config, defaults);
     }
 
     /**
@@ -102,23 +102,23 @@ module.exports = function(zero) {
      */
     function loadPlugin(id, cb) {
       // Validate `pluginTimeout` setting, if present.
-      if (!_.isUndefined(zero.config.pluginTimeout)) {
-        if (!_.isNumber(zero.config.pluginTimeout) || zero.config.pluginTimeout < 1 || Math.floor(zero.config.pluginTimeout) !== zero.config.pluginTimeout) {
-          return cb(new Error('Invalid `pluginTimeout` config!  If set, this should be a positive whole number, but instead got `'+zero.config.pluginTimeout+'`.  Please change this setting, then try starting again.'));
+      if (!_.isUndefined(zeros.config.pluginTimeout)) {
+        if (!_.isNumber(zeros.config.pluginTimeout) || zeros.config.pluginTimeout < 1 || Math.floor(zeros.config.pluginTimeout) !== zeros.config.pluginTimeout) {
+          return cb(new Error('Invalid `pluginTimeout` config!  If set, this should be a positive whole number, but instead got `'+zeros.config.pluginTimeout+'`.  Please change this setting, then try starting again.'));
         }
       }
 
       var timestampBeforeLoad = Date.now();
       var DEFAULT_PLUGIN_TIMEOUT = 40000;
 
-      var timeoutInterval = (zero.config[plugins[id].configKey || id]
-        && zero.config[plugins[id].configKey || id]._pluginTimeout)
-        || zero.config.pluginTimeout
+      var timeoutInterval = (zeros.config[plugins[id].configKey || id]
+        && zeros.config[plugins[id].configKey || id]._pluginTimeout)
+        || zeros.config.pluginTimeout
         || DEFAULT_PLUGIN_TIMEOUT;
 
       var pluginTimeout = setTimeout(function tooLong() {
         var err = new Error(
-          'Zero is taking too long to load.\n'+
+          'Zeros is taking too long to load.\n'+
           '\n'+
           '  -• Please check plugin `'+id+'`.\n'+
           '    (*If* `initialize()` is using a callback, make sure it\'s being called.)\n'+
@@ -143,16 +143,16 @@ module.exports = function(zero) {
           // Clear all plugin timeouts so that the process doesn't hang because
           // something is waiting for this failed plugin to load.
           _.each(pluginTimeouts, function(pluginTimeout) {clearTimeout(pluginTimeout);});
-          zero.log.error('A plugin (`' + id + '`) failed to load!');
-          zero.emit('plugin:' + id + ':error');
+          zeros.log.error('A plugin (`' + id + '`) failed to load!');
+          zeros.emit('plugin:' + id + ':error');
 
           // Defer a tick to allow other stuff to happen
           process.nextTick(function(){ cb(err); });
           return;
         }
 
-        zero.log.verbose(id, 'plugin loaded successfully. ('+(Date.now() - timestampBeforeLoad)+'ms)');
-        zero.emit('plugin:' + id + ':loaded');
+        zeros.log.verbose(id, 'plugin loaded successfully. ('+(Date.now() - timestampBeforeLoad)+'ms)');
+        zeros.emit('plugin:' + id + ':loaded');
 
         // Defer a tick to allow other stuff to happen
         process.nextTick(function(){ cb(); });
@@ -209,7 +209,7 @@ module.exports = function(zero) {
         // Load all other plugins
         load: function(cb) {
           async.each(_.without(_.keys(plugins), 'moduleloader'), function (id, cb) {
-            zero.log.silly('Loading plugin: ' + id);
+            zeros.log.silly('Loading plugin: ' + id);
             loadPlugin(id, cb);
           }, cb);
         }

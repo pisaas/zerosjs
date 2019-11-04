@@ -8,7 +8,7 @@ const {
   createSymbol
 } = require('../lib');
 
-describe('@zerojs/commons utils', () => {
+describe('@zerosjs/commons utils', () => {
   it('stripSlashes', () => {
     expect(stripSlashes('some/thing')).toBe('some/thing');
     expect(stripSlashes('/some/thing')).toBe('some/thing');
@@ -179,7 +179,7 @@ describe('@zerojs/commons utils', () => {
           case 'port':
             return 3030;
           case 'host':
-            return 'feathersjs.com';
+            return 'zerosjs.com';
           case 'env':
             return mockApp.env;
         }
@@ -188,24 +188,24 @@ describe('@zerojs/commons utils', () => {
 
     it('when in development mode returns the correct url', () => {
       const uri = makeUrl('test', mockApp);
-      expect(uri).toBe('http://feathersjs.com:3030/test');
+      expect(uri).toBe('http://zerosjs.com:3030/test');
     });
 
     it('when in test mode returns the correct url', () => {
       mockApp.env = 'test';
       const uri = makeUrl('test', mockApp);
-      expect(uri).toBe('http://feathersjs.com:3030/test');
+      expect(uri).toBe('http://zerosjs.com:3030/test');
     });
 
     it('when in production mode returns the correct url', () => {
       mockApp.env = 'production';
       const uri = makeUrl('test', mockApp);
-      expect(uri).toBe('https://feathersjs.com/test');
+      expect(uri).toBe('https://zerosjs.com/test');
     });
 
     it('when path is not provided returns a default url', () => {
       const uri = makeUrl(null, mockApp);
-      expect(uri).toBe('http://feathersjs.com:3030/');
+      expect(uri).toBe('http://zerosjs.com:3030/');
     });
 
     it('when app is not defined returns the correct url', () => {

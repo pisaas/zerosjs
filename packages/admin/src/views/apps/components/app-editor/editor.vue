@@ -104,7 +104,7 @@ export default {
       let fileSize = file.size
 
       if (fileSize > (this.maxFileSize * 1024)) {
-        this.$zero.toast(`文件 ${file.name} 太大，不能超过 ${this.maxFileSize}K。`, {
+        this.$zeros.toast(`文件 ${file.name} 太大，不能超过 ${this.maxFileSize}K。`, {
           type: 'warning'
         })
         return

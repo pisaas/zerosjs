@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import zero from './modules/zero'
+import zeros from './modules/zeros'
 import app from './modules/app'
 import usr from './modules/usr'
 
@@ -11,7 +11,7 @@ export default function () {
   const Store = new Vuex.Store({
     plugins: [],
     state: {},
-    modules: { zero, app, usr }
+    modules: { zeros, app, usr }
   })
 
   return Store

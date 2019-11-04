@@ -1,4 +1,4 @@
-const errors = require('@zerojs/errors');
+const errors = require('@zerosjs/errors');
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
@@ -40,7 +40,7 @@ class Regs extends ApiService {
 
     const { pid } = query;
 
-    if (!pid || ['0', 'zero', 'root'].includes(pid)) {
+    if (!pid || ['0', 'zeros', 'root'].includes(pid)) {
       return {
         data: RootData
       };

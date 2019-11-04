@@ -13,14 +13,14 @@ var async = require('async');
  *
  * @throws E_BAD_GLOBAL_CONFIG
  *
- * @this {ZeroApp}
+ * @this {ZerosApp}
  * @api private
  */
 
 module.exports = function exposeGlobals() {
-  var zero = this;
+  var zeros = this;
 
-  global['zero'] = zero;
+  global['zeros'] = zeros;
   global['_'] = _;
   global['async'] = async;
 };

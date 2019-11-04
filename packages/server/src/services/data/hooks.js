@@ -25,7 +25,7 @@ exports.preEntityCreate = function (options) {
     let newData = cloneDeep(data);
 
     if (data && !data[idField] && autoId !== false) {
-      const idsService = zero.service('core/ids');
+      const idsService = zeros.service('core/ids');
       const newId = await idsService.gen();
       newData[idField] = newId;
     }

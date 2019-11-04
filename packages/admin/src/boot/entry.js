@@ -1,11 +1,11 @@
 import Vue from 'vue'
 
 import uni from '../utils/uni'
-import createZero from './zero'
+import createZeros from './zeros'
 
 // import pValidator from '../plugins/validator'
 // import pIO        from '../plugins/io'
-import pZero         from '../plugins/zero'
+import pZeros         from '../plugins/zeros'
 import pMedia        from '../plugins/media'
 import pCmpt         from '../plugins/cmpt'
 // import pResc      from '../plugins/resc'
@@ -13,17 +13,17 @@ import pCmpt         from '../plugins/cmpt'
 Vue.config.devtools = true
 Vue.config.productionTip = false
 
-const { zero, store, router } = createZero()
+const { zeros, store, router } = createZeros()
 
 ;[
   // pValidator, pIO,
-  pZero,
+  pZeros,
   pMedia,
   pCmpt,
   // pResc
 ].forEach(plugin => {
   plugin({
-    zero,
+    zeros,
     router,
     store,
     Vue
@@ -31,11 +31,11 @@ const { zero, store, router } = createZero()
 })
 
 function newVue (config) {
-  config = Object.assign(zero, config)
+  config = Object.assign(zeros, config)
   new Vue(config)
 }
 
-store.dispatch('zero/load', {
+store.dispatch('zeros/load', {
   silent: true
 }).then((res) => {
   let isLogin = store.getters['usr/isLogin']
@@ -56,7 +56,7 @@ store.dispatch('zero/load', {
     })
   })
 }).catch((error) => {
-  store.commit('zero/error', error)
+  store.commit('zeros/error', error)
   
   newVue()
 })

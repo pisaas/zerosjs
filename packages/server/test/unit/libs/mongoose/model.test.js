@@ -6,7 +6,7 @@ let dbConn, testSchema, testModel;
 describe('\'mongoose\' mongoose model', () => {
   beforeAll (() => {
     dbConn = mongoose.createConnection(
-      'mongodb://localhost:27017/zero',
+      'mongodb://localhost:27017/zeros',
       {
         useCreateIndex: true,
         useNewUrlParser: true,

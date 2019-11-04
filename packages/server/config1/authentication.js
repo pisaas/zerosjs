@@ -16,7 +16,7 @@ module.exports.authentication = {
       typ: 'access'
     },
     audience: 'https://pisaas.com',
-    issuer: 'zero',
+    issuer: 'zeros',
     algorithm: 'HS256',
     expiresIn: '1d'
   },

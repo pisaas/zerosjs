@@ -1,10 +1,10 @@
 const assert = require('assert');
-const zero = require('@zerojs/zero');
+const zeros = require('@zerosjs/zeros');
 
 const hook = require('../../lib/hooks/event');
 
 describe('authentication/hooks/events', () => {
-  const app = zero().use('/authentication', {
+  const app = zeros().use('/authentication', {
     async create (data) {
       return data;
     },

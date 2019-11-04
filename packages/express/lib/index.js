@@ -1,23 +1,23 @@
 const express = require('express');
 const Proto = require('uberproto');
-const debug = require('debug')('@zerojs/express');
+const debug = require('debug')('@zerosjs/express');
 
 const errorHandler = require('./error-handler');
 const authentication = require('./authentication');
 const notFound = require('./not-found-handler');
 const rest = require('./rest');
 
-function zeroExpress (zeroApp, expressApp = express()) {
-  if (!zeroApp) {
+function zerosExpress (zerosApp, expressApp = express()) {
+  if (!zerosApp) {
     return expressApp;
   }
 
-  if (typeof zeroApp.setup !== 'function') {
-    throw new Error('@zerojs/express requires a valid Feathers application instance');
+  if (typeof zerosApp.setup !== 'function') {
+    throw new Error('@zerosjs/express requires a valid Zeros application instance');
   }
 
-  if (!zeroApp.version || zeroApp.version < '3.0.0') {
-    throw new Error(`@zerojs/express requires an instance of a Feathers application version 3.x or later (got ${zeroApp.version || 'unknown'})`);
+  if (!zerosApp.version || zerosApp.version < '0.0.1') {
+    throw new Error(`@zerosjs/express requires an instance of a Zeros application version 0.x or later (got ${zerosApp.version || 'unknown'})`);
   }
 
   // An Uberproto mixin that provides the extended functionality
@@ -50,8 +50,8 @@ function zeroExpress (zeroApp, expressApp = express()) {
       }
 
       debug('Registering service with middleware', middleware);
-      // Since this is a serivce, call Feathers `.use`
-      zeroApp.use.call(this, location, service, { middleware });
+      // Since this is a serivce, call Zeros `.use`
+      zerosApp.use.call(this, location, service, { middleware });
 
       return this;
     },
@@ -60,7 +60,7 @@ function zeroExpress (zeroApp, expressApp = express()) {
       const server = this._super.apply(this, arguments);
 
       this.setup(server);
-      debug('Feathers application listening');
+      debug('Zeros application listening');
 
       return server;
     }
@@ -68,22 +68,22 @@ function zeroExpress (zeroApp, expressApp = express()) {
 
   // Copy all non-existing properties (including non-enumerables)
   // that don't already exist on the Express app
-  Object.getOwnPropertyNames(zeroApp).forEach(prop => {
-    const feathersProp = Object.getOwnPropertyDescriptor(zeroApp, prop);
+  Object.getOwnPropertyNames(zerosApp).forEach(prop => {
+    const zerosProp = Object.getOwnPropertyDescriptor(zerosApp, prop);
     const expressProp = Object.getOwnPropertyDescriptor(expressApp, prop);
 
-    if (expressProp === undefined && feathersProp !== undefined) {
-      Object.defineProperty(expressApp, prop, feathersProp);
+    if (expressProp === undefined && zerosProp !== undefined) {
+      Object.defineProperty(expressApp, prop, zerosProp);
     }
   });
 
   return Proto.mixin(mixin, expressApp);
 }
 
-module.exports = zeroExpress;
+module.exports = zerosExpress;
 
 Object.assign(module.exports, express, authentication, {
-  default: zeroExpress,
+  default: zerosExpress,
   original: express,
   rest,
   notFound,

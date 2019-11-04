@@ -1,6 +1,6 @@
-const debug = require('debug')('@zerojs/errors');
+const debug = require('debug')('@zerosjs/errors');
 
-function ZeroError (msg, name, code, className, data) {
+function ZerosError (msg, name, code, className, data) {
   msg = msg || 'Error';
 
   let errors;
@@ -24,7 +24,6 @@ function ZeroError (msg, name, code, className, data) {
   if (data) {
     // NOTE(EK): To make sure that we are not messing
     // with immutable data, just make a copy.
-    // https://github.com/feathersjs/errors/issues/19
     newData = JSON.parse(JSON.stringify(data));
 
     if (newData.errors) {
@@ -41,7 +40,7 @@ function ZeroError (msg, name, code, className, data) {
   // NOTE (EK): Babel doesn't support this so
   // we have to pass in the class name manually.
   // this.name = this.constructor.name;
-  this.type = 'ZeroError';
+  this.type = 'ZerosError';
   this.name = name;
   this.message = message;
   this.code = code;
@@ -53,7 +52,7 @@ function ZeroError (msg, name, code, className, data) {
   debug(this.errors);
 
   if (Error.captureStackTrace) {
-    Error.captureStackTrace(this, ZeroError);
+    Error.captureStackTrace(this, ZerosError);
   } else {
     this.stack = (new Error()).stack;
   }
@@ -64,11 +63,11 @@ function inheritsFrom (Child, Parent) {
   Child.prototype.constructor = Child;
 }
 
-inheritsFrom(ZeroError, Error);
+inheritsFrom(ZerosError, Error);
 
 // NOTE (EK): A little hack to get around `message` not
 // being included in the default toJSON call.
-Object.defineProperty(ZeroError.prototype, 'toJSON', {
+Object.defineProperty(ZerosError.prototype, 'toJSON', {
   value: function () {
     return {
       name: this.name,
@@ -83,125 +82,125 @@ Object.defineProperty(ZeroError.prototype, 'toJSON', {
 
 // 400 - Bad Request
 function BadRequest (message, data) {
-  ZeroError.call(this, message, 'BadRequest', 400, 'bad-request', data);
+  ZerosError.call(this, message, 'BadRequest', 400, 'bad-request', data);
 }
 
-inheritsFrom(BadRequest, ZeroError);
+inheritsFrom(BadRequest, ZerosError);
 
 // 401 - Not Authenticated
 function NotAuthenticated (message, data) {
-  ZeroError.call(this, message, 'NotAuthenticated', 401, 'not-authenticated', data);
+  ZerosError.call(this, message, 'NotAuthenticated', 401, 'not-authenticated', data);
 }
 
-inheritsFrom(NotAuthenticated, ZeroError);
+inheritsFrom(NotAuthenticated, ZerosError);
 
 // 402 - Payment Error
 function PaymentError (message, data) {
-  ZeroError.call(this, message, 'PaymentError', 402, 'payment-error', data);
+  ZerosError.call(this, message, 'PaymentError', 402, 'payment-error', data);
 }
 
-inheritsFrom(PaymentError, ZeroError);
+inheritsFrom(PaymentError, ZerosError);
 
 // 403 - Forbidden
 function Forbidden (message, data) {
-  ZeroError.call(this, message, 'Forbidden', 403, 'forbidden', data);
+  ZerosError.call(this, message, 'Forbidden', 403, 'forbidden', data);
 }
 
-inheritsFrom(Forbidden, ZeroError);
+inheritsFrom(Forbidden, ZerosError);
 
 // 404 - Not Found
 function NotFound (message, data) {
-  ZeroError.call(this, message, 'NotFound', 404, 'not-found', data);
+  ZerosError.call(this, message, 'NotFound', 404, 'not-found', data);
 }
 
-inheritsFrom(NotFound, ZeroError);
+inheritsFrom(NotFound, ZerosError);
 
 // 405 - Method Not Allowed
 function MethodNotAllowed (message, data) {
-  ZeroError.call(this, message, 'MethodNotAllowed', 405, 'method-not-allowed', data);
+  ZerosError.call(this, message, 'MethodNotAllowed', 405, 'method-not-allowed', data);
 }
 
-inheritsFrom(MethodNotAllowed, ZeroError);
+inheritsFrom(MethodNotAllowed, ZerosError);
 
 // 406 - Not Acceptable
 function NotAcceptable (message, data) {
-  ZeroError.call(this, message, 'NotAcceptable', 406, 'not-acceptable', data);
+  ZerosError.call(this, message, 'NotAcceptable', 406, 'not-acceptable', data);
 }
 
-inheritsFrom(NotAcceptable, ZeroError);
+inheritsFrom(NotAcceptable, ZerosError);
 
 // 408 - Timeout
 function Timeout (message, data) {
-  ZeroError.call(this, message, 'Timeout', 408, 'timeout', data);
+  ZerosError.call(this, message, 'Timeout', 408, 'timeout', data);
 }
 
-inheritsFrom(Timeout, ZeroError);
+inheritsFrom(Timeout, ZerosError);
 
 // 409 - Conflict
 function Conflict (message, data) {
-  ZeroError.call(this, message, 'Conflict', 409, 'conflict', data);
+  ZerosError.call(this, message, 'Conflict', 409, 'conflict', data);
 }
 
-inheritsFrom(Conflict, ZeroError);
+inheritsFrom(Conflict, ZerosError);
 
 // 411 - Length Required
 function LengthRequired (message, data) {
-  ZeroError.call(this, message, 'LengthRequired', 411, 'length-required', data);
+  ZerosError.call(this, message, 'LengthRequired', 411, 'length-required', data);
 }
 
-inheritsFrom(LengthRequired, ZeroError);
+inheritsFrom(LengthRequired, ZerosError);
 
 // 422 Unprocessable
 function Unprocessable (message, data) {
-  ZeroError.call(this, message, 'Unprocessable', 422, 'unprocessable', data);
+  ZerosError.call(this, message, 'Unprocessable', 422, 'unprocessable', data);
 }
 
-inheritsFrom(Unprocessable, ZeroError);
+inheritsFrom(Unprocessable, ZerosError);
 
 // 429 Too Many Requests
 function TooManyRequests (message, data) {
-  ZeroError.call(this, message, 'TooManyRequests', 429, 'too-many-requests', data);
+  ZerosError.call(this, message, 'TooManyRequests', 429, 'too-many-requests', data);
 }
 
-inheritsFrom(TooManyRequests, ZeroError);
+inheritsFrom(TooManyRequests, ZerosError);
 
 // 500 - General Error
 function GeneralError (message, data) {
-  ZeroError.call(this, message, 'GeneralError', 500, 'general-error', data);
+  ZerosError.call(this, message, 'GeneralError', 500, 'general-error', data);
 }
 
-inheritsFrom(GeneralError, ZeroError);
+inheritsFrom(GeneralError, ZerosError);
 
 // 501 - Not Implemented
 function NotImplemented (message, data) {
-  ZeroError.call(this, message, 'NotImplemented', 501, 'not-implemented', data);
+  ZerosError.call(this, message, 'NotImplemented', 501, 'not-implemented', data);
 }
 
-inheritsFrom(NotImplemented, ZeroError);
+inheritsFrom(NotImplemented, ZerosError);
 
 // 502 - Bad Gateway
 function BadGateway (message, data) {
-  ZeroError.call(this, message, 'BadGateway', 502, 'bad-gateway', data);
+  ZerosError.call(this, message, 'BadGateway', 502, 'bad-gateway', data);
 }
 
-inheritsFrom(BadGateway, ZeroError);
+inheritsFrom(BadGateway, ZerosError);
 
 // 503 - Unavailable
 function Unavailable (message, data) {
-  ZeroError.call(this, message, 'Unavailable', 503, 'unavailable', data);
+  ZerosError.call(this, message, 'Unavailable', 503, 'unavailable', data);
 }
 
-inheritsFrom(Unavailable, ZeroError);
+inheritsFrom(Unavailable, ZerosError);
 
 // 509 - InnerError 不对外报错
 function InnerError (message, data) {
-  ZeroError.call(this, message, 'InnerError', 509, 'inner-error', data);
+  ZerosError.call(this, message, 'InnerError', 509, 'inner-error', data);
 }
 
-inheritsFrom(InnerError, ZeroError);
+inheritsFrom(InnerError, ZerosError);
 
 const errors = {
-  ZeroError,
+  ZerosError,
   BadRequest,
   NotAuthenticated,
   PaymentError,
@@ -243,9 +242,9 @@ function convert (error) {
     return error;
   }
 
-  const ZeroError = errors[error.name];
-  const result = ZeroError
-    ? new ZeroError(error.message, error.data)
+  const ZerosError = errors[error.name];
+  const result = ZerosError
+    ? new ZerosError(error.message, error.data)
     : new Error(error.message || error);
 
   if (typeof error === 'object') {

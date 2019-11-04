@@ -1,16 +1,16 @@
-const feathers = require('@feathersjs/feathers');
-const express = require('@zerojs/express');
+const zeros = require('@zerosjs/zeros');
+const express = require('@zerosjs/express');
 const assert = require('assert');
 const _ = require('lodash');
 const io = require('socket.io-client');
 const request = require('request');
-const { Service } = require('@zerojs/tests/lib/fixture');
+const { Service } = require('@zerosjs/tests/lib/fixture');
 
 const methodTests = require('./methods.js');
 const eventTests = require('./events');
 const socketio = require('../lib');
 
-describe('@zerojs/socketio', () => {
+describe('@zerosjs/socketio', () => {
   let app;
   let server;
   let socket;
@@ -37,16 +37,16 @@ describe('@zerojs/socketio', () => {
       }
     };
 
-    app = feathers()
+    app = zeros()
       .configure(socketio(function (io) {
         io.use(function (socket, next) {
-          socket.feathers.user = { name: 'David' };
-          socketParams.headers = socket.feathers.headers;
+          socket.zeros.user = { name: 'David' };
+          socketParams.headers = socket.zeros.headers;
 
           const { channel } = socket.handshake.query;
 
           if (channel) {
-            socket.feathers.channel = channel;
+            socket.zeros.channel = channel;
           }
 
           next();
@@ -86,7 +86,7 @@ describe('@zerojs/socketio', () => {
 
   it('runs io before setup (#131)', done => {
     let counter = 0;
-    let app = feathers().configure(socketio(() => {
+    let app = zeros().configure(socketio(() => {
       assert.strictEqual(counter, 0);
       counter++;
     }));
@@ -95,7 +95,7 @@ describe('@zerojs/socketio', () => {
   });
 
   it('can set MaxListeners', done => {
-    let app = feathers().configure(socketio(io =>
+    let app = zeros().configure(socketio(io =>
       io.sockets.setMaxListeners(100)
     ));
 
@@ -107,7 +107,7 @@ describe('@zerojs/socketio', () => {
 
   it('expressified app works', done => {
     const data = { message: 'Hello world' };
-    const app = express(feathers())
+    const app = express(zeros())
       .configure(socketio())
       .use('/test', (req, res) => res.json(data));
     const srv = app.listen(8992).on('listening', () => {
@@ -129,7 +129,7 @@ describe('@zerojs/socketio', () => {
   });
 
   it('can set options (#12)', done => {
-    let application = feathers().configure(socketio({
+    let application = zeros().configure(socketio({
       path: '/test/'
     }, ioInstance => assert.ok(ioInstance)));
 

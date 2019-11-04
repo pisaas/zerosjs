@@ -1,7 +1,7 @@
 {
-  "name": "@zerojs/tests",
+  "name": "@zerosjs/tests",
   "private": true,
-  "description": "Core module common tests. Forked from feathers.",
+  "description": "Core module common tests.",
   "version": "0.0.1",
   "engines": {
     "node": ">= 6"

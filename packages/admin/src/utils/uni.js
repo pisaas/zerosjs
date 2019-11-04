@@ -4,8 +4,8 @@ import { ErrorCodes } from './errors'
 import HttpRequest from './http'
 import Storage from './storage'
 
-export const AppIdKey = 'zero-appid'
-export const TokenKey = 'zero-token'
+export const AppIdKey = 'zeros-appid'
+export const TokenKey = 'zeros-token'
 
 export function showToast (options) {
   if (typeof options === 'string') {

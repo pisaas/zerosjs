@@ -1,4 +1,4 @@
-module.exports = function(zero) {
+module.exports = function(zeros) {
   /**
    * Module dependencies
    */
@@ -34,7 +34,7 @@ module.exports = function(zero) {
   /**
    * Module loader
    *
-   * Load code files from a Zero app into memory; modules like controllers,
+   * Load code files from a Zeros app into memory; modules like controllers,
    * models, services, config, etc.
    */
   return {
@@ -45,7 +45,7 @@ module.exports = function(zero) {
 
         // Paths for application modules and key files
         // If `paths.app` not specified, use process.cwd()
-        // (the directory where this Zero process is being initiated from)
+        // (the directory where this Zeros process is being initiated from)
         paths: {
           // Configuration
           //
@@ -69,15 +69,15 @@ module.exports = function(zero) {
     },
 
     initialize: function(cb) {
-      // Expose self as `zero.modules`.
-      zero.modules = zero.plugins.moduleloader;
+      // Expose self as `zeros.modules`.
+      zeros.modules = zeros.plugins.moduleloader;
 
       return cb();
     },
 
     configure: function() {
       // Default to process.cwd()
-      zero.config.appPath = zero.config.appPath ? path.resolve(zero.config.appPath) : process.cwd();
+      zeros.config.appPath = zeros.config.appPath ? path.resolve(zeros.config.appPath) : process.cwd();
     },
 
     /**
@@ -90,7 +90,7 @@ module.exports = function(zero) {
       async.auto({
         'config/*': function loadOtherConfigFiles (cb) {
           includeAll.aggregate({
-            dirname   : zero.config.paths.config,
+            dirname   : zeros.config.paths.config,
             exclude   : ['locales', /local\..+/],
             excludeDirs: /(locales|env)$/,
             filter    : new RegExp('^(.+)\\.(' + SUPPORTED_FILE_EXTENSIONS_FOR_CONFIG.join('|') + ')$'),
@@ -102,7 +102,7 @@ module.exports = function(zero) {
 
         'config/local' : function loadLocalOverrideFile (cb) {
           includeAll.aggregate({
-            dirname   : zero.config.paths.config,
+            dirname   : zeros.config.paths.config,
             filter    : new RegExp('^local\\.(' + SUPPORTED_FILE_EXTENSIONS_FOR_CONFIG.join('|') + ')$'),
             identity  : false
           }, cb);
@@ -110,12 +110,12 @@ module.exports = function(zero) {
 
         // Load environment-specific config folder, e.g. config/env/development/*
         'config/env/**': ['config/local', function loadEnvConfigFolder (asyncData, cb) {
-          // If there's an environment already set in zero.config, then it came from the environment
+          // If there's an environment already set in zeros.config, then it came from the environment
           // or the command line, so that takes precedence.  Otherwise, check the config/local.js file
           // for an environment setting.  Lastly, default to development.
-          var env = zero.config.environment || asyncData['config/local'].environment || 'development';
+          var env = zeros.config.environment || asyncData['config/local'].environment || 'development';
           includeAll.aggregate({
-            dirname   : path.resolve( zero.config.paths.config, 'env', env ),
+            dirname   : path.resolve( zeros.config.paths.config, 'env', env ),
             filter    : new RegExp('^(.+)\\.(' + SUPPORTED_FILE_EXTENSIONS_FOR_CONFIG.join('|') + ')$'),
             optional  : true,
             flatten   : true,
@@ -126,12 +126,12 @@ module.exports = function(zero) {
 
         // Load environment-specific config file, e.g. config/env/development.js
         'config/env/*' : ['config/local', function loadEnvConfigFile (asyncData, cb) {
-          // If there's an environment already set in zero.config, then it came from the environment
+          // If there's an environment already set in zeros.config, then it came from the environment
           // or the command line, so that takes precedence.  Otherwise, check the config/local.js file
           // for an environment setting.  Lastly, default to development.
-          var env = zero.config.environment || asyncData['config/local'].environment || 'development';
+          var env = zeros.config.environment || asyncData['config/local'].environment || 'development';
           includeAll.aggregate({
-            dirname   : path.resolve( zero.config.paths.config, 'env' ),
+            dirname   : path.resolve( zeros.config.paths.config, 'env' ),
             filter    : new RegExp('^' + _.escapeRegExp(env) + '\\.(' + SUPPORTED_FILE_EXTENSIONS_FOR_CONFIG.join('|') + ')$'),
             optional  : true,
             flatten   : true,
@@ -142,7 +142,7 @@ module.exports = function(zero) {
       }, function (err, asyncData) {
         if (err) { return cb(err); }
         // Save the environment override, if any.
-        var env = zero.config.environment;
+        var env = zeros.config.environment;
         // Merge the configs, with env/*.js files taking precedence over others, and local.js
         // taking precedence over everything.
         var config = mergeDictionaries(
@@ -167,11 +167,11 @@ module.exports = function(zero) {
     loadModels: function (cb) {
       // Get the main model files
       includeAll.optional({
-        dirname   : zero.config.paths.models,
+        dirname   : zeros.config.paths.models,
         filter  :  /(.+model)\.js$/,
         replaceExpr : /^.*\//,
         flatten: true
-      }, bindToZero(cb));
+      }, bindToZeros(cb));
     },
 
     /**
@@ -208,12 +208,12 @@ module.exports = function(zero) {
    *         @param {Error?} err
    *         @param {Dictionary} modules
    */
-  function bindToZero(cb) {
+  function bindToZeros(cb) {
     return function(err, modules) {
       if (err) {return cb(err);}
       _.each(modules, function(moduleDef) {
-        // Add a reference to the Zero app that loaded the module
-        moduleDef.zero = zero;
+        // Add a reference to the Zeros app that loaded the module
+        moduleDef.zeros = zeros;
         // Bind all methods to the module context
         _.bindAll(moduleDef);
       });

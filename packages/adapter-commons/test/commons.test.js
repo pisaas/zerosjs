@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { select } = require('../lib');
 
-describe('@zerojs/adapter-commons', () => {
+describe('@zerosjs/adapter-commons', () => {
   describe('select', () => {
     it('select', () => {
       const selector = select({

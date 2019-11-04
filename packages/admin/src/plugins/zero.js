@@ -12,7 +12,7 @@ import uni     from '@/utils/uni'
 import env from '@/env'
 import apis from '@/apis'
 
-export default ({ zero, Vue }) => {
+export default ({ zeros, Vue }) => {
   Vue.prototype.$env = env
   Vue.prototype.$util = { lodash, str, timeago, date, format, regexr }
   Vue.prototype.$errors = errors
@@ -21,12 +21,12 @@ export default ({ zero, Vue }) => {
 
   Vue.prototype.$apis = apis
   Vue.prototype.$service = apis.service
-  Vue.prototype.$zero = initialize(zero, Vue)
+  Vue.prototype.$zeros = initialize(zeros, Vue)
 }
 
-function initialize (zero, Vue) {
+function initialize (zeros, Vue) {
   function appBasic (key) {
-    let appBasic = Object.assign({}, zero.store.getters['app/basic'])
+    let appBasic = Object.assign({}, zeros.store.getters['app/basic'])
 
     if (!key || !appBasic) {
       return appBasic
@@ -35,20 +35,20 @@ function initialize (zero, Vue) {
   }
 
   function userBasic (key) {
-    let userBasic = zero.store.getters['usr/basic']
+    let userBasic = zeros.store.getters['usr/basic']
     if (!key || !userBasic) {
       return userBasic
     }
     return userBasic[key]
   }
 
-  function zeroBasic (key) {
-    let zeroBasic = Object.assign({}, zero.store.getters['zero/basic'])
+  function zerosBasic (key) {
+    let zerosBasic = Object.assign({}, zeros.store.getters['zeros/basic'])
 
-    if (!key || !zeroBasic) {
-      return zeroBasic
+    if (!key || !zerosBasic) {
+      return zerosBasic
     }
-    return zeroBasic[key]
+    return zerosBasic[key]
   }
 
   /**
@@ -57,7 +57,7 @@ function initialize (zero, Vue) {
    * @return {[type]}       [description]
    */
   function rescUrl (path) {
-    let { id, rescDomain } =zeroBasic()
+    let { id, rescDomain } =zerosBasic()
     return `${rescDomain}/apps/${id}/${path}`
   }
 
@@ -67,7 +67,7 @@ function initialize (zero, Vue) {
    * @return {[type]}      [description]
    */
   function tmpRescUrl (path) {
-    let tmpRescDomain = this.zeroBasic('tmpRescDomain')
+    let tmpRescDomain = this.zerosBasic('tmpRescDomain')
     return `${tmpRescDomain}/${path}`
   }
 
@@ -76,7 +76,7 @@ function initialize (zero, Vue) {
    * @return {Boolean} [description]
    */
   function isLogin () {
-    return zero.store.getters['usr/isLogin']
+    return zeros.store.getters['usr/isLogin']
   }
 
   /**
@@ -91,7 +91,7 @@ function initialize (zero, Vue) {
   }
 
   function loadApp (id) {
-    return zero.store.dispatch('app/load', {
+    return zeros.store.dispatch('app/load', {
       id
     }).then(() => {
       this.goHome()
@@ -99,7 +99,7 @@ function initialize (zero, Vue) {
   }
 
   function isAppLoaded () {
-    return zero.store.getters['app/isLoaded']
+    return zeros.store.getters['app/isLoaded']
   }
 
   /**
@@ -107,7 +107,7 @@ function initialize (zero, Vue) {
    * @return {[type]} [description]
    */
   function goHome () {
-    return zero.router.tryPush('/home')
+    return zeros.router.tryPush('/home')
   }
 
   /**
@@ -115,7 +115,7 @@ function initialize (zero, Vue) {
    * @return {[type]} [description]
    */
   function goLogin () {
-    return zero.router.tryPush('/login')
+    return zeros.router.tryPush('/login')
   }
 
   /**
@@ -124,7 +124,7 @@ function initialize (zero, Vue) {
    */
   function goError (code) {
     code = code || '404'
-    return zero.router.tryPush(`/${code}`)
+    return zeros.router.tryPush(`/${code}`)
   }
 
   function toast (title, opts) {
@@ -151,7 +151,7 @@ function initialize (zero, Vue) {
   return {
     appBasic,
     userBasic,
-    zeroBasic,
+    zerosBasic,
     rescUrl,
     tmpRescUrl,
     isLogin,

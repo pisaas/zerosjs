@@ -1,12 +1,12 @@
 const assert = require('assert');
-const zero = require('@zerojs/zero');
+const zeros = require('@zerosjs/zeros');
 const { routing, ROUTER } = require('../lib/routing');
 
 describe('app.router', () => {
   let app;
 
   beforeEach(() => {
-    app = zero().configure(routing());
+    app = zeros().configure(routing());
 
     app.use('/my/service', {
       get (id) {
@@ -16,7 +16,7 @@ describe('app.router', () => {
   });
 
   it('does nothing when configured twice', () => {
-    zero().configure(routing()).configure(routing());
+    zeros().configure(routing()).configure(routing());
   });
 
   it('has app.lookup and ROUTER symbol', () => {

@@ -65,7 +65,7 @@ export default {
     onConfirm () {
       let ucodes = this.targetKeys
       if (!ucodes || !ucodes.length) {
-        this.$zero.toast('请选择要添加的用户。')
+        this.$zeros.toast('请选择要添加的用户。')
         return
       }
 

@@ -1,8 +1,8 @@
 const assert = require('assert');
 const { omit } = require('lodash');
 const jwt = require('jsonwebtoken');
-const zero = require('@zerojs/zero');
-const memory = require('@zerojs/adapter-memory');
+const zeros = require('@zerosjs/zeros');
+const memory = require('@zerosjs/adapter-memory');
 
 const defaultOptions = require('../lib/options');
 const { AuthenticationService } = require('../lib');
@@ -17,7 +17,7 @@ describe('authentication/service', () => {
   let app;
 
   beforeEach(() => {
-    app = zero();
+    app = zeros();
     app.use('/authentication', new AuthenticationService(app, 'authentication', {
       entity: 'user',
       service: 'users',
@@ -229,7 +229,7 @@ describe('authentication/service', () => {
     });
 
     it('throws an error if service name is not set', () => {
-      const otherApp = zero();
+      const otherApp = zeros();
 
       otherApp.use('/authentication', new AuthenticationService(otherApp, 'authentication', {
         secret: 'supersecret',
@@ -245,7 +245,7 @@ describe('authentication/service', () => {
     });
 
     it('throws an error if entity service does not exist', () => {
-      const otherApp = zero();
+      const otherApp = zeros();
 
       otherApp.use('/authentication', new AuthenticationService(otherApp, 'authentication', {
         entity: 'user',
@@ -263,7 +263,7 @@ describe('authentication/service', () => {
     });
 
     it('throws an error if entity service exists but has no `id`', () => {
-      const otherApp = zero();
+      const otherApp = zeros();
 
       otherApp.use('/authentication', new AuthenticationService(otherApp, 'authentication', {
         entity: 'user',

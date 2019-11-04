@@ -1,12 +1,12 @@
 const assert = require('assert');
-const zero = require('@zerojs/zero');
+const zeros = require('@zerosjs/zeros');
 const { channels } = require('../../lib/channels');
 
 describe('app.publish', () => {
   let app;
 
   beforeEach(() => {
-    app = zero().configure(channels());
+    app = zeros().configure(channels());
   });
 
   it('throws an error if service does not send the event', () => {

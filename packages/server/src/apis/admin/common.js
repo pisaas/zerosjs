@@ -1,5 +1,5 @@
 // 客户端与服务端之间传递的AppIdKey
-const AppIdKey = 'zero-appid';
+const AppIdKey = 'zeros-appid';
 
 async function handleAppLoad (app, context) {
   if (!app || !context || !context.params) {

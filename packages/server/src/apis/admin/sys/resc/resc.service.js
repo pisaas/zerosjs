@@ -1,4 +1,4 @@
-const errors = require('@zerojs/errors');
+const errors = require('@zerosjs/errors');
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
@@ -28,7 +28,7 @@ class Service extends ApiService {
     let { appId, objId, prefix, bucket, extName } = params.query;
   
     if (appId && appId !== '0') {
-      let app = await zero.service('data/apps').get(appId);
+      let app = await zeros.service('data/apps').get(appId);
   
       if (!app) {
         throw new errors.BadRequest('当前app未注册或不存在。');

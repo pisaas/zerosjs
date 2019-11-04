@@ -19,7 +19,7 @@ if (clientType === 'rest') {
 }
 
 client.configure(feathers.authentication({
-  storageKey: 'zero-token'
+  storageKey: 'zeros-token'
 }))
 
 client.hooks({

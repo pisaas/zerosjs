@@ -24,7 +24,7 @@ module.exports = function (app) {
     toJSON: {
       transform (doc, ret) {
         if (ret.logo) {
-          ret.logo = zero.$resc.fullUrl(`${ret.logo}`);
+          ret.logo = zeros.$resc.fullUrl(`${ret.logo}`);
         }
         
         let status = '';

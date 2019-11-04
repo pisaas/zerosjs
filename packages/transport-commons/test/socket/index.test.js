@@ -1,11 +1,11 @@
 const assert = require('assert');
 const { EventEmitter } = require('events');
-const zero = require('@zerojs/zero');
+const zeros = require('@zerosjs/zeros');
 
 const transSocket = require('../../lib/socket');
 const commons = transSocket.socket;
 
-describe('@zerojs/transport-commons', () => {
+describe('@zerosjs/transport-commons', () => {
   let provider;
   let options;
   let app;
@@ -23,7 +23,7 @@ describe('@zerojs/transport-commons', () => {
         return connection;
       }
     };
-    app = zero()
+    app = zeros()
       .configure(commons(options))
       .use('/myservice', {
         get (id, params) {

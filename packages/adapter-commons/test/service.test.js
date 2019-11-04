@@ -1,10 +1,10 @@
 const assert = require('assert');
-const { NotImplemented } = require('@zerojs/errors');
+const { NotImplemented } = require('@zerosjs/errors');
 const { AdapterService } = require('../lib');
 
 const METHODS = [ 'find', 'get', 'create', 'update', 'patch', 'remove' ];
 
-describe('@zerojs/adapter-commons/service', () => {
+describe('@zerosjs/adapter-commons/service', () => {
   class CustomService extends AdapterService {
   }
 

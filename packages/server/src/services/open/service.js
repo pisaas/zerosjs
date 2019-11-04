@@ -16,6 +16,6 @@ exports.OpenService = class OpenService {
       basePath: this.options.basePath
     }, options);
 
-    return zero.$service.register(this.app, path, this, opts);
+    return zeros.$service.register(this.app, path, this, opts);
   }
 };

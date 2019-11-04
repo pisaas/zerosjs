@@ -1,11 +1,11 @@
-const feathers = require('@zerojs/zero');
-const memory = require('feathers-memory');
-const { AuthenticationService, JWTStrategy } = require('@feathersjs/authentication');
+const zeros = require('@zerosjs/zeros');
+const memory = require('@zerosjs/adapter-memory');
+const { AuthenticationService, JWTStrategy } = require('@zerosjs/authentication');
 
-const { LocalStrategy, hooks } = require('@feathersjs/authentication-local');
+const { LocalStrategy, hooks } = require('@zerosjs/authentication-local');
 const { hashPassword, protect } = hooks;
 
-module.exports = (app = feathers()) => {
+module.exports = (app = zeros()) => {
   const authentication = new AuthenticationService(app);
 
   app.set('authentication', {

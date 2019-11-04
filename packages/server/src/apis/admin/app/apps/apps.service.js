@@ -15,7 +15,7 @@ class Service extends ApiService {
     let app = await this.adapterService.get(id);
 
     if (!app || app.uid !== user.id) {
-      throw new zero.$errors.BadRequest('无法获取应用');
+      throw new zeros.$errors.BadRequest('无法获取应用');
     }
 
     return app;
@@ -49,7 +49,7 @@ class Service extends ApiService {
     let app = await this.adapterService.get(id);
 
     if (!app || app.uid !== user.id) {
-      throw new zero.$errors.BadRequest('无法获取应用');
+      throw new zeros.$errors.BadRequest('无法获取应用');
     }
 
     let logo = data.logo;

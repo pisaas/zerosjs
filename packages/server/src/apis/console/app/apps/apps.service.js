@@ -12,7 +12,7 @@ module.exports = function (app) {
 class Apps extends ApiService {
   async patch (id, data, params) {
     if (!data) {
-      throw new zero.$errors.BadRequest('请提供需要更新的数据。');
+      throw new zeros.$errors.BadRequest('请提供需要更新的数据。');
     }
 
     let logo = data.logo;
@@ -21,7 +21,7 @@ class Apps extends ApiService {
     let app = await this.adapterService.patch(id, data, params);
 
     if (!app) {
-      throw new zero.$errors.BadRequest('应用不存在');
+      throw new zeros.$errors.BadRequest('应用不存在');
     }
     
     app = await this.adapterService.updateLogo(app, logo);

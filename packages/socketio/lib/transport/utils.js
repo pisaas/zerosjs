@@ -1,7 +1,7 @@
 const isEqual = require('lodash');
-const errors = require('@zerojs/errors');
+const errors = require('@zerosjs/errors');
 
-const debug = require('debug')('@zerojs/socketio/transport');
+const debug = require('debug')('@zerosjs/socketio/transport');
 
 const paramsPositions = {
   find: 0,

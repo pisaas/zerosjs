@@ -1,4 +1,4 @@
-const errors = require('@zerojs/errors');
+const errors = require('@zerosjs/errors');
 const { AppIdKey } = require('../../common');
 const { ApiService } = require('../../service');
 const { handleConnection } = require('./app.hooks');
@@ -23,7 +23,7 @@ class Service extends ApiService {
     let app = await this.adapterService.get(id);
 
     if (!app || app.uid !== user.id) {
-      throw new zero.$errors.BadRequest('无法获取应用');
+      throw new zeros.$errors.BadRequest('无法获取应用');
     }
 
     return app;

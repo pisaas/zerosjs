@@ -16,7 +16,7 @@ class Apps extends EntityService {
       return app;
     }
 
-    let rescService = zero.service('sys/resc');
+    let rescService = zeros.service('sys/resc');
 
     let logoData = await rescService.store('appLogo', {
       tmpKey: logo.key,

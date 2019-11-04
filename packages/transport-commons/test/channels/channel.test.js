@@ -1,5 +1,5 @@
 const assert = require('assert');
-const zero = require('@zerojs/zero');
+const zeros = require('@zerosjs/zeros');
 const { channels, keys } = require('../../lib/channels');
 const { Channel } = require('../../lib/channels/channel/base');
 const { CombinedChannel } = require('../../lib/channels/channel/combined');
@@ -10,7 +10,7 @@ describe('app.channel', () => {
   let app;
 
   beforeEach(() => {
-    app = zero().configure(channels());
+    app = zeros().configure(channels());
   });
 
   describe('base channels', () => {

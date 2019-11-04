@@ -1,9 +1,9 @@
 {
-	"name": "@zerojs/authentication",
+	"name": "@zerosjs/authentication",
 	"version": "0.0.1",
 	"description": "> TODO: description",
 	"author": "rayl <rayl@pistech.com>",
-	"homepage": "https://bitbucket.org/pisaas/zero#readme",
+	"homepage": "https://bitbucket.org/pisaas/zeros#readme",
 	"license": "ISC",
 	"main": "lib",
 	"directories": {
@@ -15,15 +15,15 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+ssh://git@bitbucket.org/pisaas/zero.git"
+		"url": "git+ssh://git@bitbucket.org/pisaas/zeros.git"
 	},
 	"scripts": {
 		"test": "jest test"
 	},
 	"dependencies": {
-		"@zerojs/errors": "^0.0.1",
-		"@zerojs/transport-commons": "^0.0.1",
-		"@zerojs/zero": "^0.0.1",
+		"@zerosjs/errors": "^0.0.1",
+		"@zerosjs/transport-commons": "^0.0.1",
+		"@zerosjs/zeros": "^0.0.1",
 		"debug": "^4.1.1",
 		"jsonwebtoken": "^8.5.1",
 		"lodash": "^4.17.15",
@@ -31,7 +31,7 @@
 		"uuid": "^3.3.2"
 	},
 	"devDependencies": {
-		"@zerojs/adapter-memory": "^0.0.1",
+		"@zerosjs/adapter-memory": "^0.0.1",
 		"jest": "^24.9.0"
 	}
 }

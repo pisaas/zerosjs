@@ -2,7 +2,7 @@ import * as localforage from 'localforage'
 
 let __storage = localforage.createInstance({
   driver: localforage.LOCALSTORAGE,
-  name: 'zero-storage'
+  name: 'zeros-storage'
 })
 
 export default __storage

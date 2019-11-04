@@ -10,7 +10,7 @@ export default {
 
   basic: {
     id: env.appId,
-    name: 'Zero',
+    name: 'Zeros',
     logo: `${rescDomain}/apps/${env.appId}/logo.png`,
     rescDomain,
     tmpRescDomain

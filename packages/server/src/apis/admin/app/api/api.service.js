@@ -1,4 +1,4 @@
-const errors = require('@zerojs/errors');
+const errors = require('@zerosjs/errors');
 const { ApiService } = require('../../../service');
 
 module.exports = function (app) {

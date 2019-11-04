@@ -1,4 +1,4 @@
 module.exports = {
-  host: 'zero.pisaas.com',
+  host: 'zeros.pisaas.com',
   port: 'PORT'
 };

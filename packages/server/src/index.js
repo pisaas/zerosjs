@@ -17,16 +17,14 @@
 // > Note: This is not required in order to start, but it is a convenient default.
 process.chdir(__dirname);
 
-const Zero = require('./app/Zero');
-
-var zero;
+var zerosApp;
 
 try {
-  zero = new Zero();
+  zerosApp = require('./app');
 } catch (err) {
   console.error(err.stack);
   return;
 }
 
 // Start server
-zero.start();
+zerosApp.start();

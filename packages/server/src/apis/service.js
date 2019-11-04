@@ -1,5 +1,5 @@
 const { authenticate } = require('../authentication/hooks');
-const debug = require('debug')('@zerojs/server/api');
+const debug = require('debug')('@zerosjs/server/api');
 
 exports.ApiService = class ApiService {
   constructor (options) {
@@ -13,7 +13,7 @@ exports.ApiService = class ApiService {
     if (!this.options.adapterServicPath) {
       return null;
     }
-    return zero.service(this.options.adapterServicPath);
+    return zeros.service(this.options.adapterServicPath);
   }
   
   get basePath () {
@@ -41,10 +41,10 @@ exports.ApiService = class ApiService {
     let authOptions = opts.authenticate;
     if (authOptions) {
       // let hookPaths
-      opts.hooks = zero.$service.prependHook(opts.hooks, 'before.all', authenticate(authOptions));
+      opts.hooks = zeros.$service.prependHook(opts.hooks, 'before.all', authenticate(authOptions));
     }
 
-    let protoService = zero.$service.register(app, path, this, opts);
+    let protoService = zeros.$service.register(app, path, this, opts);
 
     return protoService;
   }

@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-describe('@zerojs/transport-commons', () => {
+describe('@zerosjs/transport-commons', () => {
   it('re-exports commons', () => {
     const commons = require('../lib');
 

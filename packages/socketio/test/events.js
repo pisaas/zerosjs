@@ -1,6 +1,6 @@
 const assert = require('assert');
 const io = require('socket.io-client');
-const { verify } = require('@zerojs/tests/lib/fixture');
+const { verify } = require('@zerosjs/tests/lib/fixture');
 
 module.exports = function (name, options) {
   const call = (method, ...args) => {

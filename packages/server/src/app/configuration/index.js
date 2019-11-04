@@ -4,7 +4,7 @@
 
 const _ = require('lodash');
 
-module.exports = function(zero) {
+module.exports = function(zeros) {
   /**
    * Expose new instance of `Configuration`
    */
@@ -16,7 +16,7 @@ module.exports = function(zero) {
      *
      * @api private
      */
-    this.load = require('./load')(zero);
+    this.load = require('./load')(zeros);
 
     // Bind the context of all instance methods
     _.bindAll(this);

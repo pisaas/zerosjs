@@ -1,5 +1,5 @@
 const assert = require('assert');
-const zero = require('@zerojs/zero');
+const zeros = require('@zerosjs/zeros');
 
 const { Strategy1, Strategy2 } = require('../fixtures');
 const { AuthenticationService, hooks } = require('../../lib');
@@ -10,7 +10,7 @@ describe('authentication/hooks/authenticate', () => {
   let app;
 
   beforeEach(() => {
-    app = zero();
+    app = zeros();
     app.use('/authentication', new AuthenticationService(app, 'authentication', {
       entity: 'user',
       service: 'users',
