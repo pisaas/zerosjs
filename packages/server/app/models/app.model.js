@@ -2,27 +2,28 @@
 // 
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
-module.exports = function (app) {
-  const { register, Types } = app.get('dbClient');
-
-  return register({
-    id: { type: String, required: true, unique: true, maxlength: 50 },
-    uid: { type: String, required: true, maxlength: 50 },  // 创建人id
-    
-    code: { type: String, required: true, unique: true, maxlength: 50 },
-    name: { type: String, required: true, unique: true, maxlength: 100 },
-
-    oid: { type: String, maxlength: 50 }, // 所属组织org id
-    ocode: { type: String, maxlength: 50 }, // 所属组织编号org code
-
-    logo: { type: String, maxlength: 200 },
-    desc: { type: String, maxlength: 500 },
-    data: Types.Mixed,
-    pubed: { type: Boolean, default: false },
-    frzn: { type: Boolean, default: false },
-  }, {
+module.exports = function () {
+  return {
     docName: 'apps',
     timestamps: true,
+
+    attributes: {
+      id: { type: 'string', required: true, unique: true, maxlength: 50 },
+      uid: { type: 'string', required: true, maxlength: 50 },  // 创建人id
+      
+      code: { type: 'string', required: true, unique: true, maxlength: 50 },
+      name: { type: 'string', required: true, unique: true, maxlength: 100 },
+  
+      oid: { type: 'string', maxlength: 50 }, // 所属组织org id
+      ocode: { type: 'string', maxlength: 50 }, // 所属组织编号org code
+  
+      logo: { type: 'string', maxlength: 200 },
+      desc: { type: 'string', maxlength: 500 },
+      data: { type: 'json' },
+      pubed: { type: 'boolean', default: false },
+      frzn: { type: 'boolean', default: false },
+    },
+
     toJSON: {
       transform (doc, ret) {
         if (ret.logo) {
@@ -49,5 +50,5 @@ module.exports = function (app) {
         return ret;
       }
     }
-  });
+  };
 };

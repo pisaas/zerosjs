@@ -1,10 +1,7 @@
 const { EntityService } = require('../service');
-const createModel = require('../../../models/app.model');
 
 module.exports = function (app) {
-  const Model = createModel(app);
-
-  new Apps({ Model }, app).register('apps', {
+  new Apps('app', app).register('apps', {
     autoOwner: true,
     fuzzySearchFields: [ 'code', 'name' ]
   });

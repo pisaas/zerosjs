@@ -32,6 +32,7 @@
   "dependencies": {
     "@zerosjs/adapter-mongoose": "^0.0.1",
     "@zerosjs/authentication": "^0.0.1",
+    "@zerosjs/commons": "^0.0.1",
     "@zerosjs/errors": "^0.0.1",
     "@zerosjs/express": "^0.0.1",
     "@zerosjs/socketio": "^0.0.1",

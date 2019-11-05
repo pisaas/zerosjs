@@ -1,9 +1,19 @@
-const { Service } = require('feathers-mongoose');
+const { Service } = require('@zerosjs/adapter-mongoose');
 const { fuzzySearch, preEntityCreate } = require('./hooks');
 
 exports.EntityService = class EntityService extends Service {
   constructor (options, app) {
     const paginate = app.get('paginate');
+
+    // console.log('app.plugins.orm.models -------->', app.plugins.orm.models);
+
+    if (typeof options === 'string') {
+      let modelName = options;
+
+      options = {
+        Model: app.plugins.orm.models[modelName]
+      };
+    }
 
     options = Object.assign({
       id: 'id',

@@ -13,7 +13,7 @@ describe('\'config\' load', () => {
 });
 
 function loadConfigFiles (cb) {
-  let pluginsPath = path.join(__dirname, '../../../src/plugins');
+  let pluginsPath = path.join(__dirname, '../../../app/plugins');
 
   console.log('pluginsPath ------>', pluginsPath);
 

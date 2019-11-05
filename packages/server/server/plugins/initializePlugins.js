@@ -144,7 +144,7 @@ module.exports = function(zeros) {
           return;
         }
 
-        zeros.log.verbose(id, 'plugin loaded successfully. ('+(Date.now() - timestampBeforeLoad)+'ms)');
+        zeros.log.verbose('plugin ', id, ' loaded successfully. ('+(Date.now() - timestampBeforeLoad)+'ms)');
         zeros.emit('plugin:' + id + ':loaded');
 
         // Defer a tick to allow other stuff to happen

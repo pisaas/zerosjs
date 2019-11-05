@@ -1,7 +1,7 @@
 module.exports.sockets = {
+  type: 'socketio',
+  
   transports: [ 'websocket' ],
-  adapter: {
-    name: 'socket.io-redis',
-    url: 'redis://localhost:6379/0'
-  }
+  adapter: 'socket.io-redis',
+  url: 'redis://localhost:6379/0'
 };

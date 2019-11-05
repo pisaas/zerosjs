@@ -1,9 +1,7 @@
 const { cloneDeep } = require('lodash');
-const { protectFields } = require('../../hooks');
 
-exports.protectFields = protectFields;
-
-exports.fuzzySearch = require('../../plugins/mongoose/hooks/fuzzy-search');
+exports.hashPassword = zeros.plugins.auth.hooks.hashPassword;
+exports.fuzzySearch = zeros.plugins.orm.hooks.fuzzySearch;
 
 exports.preEntityCreate = function (options) {
   let opts = Object.assign({

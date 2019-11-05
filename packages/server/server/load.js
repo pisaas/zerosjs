@@ -6,7 +6,7 @@ const _ = require('lodash');
 const async = require('async');
 const flaverr = require('flaverr');
 
-const __Configuration = require('./configuration');
+const __Config = require('./config');
 const __Plugins = require('./plugins');
 
 /**
@@ -14,7 +14,7 @@ const __Plugins = require('./plugins');
  * @returns {Function}
  */
 module.exports = function(zeros) {
-  var Configuration = __Configuration(zeros);
+  var Config = __Config(zeros);
   var Plugins = __Plugins(zeros);
 
   /**
@@ -63,7 +63,7 @@ module.exports = function(zeros) {
       // Apply core defaults and plugin-agnostic configuration,
       // esp. overrides including command-line options, environment variables,
       // and options that were passed in programmatically.
-      config: [Configuration.load],
+      config: [Config.load],
 
       // Verify that the combination of Zeros environment and NODE_ENV is valid
       // as early as possible -- that is, as soon as we know for sure what the

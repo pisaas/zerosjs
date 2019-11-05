@@ -26,10 +26,10 @@ exports.Ids = class Ids extends CoreService {
  * @param {Application} app 
  */
 function initFlakeIdInstance (app) {
-  let env = app.get('env');
+  let nodeEnv = app.get('nodeEnv');
 
-  let hostId = parseInt(env.hostId) || 0;
-  let insId  = parseInt(env.instanceId) || 0;
+  let hostId = parseInt(nodeEnv.hostId) || 0;
+  let insId  = parseInt(nodeEnv.instanceId) || 0;
 
   let cWorkerId = 0;
   if (cluster.worker) {

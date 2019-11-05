@@ -101,7 +101,7 @@ class QiniuService extends OpenService {
     let opts = {
       scope: `${name}:${srcKey}`,
       expires,
-      returnBody: zeros.$json.stringify(returnBody)
+      returnBody: zeros.util.stringify(returnBody)
     };
 
     const qiniuMac = this.getDigestMac();

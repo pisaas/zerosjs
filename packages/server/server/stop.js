@@ -21,7 +21,7 @@ module.exports = function stop(options, cb) {
   options.delay = options.delay || 100;
 
   // Flag `zeros._exiting` as soon as the zeros has begun to shutdown.
-  // This may be used by core hooks and other parts of core.
+  // This may be used by core plugins and other parts of core.
   // (e.g. to stop handling HTTP requests and prevent ugly error msgs)
   zeros._exiting = true;
 
@@ -56,7 +56,7 @@ module.exports = function stop(options, cb) {
         // the onClose event possibly being called multiple times (because you can't tell
         // socket.io to close without it trying to close the http server).  If we're piggybacking
         // we'll call zeros.io.close in the main "shutdownHTTP" code below.
-        if (!_.isObject(zeros.hooks) || !zeros.hooks.sockets || !zeros.io || (zeros.io && zeros.io.httpServer && zeros.hooks.http.server === zeros.io.httpServer)) {
+        if (!_.isObject(zeros.plugins) || !zeros.plugins.sockets || !zeros.io || (zeros.io && zeros.io.httpServer && zeros.plugins.http.server === zeros.io.httpServer)) {
           return cb();
         }
 
@@ -86,7 +86,9 @@ module.exports = function stop(options, cb) {
       },
 
       function shutdownHTTP(cb) {
-        if (!_.isObject(zeros.hooks) || !zeros.hooks.http || !zeros.hooks.http.server) {
+        debugger;
+
+        if (!_.isObject(zeros.plugins) || !zeros.plugins.http || !zeros.plugins.http.server) {
           return cb();
         }
 
@@ -96,32 +98,32 @@ module.exports = function stop(options, cb) {
           zeros.log.silly('Shutting down HTTP server...');
 
           // Allow process to exit once this server is closed
-          zeros.hooks.http.server.unref();
+          zeros.plugins.http.server.unref();
 
           // If we have a socket server and it's piggybacking on the main HTTP server, tell
           // socket.io to close now.  This may call `.close()` on the HTTP server, which will
           // hzerosen again below, but the second synchronous call to .close() will have no
           // additional effect.  Leaving this as-is in case future versions of socket.io
           // DON'T automatically close the http server for you.
-          if (zeros.io && zeros.io.httpServer && zeros.hooks.http.server === zeros.io.httpServer) {
+          if (zeros.io && zeros.io.httpServer && zeros.plugins.http.server === zeros.io.httpServer) {
             zeros.io.close();
           }
 
           // If the "hard shutdown" option is on, destroy the server immediately,
           // severing all connections
           if (options.hardShutdown) {
-            zeros.hooks.http.destroy();
+            zeros.plugins.http.destroy();
           }
           // Otherwise just stop the server from accepting new connections,
           // and wait options.delay for the existing connections to close
           // gracefully before destroying.
           else {
-            timeOut = setTimeout(zeros.hooks.http.destroy, options.delay);
-            zeros.hooks.http.server.close();
+            timeOut = setTimeout(zeros.plugins.http.destroy, options.delay);
+            zeros.plugins.http.server.close();
           }
 
           // Wait for the existing connections to close
-          zeros.hooks.http.server.once('close', function () {
+          zeros.plugins.http.server.once('close', function () {
             zeros.log.silly('HTTP server shut down successfully.');
             clearTimeout(timeOut);
             cb();

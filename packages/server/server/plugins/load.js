@@ -32,8 +32,26 @@ module.exports = function(zeros) {
 };
 
 function loadPluginDefinitions (plugins, cb) {
-  let pluginsPath = zeros.config.paths.plugins;
+  let innerPluginsPath = path.resolve(__dirname, 'modules');
+  let userPluginsPath = zeros.config.paths.plugins;
 
+  async.series([
+    (cb) => {
+      loadPluginDefinitionsByPath(plugins, innerPluginsPath, cb);
+    },
+    (cb) => {
+      loadPluginDefinitionsByPath(plugins, userPluginsPath, cb);
+    }
+  ], (err) => {
+    if (err) { return cb(err); }
+
+    Object.assign(plugins, zeros.config.plugins);
+
+    return cb();
+  });
+}
+
+function loadPluginDefinitionsByPath (plugins, pluginsPath, cb) {
   if (!pluginsPath) {
     return cb();
   }

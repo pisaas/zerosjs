@@ -1,4 +1,3 @@
-const { authenticate } = require('../authentication/hooks');
 const debug = require('debug')('@zerosjs/server/api');
 
 exports.ApiService = class ApiService {
@@ -40,8 +39,10 @@ exports.ApiService = class ApiService {
 
     let authOptions = opts.authenticate;
     if (authOptions) {
-      // let hookPaths
-      opts.hooks = zeros.$service.prependHook(opts.hooks, 'before.all', authenticate(authOptions));
+      // TODO: 
+      // let authenticateHook = zeros.plugins.authentication.hooks;
+      // // let hookPaths
+      // opts.hooks = zeros.$service.prependHook(opts.hooks, 'before.all', authenticateHook(authOptions));
     }
 
     let protoService = zeros.$service.register(app, path, this, opts);

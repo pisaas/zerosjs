@@ -1,14 +1,20 @@
 /**
  * Module dependencies.
  */
+const _ = require('lodash');
 const Proto = require('uberproto');
 const CaptainsLog = require('captains-log');
 const Zeros = require('@zerosjs/zeros');
+const Express = require('@zerosjs/express');
 
 const loadApp = require('./load');
 const mixinAfter = require('./private/after');
+const util = require('./util');
+
+const ZerosApp = Express(Zeros());
 
 const App = Proto.mixin({
+  util,
   log: CaptainsLog(),
 
   start: require('./start'),
@@ -16,11 +22,14 @@ const App = Proto.mixin({
 
   initialize: require('./private/initialize'),
   exposeGlobals: require('./private/exposeGlobals')
-}, Zeros());
+}, ZerosApp);
 
 App.load = loadApp(App);
 
 mixinAfter(App);
+
+App.get = (path, defaultValue) => _.get(App.config, path, defaultValue);
+App.set = (path, value) => _.set(App.config, path, value);
 
 module.exports = App;
 

@@ -1,24 +1,24 @@
 /**
  * 分类类型
  */
-module.exports = function (app) {
-  const { register, Types } = app.get('dbClient');
-
-  return register({
-    id: { type: String, required: true, unique: true, maxlength: 50 },
-    uid: { type: String, required: true, maxlength: 50 },  // 所属成员, 一般为创建人id
-    
-    code: { type: String, required: true, unique: true, maxlength: 100 },
-    name: { type: String, required: true, maxlength: 100 },
-    type: { type: String, required: true, maxlength: 100 }, // 分类类型 {10: app, 30: topic, 60: user}
-
-    desc: { type: String },
-
-    data: Types.Mixed,
-    frzn: { type: Boolean },
-
-  }, {
+module.exports = function () {
+  return {
     docName: 'taxs',
-    timestamps: true
-  });
+    timestamps: true,
+
+    attributes: {
+      id: { type: 'string', required: true, unique: true, maxlength: 50 },
+      uid: { type: 'string', required: true, maxlength: 50 },  // 所属成员, 一般为创建人id
+      
+      code: { type: 'string', required: true, unique: true, maxlength: 100 },
+      name: { type: 'string', required: true, maxlength: 100 },
+      type: { type: 'string', required: true, maxlength: 100 }, // 分类类型 {10: app, 30: topic, 60: user}
+  
+      desc: { type: 'string' },
+  
+      data: { type: 'json' },
+      frzn: { type: 'boolean' },
+  
+    }
+  };
 };
