@@ -86,8 +86,6 @@ module.exports = function stop(options, cb) {
       },
 
       function shutdownHTTP(cb) {
-        debugger;
-
         if (!_.isObject(zeros.plugins) || !zeros.plugins.http || !zeros.plugins.http.server) {
           return cb();
         }

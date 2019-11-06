@@ -56,7 +56,7 @@ store.dispatch('zeros/load', {
     })
   })
 }).catch((error) => {
-  store.commit('zeros/error', error)
+  store.commit('zeros/setError', error)
   
   newVue()
 })

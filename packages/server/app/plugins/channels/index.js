@@ -43,7 +43,7 @@ module.exports = function (zeros) {
         // Here you can add event publishers to channels set up in `channels.js`
         // To publish only for a specific event use `zeros.publish(eventname, () => {})`
     
-        console.log('Publishing all events to all authenticated users. See `channels.js` and https://docs.feathersjs.com/api/channels.html for more information.'); // eslint-disable-line
+        console.log('Publishing all events to all authenticated users.'); // eslint-disable-line
     
         // e.g. to publish all service events to all authenticated users use
         return zeros.channel('authenticated');

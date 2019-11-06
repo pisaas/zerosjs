@@ -37,11 +37,11 @@ module.exports = function() {
         model = mongoose.model(docName, schema);
       }
       
-      _.extend(this, model, {
+      _.extend(model, {
         definition
       });
 
-      cb(null, this);
+      cb(null, model);
     };
   };
 };

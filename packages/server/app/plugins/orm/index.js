@@ -4,11 +4,12 @@ const includeAll = require('include-all');
 
 module.exports = function (zeros) {
   return {
+    hooks: require('./hooks'),
+
     initialize: function (next) {
       const loadModels = require('./mongoose')(zeros);
 
       let plugin = this;
-      plugin.hooks = require('./hooks');
 
       plugin.models = {};
 

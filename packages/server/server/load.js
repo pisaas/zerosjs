@@ -75,7 +75,7 @@ module.exports = function(zeros) {
       }],
 
       // Load plugins into memory, with their hooks
-      plugins: ['verifyEnv', 'config', () => {
+      plugins: ['verifyEnv', 'config', (results, cb) => {
         Plugins.load(cb);
       }]
     }, ready__(cb));

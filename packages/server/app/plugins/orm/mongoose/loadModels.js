@@ -10,9 +10,7 @@ module.exports = function(zeros) {
     async.each(_.keys(plugin.models), (key, cb) => {
       let modelDef = plugin.models[key];
 
-      let model = new Model(modelDef);
-
-      model.load((err) => {
+      new Model(modelDef).load((err, model) => {
         if (err) {
           return cb(err);
         }

@@ -19,15 +19,19 @@ function initializeScoketIo (zeros, config, cb) {
 
   let options = _.omit(config, ['type', 'adapter', 'url']);
 
-  if (config.adapter) {
-    let ioAdapter = require(config.adapter);
+  // if (config.adapter) {
+  //   let ioAdapter = require(config.adapter);
 
-    options.adapter = ioAdapter({
-      url: options.url
-    });
-  }
+  //   options.adapter = ioAdapter({
+  //     url: options.url
+  //   });
+  // }
 
-  zeros.configure(socketio(options));
+  // console.log('options -------->', options)
+
+  // zeros.configure(socketio(options));
+  
+  zeros.configure(socketio());
 
   cb();
 }

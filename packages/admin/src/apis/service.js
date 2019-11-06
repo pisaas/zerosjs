@@ -1,14 +1,14 @@
-const feathers = require('@feathersjs/client')
+const zeros = require('@zerosjs/client')
 
 import uni, { showToast, AppIdKey, TokenKey } from '@/utils/uni'
 
 import { apiDomain } from '../env'
 
-const clientType = 'rest'
-// const clientType = 'io'
+// const clientType = 'rest'
+const clientType = 'io'
 let apiBaseUrl = 'api'
 
-const client = feathers()
+const client = zeros()
 
 if (clientType === 'rest') {
   initRestClient(client)
@@ -17,7 +17,7 @@ if (clientType === 'rest') {
   initIoClient(client)
 }
 
-client.configure(feathers.authentication({
+client.configure(zeros.authentication({
   storageKey: TokenKey
 }))
 
@@ -84,7 +84,7 @@ function initIoClient (client) {
     clientService.reloadApp()
   })
 
-  client.configure(feathers.socketio(socket, {
+  client.configure(zeros.socketio(socket, {
     timeout: 300000
   }))
 
@@ -94,7 +94,7 @@ function initIoClient (client) {
 function initRestClient (client) {
   const axios = require('axios')
 
-  const restClient = feathers.rest()
+  const restClient = zeros.rest()
   client.configure(restClient.axios(axios))
 
   return client

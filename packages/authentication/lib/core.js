@@ -27,6 +27,7 @@ exports.AuthenticationBase = class AuthenticationBase {
     this.app = app;
     this.strategies = {};
     this.configKey = configKey;
+    this.options = Object.assign({ public: true }, options);
 
     app.set('defaultAuthentication', app.get('defaultAuthentication') || configKey);
     app.set(configKey, merge({}, app.get(configKey), options));

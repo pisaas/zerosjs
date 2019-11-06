@@ -39,10 +39,10 @@ exports.ApiService = class ApiService {
 
     let authOptions = opts.authenticate;
     if (authOptions) {
-      // TODO: 
-      // let authenticateHook = zeros.plugins.authentication.hooks;
-      // // let hookPaths
-      // opts.hooks = zeros.$service.prependHook(opts.hooks, 'before.all', authenticateHook(authOptions));
+      const authenticateHook = zeros.plugins.auth.hooks.authenticate;
+      
+      // let hookPaths
+      opts.hooks = zeros.$service.prependHook(opts.hooks, 'before.all', authenticateHook(authOptions));
     }
 
     let protoService = zeros.$service.register(app, path, this, opts);

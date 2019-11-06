@@ -26,6 +26,8 @@ module.exports = {
       .set('@c', resolve('src/components'))
       .set('@conf', resolve('config'))
 
+    config.resolve.symlinks(false)
+
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
     types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)))
 

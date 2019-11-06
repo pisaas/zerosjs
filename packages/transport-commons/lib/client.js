@@ -49,7 +49,7 @@ const addEmitterMethods = (service) => {
   });
 };
 
-class Service {
+exports.Service = class Service {
   constructor (options) {
     this.events = options.events;
     this.path = options.name;
@@ -122,8 +122,4 @@ class Service {
     // @ts-ignore
     return this.removeListener(name, ...args);
   }
-}
-
-module.exports = {
-  Service
 }

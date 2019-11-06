@@ -1,4 +1,3 @@
-// Initializes the `users` service on path `/users`
 const { Users } = require('./users.class');
 const hooks = require('./users.hooks')();
 

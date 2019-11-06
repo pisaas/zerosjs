@@ -1,0 +1,38 @@
+{
+  "name": "@zerosjs/rest-client",
+  "version": "0.0.1",
+  "description": "> TODO: description",
+  "author": "rayl <rayl@pistech.com>",
+  "homepage": "https://bitbucket.org/pisaas/zero#readme",
+  "license": "ISC",
+  "main": "lib",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/pisaas/zero.git"
+  },
+  "scripts": {
+    "test": "jest test"
+  },
+  "dependencies": {
+    "@zerosjs/commons": "^0.0.1",
+    "@zerosjs/errors": "^0.0.1",
+    "qs": "^6.9.0"
+  },
+  "devDependencies": {
+    "@zerosjs/adapter-memory": "^0.0.1",
+    "@zerosjs/express": "^0.0.1",
+    "@zerosjs/tests": "^0.0.1",
+    "@zerosjs/zeros": "^0.0.1",
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "node-fetch": "^2.6.0",
+    "jest": "^24.9.0"
+  }
+}

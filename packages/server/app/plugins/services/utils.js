@@ -1,5 +1,4 @@
 const path = require('path');
-const { get, set } = require('lodash');
 const includeAll = require('include-all');
 const { stripSlashes } = require('@zerosjs/commons');
 
@@ -104,13 +103,13 @@ exports.prependHook = (hooks, path, hook) => {
 
   hooks = hooks || {};
 
-  let targetHooks = get(hooks, path, []);
+  let targetHooks = _.get(hooks, path, []);
   if (!targetHooks) {
-    targetHooks = set(hooks, path, []);
+    targetHooks = _.set(hooks, path, []);
   }
 
   targetHooks.unshift(hook);
-  set(hooks, path, targetHooks);
+  _.set(hooks, path, targetHooks);
 
   return hooks;
 };
@@ -122,13 +121,13 @@ exports.appendHook = (hooks, path, hook) => {
 
   hooks = hooks || {};
 
-  let targetHooks = get(hooks, path, []);
+  let targetHooks = _.get(hooks, path, []);
   if (!targetHooks) {
-    targetHooks = set(hooks, path, []);
+    targetHooks = _.set(hooks, path, []);
   }
 
   targetHooks.push(hook);
-  set(hooks, path, targetHooks);
+  _.set(hooks, path, targetHooks);
 
   return hooks;
 };

@@ -5,8 +5,6 @@ exports.EntityService = class EntityService extends Service {
   constructor (options, app) {
     const paginate = app.get('paginate');
 
-    // console.log('app.plugins.orm.models -------->', app.plugins.orm.models);
-
     if (typeof options === 'string') {
       let modelName = options;
 

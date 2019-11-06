@@ -8,7 +8,8 @@ module.exports = function (zeros) {
       zeros.$service = serviceUtils;
 
       zeros.after([
-        'plugin:orm:loaded'
+        'plugin:orm:loaded',
+        'plugin:sockets:loaded'
       ], () => {
         zeros.configure(services);
         return next();

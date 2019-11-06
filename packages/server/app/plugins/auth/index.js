@@ -4,9 +4,9 @@ const { JWTStrategy } = require('./strategies/jwt');
 
 module.exports = function definePlugin(zeros) {
   return {
-    initialize (next) {
-      this.hooks = require('./hooks');
+    hooks: require('./hooks'),
 
+    initialize (next) {
       zeros.after(['plugin:services:loaded'], () => {
         const authentication = new AuthenticationService(zeros);
   

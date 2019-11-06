@@ -59,6 +59,7 @@ function getDispatcher (emit, socketMap, socketKey) {
 }
 
 function runMethod (app, connection, path, method, args) {
+  debugger
   const trace = `method '${method}' on service '${path}'`;
   const methodArgs = args.slice(0);
   const callback = typeof methodArgs[methodArgs.length - 1] === 'function'

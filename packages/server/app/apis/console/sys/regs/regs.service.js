@@ -53,7 +53,7 @@ class Regs extends ApiService {
     return this.adapterService.find(params);
   }
 
-  async create (data) {
+  async create (data, params) {
     let { pid } = data;
 
     if (!pid) {
@@ -85,7 +85,7 @@ class Regs extends ApiService {
       await this.adapterService.patch(pid, { leaf: false });
     }
 
-    let result = await this.adapterService.create(regData);
+    let result = await this.adapterService.create(regData, params);
     return result;
   }
 
