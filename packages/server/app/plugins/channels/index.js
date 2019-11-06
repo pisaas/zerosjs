@@ -51,7 +51,7 @@ module.exports = function (zeros) {
     
       // Here you can also add service specific event publishers
       // e.g. the publish the `users` service `created` event to the `admins` channel
-      // zeros.service('users').publish('created', () => zeros.channel('admins'));
+      // zeros.service('usrs').publish('created', () => zeros.channel('admins'));
       
       // With the userid and email organization from above you can easily select involved users
       // zeros.service('messages').publish(() => {

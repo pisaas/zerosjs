@@ -4,7 +4,7 @@
 // for more of what you can do here.
 module.exports = function () {
   return {
-    docName: 'users',
+    docName: 'usrs',
     timestamps: true,
 
     attributes: {

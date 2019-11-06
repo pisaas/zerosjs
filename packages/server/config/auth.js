@@ -1,6 +1,6 @@
 module.exports.authentication = {
   entity: 'user',
-  service: 'data/users',
+  service: 'data/usrs',
   secret: 'Hi5r9X2h9CrohaxQD9MF7oNof6Y=',
   secrets: {
     client: 'Hi5r9X2h9CrohaxQD9MF7oNof6Y=',

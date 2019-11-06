@@ -1,7 +1,7 @@
 // 主题
 module.exports = function () {
   return {
-    docName: 'topics',
+    docName: 'tpcs',
     timestamps: true,
 
     attributes: {
