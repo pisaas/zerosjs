@@ -11,7 +11,7 @@ module.exports = function () {
       appid: { type: 'string', required: true, maxlength: 50 }, // 所属app id
       uid: { type: 'string', required: true, maxlength: 50 },  // 创建人id
   
-      code: { type: 'string', required: true, unique: true, maxlength: 100 },
+      code: { type: 'string', required: true, maxlength: 100 },
       name: { type: 'string', required: true, maxlength: 100 },
       type: { type: 'string', required: true, maxlength: 100 }, // 分类类型 {10: app, 30: topic, 60: user}
       desc: { type: 'string' },
@@ -31,6 +31,10 @@ module.exports = function () {
       frzn: { type: 'boolean' },
       modes: { type: 'array', default: [] },
       ctrls: { type: 'json' },
-    }
+    },
+
+    indexs: [
+      { keys: { appid: 1, code: 1 }, options: { unique: true } }
+    ]
   };
 };

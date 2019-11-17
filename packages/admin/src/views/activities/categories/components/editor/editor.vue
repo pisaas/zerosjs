@@ -113,7 +113,7 @@ export default {
           formModel.type = 'json'
           return catService.create(formModel)
         } else {
-          return catService.update(this.catId, formModel)
+          return catService.patch(this.catId, formModel)
         }
       })
     },

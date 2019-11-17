@@ -24,9 +24,16 @@ module.exports = function() {
    */
   return function Model(definition) {
     this.load = function (cb) {
-      let { fields, options } = normalizeDef(definition);
+      let { fields, indexs, options } = normalizeDef(definition);
 
       let schema = new Schema(fields, options);
+
+      if (indexs && indexs.length) {
+        indexs.forEach((idx) => {
+          schema.index(idx.keys, idx.options);
+        });
+      }
+
       let { docName } = options;
 
       let model;
@@ -51,6 +58,7 @@ function normalizeDef (definition) {
 
   let fields = {};
   let attributes = definition.attributes || {};
+  let indexs = definition.indexs || [];
 
   // 默认被保护的字段
   let protectedFields = ['_id', '__v'];
@@ -99,7 +107,7 @@ function normalizeDef (definition) {
 
   options.toJSON = toJSONOptions;
 
-  return { fields, options };
+  return { fields, indexs, options };
 }
 
 function normalizeDefField (attribute) {

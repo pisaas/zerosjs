@@ -95,6 +95,7 @@ export default {
       this.$refs.editorModal.close()
 
       if (!this.currentNode) {
+        this.loadRoot()
         return
       }
 
@@ -127,12 +128,16 @@ export default {
 
       const parent = this.getParentData({ root, node })
 
-      const index = parent.children.indexOf(data)
-      parent.children.splice(index, 1)
-      this.currentNode = null
+      if (!parent) {
+        this.loadRoot()
+      } else {
+        const index = parent.children.indexOf(data)
+        parent.children.splice(index, 1)
+        this.currentNode = null
 
-      // 刷新父节点
-      await this.reloadNode({ root, data: parent })
+        // 刷新父节点
+        await this.reloadNode({ root, data: parent })
+      }
     },
 
     async loadItems (item, callback) {
@@ -173,8 +178,15 @@ export default {
       }
 
       const parent = this.getParentData({ root, node })
+      const current = node.node
 
-      if (!parent) {
+      if (!parent && current) {
+        let item = await this.loadItem(data.id)
+
+        Object.keys(item).forEach((key) => {
+          current[key] =  item[key]
+        })
+
         this.$emit('on-node-change', data)
         return
       }
@@ -200,8 +212,10 @@ export default {
       let catService = this.$service('cats')
 
       let res = await catService.get(id)
+
       let item = this.toTreeItem(res)
-      return res
+
+      return item
     },
 
     getParentData ({ root, node }) {
