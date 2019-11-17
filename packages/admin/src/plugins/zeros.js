@@ -21,7 +21,7 @@ export default ({ zeros, Vue }) => {
 
   Vue.prototype.$apis = apis
   Vue.prototype.$service = apis.service
-  Vue.prototype.$zeros = initialize(zeros, Vue)
+  Vue.prototype.$app = initialize(zeros, Vue)
 }
 
 function initialize (zeros, Vue) {
@@ -94,37 +94,12 @@ function initialize (zeros, Vue) {
     return zeros.store.dispatch('app/load', {
       id
     }).then(() => {
-      this.goHome()
+      zeros.router.goHome()
     })
   }
 
   function isAppLoaded () {
     return zeros.store.getters['app/isLoaded']
-  }
-
-  /**
-   * 返回首页
-   * @return {[type]} [description]
-   */
-  function goHome () {
-    return zeros.router.tryPush('/home')
-  }
-
-  /**
-   * 调整到登录页面
-   * @return {[type]} [description]
-   */
-  function goLogin () {
-    return zeros.router.tryPush('/login')
-  }
-
-  /**
-   * 跳转错误页面
-   * @return {[type]} [description]
-   */
-  function goError (code) {
-    code = code || '404'
-    return zeros.router.tryPush(`/${code}`)
   }
 
   function toast (title, opts) {
@@ -158,11 +133,9 @@ function initialize (zeros, Vue) {
     logout,
     isAppLoaded,
     loadApp,
-    goLogin,
-    goHome,
-    goError,
     toast,
     loading,
+    alert,
     confirm
   }
 }

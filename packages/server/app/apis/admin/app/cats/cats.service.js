@@ -19,36 +19,47 @@ class Service extends ApiService {
   }
 
   async find (params) {
-    let { query } = params;
-    const { pid } = query;
-
-    if (!pid) {
-      return {};
-    }
+    let { query, user, app } = params;
 
     params.query = Object.assign({
+      pid: '0',
       $sort: { sn: 1, id: 1 }
-    }, query);
+    }, query, {
+      uid: user.id,
+      appid: app.id
+    });
 
     return this.adapterService.find(params);
   }
 
-  async create (data) {
+  async create (data, params) {
     let { pid } = data;
+
+    const { app, user } = params;
 
     if (!pid) {
       throw new errors.BadRequest('请提供父分类。');
     }
 
-    let regData = Object.assign({}, data);
+    let regData = Object.assign({}, data, {
+      uid: user.id,
+      appid: app.id
+    });
 
-    let pReg = await this.adapterService.get(pid);
+    let pReg = null;
 
-    if (!pReg) {
-      throw new errors.BadRequest('未找到对应父节点');
-    }
+    if (pid === 'root' || pid === '0') {
+      regData.pid = '0';
+      regData.path = '0';
+    } else {
+      pReg = await this.adapterService.get(pid);
+
+      if (!pReg) {
+        throw new errors.BadRequest(`未找到对应父节点 ${pid}`);
+      }
     
-    regData.path = `${pReg.path}.${pReg.id}`;
+      regData.path = `${pReg.path}.${pReg.id}`;
+    }
 
     if (!data.sn || isNaN(data.sn) || data.sn === '0') {
       regData.sn = 1000;
@@ -56,11 +67,15 @@ class Service extends ApiService {
       regData.sn = parseInt(data.sn);
     }
 
+    // 创建关联topic id
+
+
     if (pReg && pReg.leaf) {
       await this.adapterService.patch(pid, { leaf: false });
     }
 
     let result = await this.adapterService.create(regData);
+
     return result;
   }
 

@@ -12,7 +12,7 @@
       <span class="node-cell-tail fr">
         <div class="node-cell-actions">
           <ButtonGroup v-if="isLock && locked" class="padding-sm">
-            <Button size="small" type="text" ghost @click="onLock(false)">
+            <Button size="small" type="text" @click="onLock(false)">
               <Icon type="md-unlock" />
             </Button>
           </ButtonGroup>
@@ -20,16 +20,16 @@
             <!-- <Button size="small" type="text" @click="onReload">
               <Icon type="md-refresh" />
             </Button> -->
-            <Button v-if="isAllowed('c')" size="small" type="text" ghost @click="onAdd">
+            <Button v-if="isAllowed('c')" size="small" type="text" @click="onAdd">
               <Icon type="md-add" />
             </Button>
-            <Button v-if="isAllowed('w')" size="small" type="text" ghost @click="onEdit">
+            <Button v-if="isAllowed('w')" size="small" type="text" @click="onEdit">
               <Icon type="md-create" />
             </Button>
-            <Button v-if="isAllowed('d')" size="small" type="text" ghost @click="onRemove">
+            <Button v-if="isAllowed('d')" size="small" type="text" @click="onRemove">
               <Icon type="md-trash" />
             </Button>
-            <Button v-if="isLock" size="small" type="text" ghost @click="onLock()">
+            <Button v-if="isLock" size="small" type="text" @click="onLock()">
               <Icon type="md-lock" />
             </Button>
           </ButtonGroup>
@@ -171,7 +171,7 @@ export default {
 <style lang="less" scoped>
 .cat-cell {
   display: inline-block;
-  width: 100%;
+  width: calc(100% - 10px);
   min-width: 200px;
 }
 
@@ -197,12 +197,10 @@ export default {
 
   &:hover {
     color: lighten(@primary, 10%);
-    background: lighten(@layout-sider-background, 5%);
   }
 
   &.selected {
     color: @primary;
-    background: lighten(@layout-sider-background, 10%);
   }
 }
 </style>

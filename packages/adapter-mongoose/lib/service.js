@@ -143,9 +143,10 @@ class Service extends AdapterService {
 
     return modelQuery.session(params.mongoose && params.mongoose.session)
       .lean(this.lean).exec().then(data => {
-        if (!data) {
-          throw new errors.NotFound(`No record found for id '${id}'`);
-        }
+        // NOTICE: 无查询数据，不报错
+        // if (!data) {
+        //   throw new errors.NotFound(`No record found for id '${id}'`);
+        // }
 
         return data;
       }).catch(errorHandler);

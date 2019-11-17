@@ -49,7 +49,7 @@ export default {
 
   computed: {
     admLogo () {
-      return this.$zeros.zerosBasic('logo')
+      return this.$app.zerosBasic('logo')
     },
 
     displayTitle () {
@@ -72,7 +72,7 @@ export default {
     },
 
     topRoute () {
-      return this.$zeros.topRoute()
+      return this.$app.topRoute()
     },
 
     subVisibleRoutes () {

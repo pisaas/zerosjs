@@ -78,15 +78,15 @@ export default {
 
   computed: {
     title () {
-      return this.$zeros.zerosBasic('name')
+      return this.$app.zerosBasic('name')
     },
     
     logoUrl () {
-      return this.$zeros.zerosBasic('logo')
+      return this.$app.zerosBasic('logo')
     },
 
     loginBg () {
-      return this.$zeros.zerosBasic('loginBg')
+      return this.$app.zerosBasic('loginBg')
     }
   },
 
@@ -112,7 +112,7 @@ export default {
 
     login () {
       this.$store.dispatch('zeros/login', this.form).then((res) => {
-        this.$zeros.goHome()
+        this.$router.goHome()
       }).catch((err) => {
         let errorMsg = this.$uni.getReqErrorMessage(err) || '未知登陆错误'
         this.loginError = errorMsg

@@ -61,11 +61,11 @@
           return
         }
         
-        this.$zeros.loadApp(data.id)
+        this.$app.loadApp(data.id)
       },
 
       onEditSubmit () {
-        this.$zeros.toast('保存成功！', { type: 'success' })
+        this.$app.toast('保存成功！', { type: 'success' })
 
         this.$refs.editorModal.close()
         this.loadData()
@@ -76,7 +76,7 @@
           return
         }
 
-        this.$zeros.confirm({
+        this.$app.confirm({
           title: '删除应用',
           content: '<p>应用删除后将无法恢复。确认删除？</p>',
           onOk: () => {
@@ -97,7 +97,7 @@
 
       removeItem (id) {
         return this.$service('apps').remove(id).then(() => {
-          this.$zeros.toast('应用已删除！', { type: 'success' })
+          this.$app.toast('应用已删除！', { type: 'success' })
 
           this.loadData()
         })

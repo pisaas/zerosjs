@@ -4,8 +4,8 @@ import uni, { showToast, AppIdKey, TokenKey } from '@/utils/uni'
 
 import { apiDomain } from '../env'
 
-// const clientType = 'rest'
-const clientType = 'io'
+const clientType = 'rest'
+// const clientType = 'io'
 let apiBaseUrl = 'api'
 
 const client = zeros()

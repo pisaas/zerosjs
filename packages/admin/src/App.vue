@@ -26,7 +26,7 @@ export default {
   methods: {
     setTitle (title) {
       // if (!title) {
-      //   title = this.$zeros.zerosBasic('name')
+      //   title = this.$app.zerosBasic('name')
       // }
       // document.title = title
     }

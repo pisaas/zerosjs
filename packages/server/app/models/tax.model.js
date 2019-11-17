@@ -18,7 +18,6 @@ module.exports = function () {
   
       data: { type: 'json' },
       frzn: { type: 'boolean' },
-  
     }
   };
 };

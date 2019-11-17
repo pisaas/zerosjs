@@ -102,6 +102,23 @@ export default function () {
     return topRoute
   }
 
+  router.goHome = () => {
+    return router.tryPush('/home')
+  }
+
+  router.goLogin = () => {
+    return router.tryPush('/login')
+  }
+
+  /**
+   * 跳转错误页面
+   * @return {[type]} [description]
+   */
+  router.goError = (code) => {
+    code = code || '404'
+    return router.tryPush(`/${code}`)
+  }
+
   /**
    * topRoute - 获取当前顶级菜单
    *

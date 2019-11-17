@@ -100,7 +100,7 @@ export default {
         return
       }
 
-      this.$zeros.confirm({
+      this.$app.confirm({
         title: '移除用户',
         content: '<p>确认从管理员列表中移除当前用户？</p>',
         onOk: () => {
@@ -126,7 +126,7 @@ export default {
         roles: data.roles,
         remark: data.remark
       }).then((res) => {
-        this.$zeros.toast('添加管理员成功！', {
+        this.$app.toast('添加管理员成功！', {
           type: 'success'
         })
 
@@ -143,7 +143,7 @@ export default {
       }
 
       return this.$apis.adm.transStaffs('revoke', ucodes).then((res) => {
-        this.$zeros.toast('移除管理员成功！', {
+        this.$app.toast('移除管理员成功！', {
           type: 'success'
         })
 
