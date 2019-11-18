@@ -62,10 +62,10 @@ export default {
         if (this.editMode === 'create') {
           this.$emit('on-create', res)
 
-          this.update(res.id, () => {
-            this.tabName = 'data'
-            this.$refs.viewer.setCatDataType('data0')
-          })
+          // this.update(res.id, () => {
+          //   this.tabName = 'data'
+          //   this.$refs.viewer.setCatDataType('data0')
+          // })
         } else {
           let eventName = `on-${this.editMode}`
           this.$emit(eventName, res)

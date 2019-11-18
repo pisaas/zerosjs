@@ -110,6 +110,8 @@ export default {
     },
 
     onEditorCreate (res) {
+      this.$refs.editorModal.close()
+      
       if (!res || !res.pid) {
         return
       }

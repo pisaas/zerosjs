@@ -23,7 +23,7 @@
       </ListItem>
       
       <div class="list-footer" slot="footer">
-        <Button type="info" long ghost @click="onAdd">新增分类</Button>
+        <Button type="primary" long ghost @click="onAdd">新增分类</Button>
       </div>
     </List>
   </i-col>
@@ -203,7 +203,6 @@ export default {
 
   &-list {
     height: 100%;
-    padding: 5px;
     border-radius: 5px;
     background: white;
 
@@ -250,6 +249,8 @@ export default {
     .list-header {
       font-weight: bold;
       padding: 0 10px;
+      color: @primary;
+      text-align: center;
     }
 
     .list-footer {
