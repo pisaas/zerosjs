@@ -11,9 +11,14 @@
         <div class="list-item-content fw">{{ it.name }}</div>
         <div slot="extra" class="list-item-extra">
           <Icon v-if="!isLastCol" class="item-arrow" type="ios-arrow-forward" size="16"></Icon>
-
-          <Icon class="item-action" type="ios-create" size="16" @click="onEdit(it)"></Icon>
-          <Icon class="item-action" type="ios-trash" size="16" @click="onRemove(it)"></Icon>
+          <template v-if="isLocked(it)">
+            <Icon class="item-action" type="md-unlock" size="16" @click="onLock(it, false)" />
+          </template>
+          <template v-else>
+            <Icon v-if="isAllowed(it, 'w')" class="item-action" type="ios-create" size="16" @click="onEdit(it)" />
+            <Icon v-if="isAllowed(it, 'd')" class="item-action" type="ios-trash" size="16" @click="onRemove(it)" />
+            <Icon v-if="isLock(it)" class="item-action" type="md-lock" size="16" @click="onLock(it)" />
+          </template>
         </div>
       </ListItem>
       
@@ -101,6 +106,13 @@ export default {
       return this.selColItem.id
     },
 
+    isAllowedAdd () {
+      if (this.pid === '0') {
+        return true
+      }
+      return this.isAllowed(this.parentItem, 'c')
+    },
+
     isLastCol () {
       let colLevel = this.colLevel
       if (!colLevel) {
@@ -128,6 +140,57 @@ export default {
 
     onRemove (item) {
       this.$emit('remove', item)
+    },
+
+    onLock (item, flag) {
+      if (!item) {
+        return
+      }
+
+      flag = (flag !== false)
+      this.$set(item, 'locked', flag)
+    },
+
+    isAllowed (item, op) {
+      if (!item || !op) {
+        return false
+      }
+
+      let ctrls = item.ctrls || {}
+      let modes = item.modes || []
+
+      // if (op === 'w' && !item.locked && !ctrls.locked) {
+      //   return true
+      // }
+
+      let flag = modes.includes(op)
+
+      if (!flag) {
+        return false
+      }
+
+      if (op === 'd') {
+        flag = (item.leaf === true)
+      }
+      
+      return flag
+    },
+
+    isLock (item) {
+      if (!item) {
+        return false
+      }
+      let ctrls = item.ctrls || {}
+      let modes = item.modes || []
+      return (ctrls.locked === true || modes.includes('l'))
+    },
+
+    isLocked (item) {
+      if (!item) {
+        return false
+      }
+
+      return this.isLock(item) && item.locked !== false
     }
   }
 }

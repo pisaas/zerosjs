@@ -19,7 +19,8 @@
     </Row>
     <FormItem label="权限" prop="modes">
       <CheckboxGroup v-model="formModel.modes">
-        <Checkbox v-for="(lbl, key) in Permissions" :label="key" :key="key">{{ lbl }}</Checkbox>
+        <Checkbox v-for="(lbl, key) in Permissions" :label="key" :key="key"
+          :disabled="key==='w'">{{ lbl }}</Checkbox>
       </CheckboxGroup>
     </FormItem>
     <FormItem label="描述" prop="desc">
@@ -33,7 +34,7 @@
 const Permissions = {
   'w': '可编辑',
   'd': '可删除',
-  'c': '叶节点',
+  'c': '可创建节点', // 是否可创建子节点
   'l': '可锁定'
 }
 
