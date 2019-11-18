@@ -5,5 +5,5 @@
 export default {
   basic: {},
 
-  topicCats: {}
+  catList: {} // 分类列表
 }

@@ -112,6 +112,16 @@ function initialize (zeros, Vue) {
   }
 
   function alert (opts) {
+    if (typeof opts === 'string') {
+      opts = {
+        title: opts
+      }
+    }
+
+    opts = Object.assign({
+      type: 'info'
+    }, opts)
+
     uni.showModal(opts)
   }
 

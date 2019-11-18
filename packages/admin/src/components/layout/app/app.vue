@@ -169,7 +169,7 @@ export default {
 }
 
 .layout-content {
-  height: 100%;
+  height: calc(100vh - 50px);
   min-width: 600px;
 
   .content-container {

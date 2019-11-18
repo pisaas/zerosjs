@@ -1,9 +1,7 @@
 <template>
   <div class="cat-tree">
     <div class="tree__hd">
-      <div class="title">
-        话题分类
-      </div>
+      <div class="title">分类</div>
       <div>
         <Button size="small" icon="md-add" type="primary" @click="onAdd('root')">新建</Button>
       </div>

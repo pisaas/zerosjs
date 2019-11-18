@@ -1,5 +1,5 @@
 <template>
-  <div class="page no-padding">
+  <page class="page-cats" full-height>
     <Split v-model="splitRate" min="200px">
       <div slot="left" class="page-left">
         <cat-tree @on-node-select="onNodeSelect" @on-node-change="onNodeChange" />
@@ -30,7 +30,7 @@
         点击节点编辑注册值
       </div>
     </Split>
-  </div>
+  </page>
 </template>
 
 <script>
@@ -112,11 +112,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.page-cats {
-  height: 100%;
-  padding: 0;
-}
-
 .page-left {
   height: 100%;
   overflow: scroll;
@@ -143,5 +138,13 @@ export default {
   padding: 10px;
   height: calc(100% - 50px);
   overflow: scroll;
+}
+</style>
+
+<style lang="less">
+.page {
+  &.page-cats .page__bd {
+    padding: 0 0 0 5px;
+  }
 }
 </style>

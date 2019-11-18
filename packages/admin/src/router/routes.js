@@ -69,9 +69,13 @@ const routes = [
         redirect: '/act/t/categories',
         meta: { title: '话题', icon: 'ios-book' },
         children: [
-          { path: 'categories', name: 'app:act:topic:cat',
-            component: load('activities/categories'),
-            meta: { title: '分类' },
+          { path: 'list', name: 'app:act:topic:list',
+            component: load('activities/topics/views/list'),
+            meta: { title: '话题列表' },
+          },
+          { path: 'categories', name: 'app:act:topic:cats',
+            component: load('activities/topics/views/cats'),
+            meta: { title: '话题分类' },
           }
         ]
       }
@@ -145,6 +149,9 @@ const routes = [
         redirect: '/settings/sys/logs',
         meta: { title: '系统设置', icon: 'md-code-working' },
         children: [
+          { path: 'cats', name: 'app:set:sys:cats', component: load('settings/categories'),
+            meta: { title: '信息分类' },
+          },
           { path: 'logs', name: 'app:set:sys:logs', component: load('settings/logs'),
             meta: { title: '系统日志' }
           },
