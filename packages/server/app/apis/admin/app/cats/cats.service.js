@@ -22,7 +22,7 @@ class Service extends ApiService {
     let { query, user, app } = params;
 
     params.query = Object.assign({
-      pid: '0',
+      $limit: 50,
       $sort: { sn: 1, id: 1 }
     }, query, {
       uid: user.id,

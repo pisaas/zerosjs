@@ -159,9 +159,9 @@ export default {
       let ctrls = item.ctrls || {}
       let modes = item.modes || []
 
-      // if (op === 'w' && !item.locked && !ctrls.locked) {
-      //   return true
-      // }
+      if (op === 'w' && !item.locked && !ctrls.locked) {
+        return true
+      }
 
       let flag = modes.includes(op)
 

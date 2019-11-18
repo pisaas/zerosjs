@@ -114,7 +114,7 @@ export default {
         return
       }
       
-      this.loadItems(res.pid)
+      this.loadItems(res.pid, [ res.pid ])
     },
 
     onEditorUpdate (res) {
@@ -157,6 +157,10 @@ export default {
     },
 
     getItemById (id) {
+      if (!id) {
+        return null
+      }
+
       let items = this.catItems || []
 
       let item = items.find((it) => {
@@ -176,8 +180,8 @@ export default {
       return items
     },
 
-    async loadItems (pid) {
-      await this.$store.dispatch('tpc/loadCats', { pid })
+    async loadItems (pid, ids) {
+      await this.$store.dispatch('tpc/loadCats', { pid, ids })
     }
   }
 }

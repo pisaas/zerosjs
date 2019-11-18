@@ -1,24 +1,37 @@
-import uni from '@/utils/uni'
 import apis from '@/apis'
+import { getItemFromList } from '../../util'
 
 export async function loadCats ({ commit, state }, payload) {
-  let { pid } = payload
+  let { pid, ids } = payload
 
-  if (!pid) {
+  if (!pid && (!ids || !ids.length)) {
     return
   }
 
   let catService = apis.service('cats')
 
+  let $or = []
+
+  if (pid) {
+    $or.push({ pid })
+  }
+
+  if (ids && ids.length) {
+    $or.push({ id: { $in: ids } })
+  }
+
+  let query = {
+    taxid: 'topic'
+  }
+
+  if ($or.length === 1) {
+    query = Object.assign(query, $or[0])
+  } else {
+    query.$or = $or
+  }
+
   // 最多只获取50条记录
-  let catRes = await catService.find({
-    query: {
-      taxid: 'topic',
-      pid,
-      $limit: 50,
-      $sort: { sn: 1, id: 1 }
-    }
-  })
+  let catRes = await catService.find({ query })
 
   let items = catRes.data.map((it) => {
     it.level = (it.path.split('.').length - 1)
@@ -28,10 +41,17 @@ export async function loadCats ({ commit, state }, payload) {
   commit('setCatList', { items })
 }
 
-export async function removeCat ({ commit, state }, payload) {
+export async function removeCat (context, payload) {
   let { id } = payload
 
   if (!id) {
+    return
+  }
+
+  let catList = context.state.catList
+  let item = getItemFromList(catList, id)
+
+  if (!item) {
     return
   }
 
@@ -39,5 +59,8 @@ export async function removeCat ({ commit, state }, payload) {
 
   await catService.remove(id)
 
-  commit('removeCat', { id })
+  context.commit('removeCat', { id })
+
+  await loadCats.call(this, context, { pid: item.pid, ids: [ item.pid ] })
 }
+
