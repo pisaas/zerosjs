@@ -96,7 +96,7 @@ export default {
       let subItems = this.getSubItems(item.id)
 
       if (subItems && subItems.length) {
-        this.$app.toast('当前节点存在子节点，请删除所有子节点再进行删除。')
+        this.$app.alert('当前节点存在子节点，请删除所有子节点再进行删除。')
         return
       }
 
@@ -110,8 +110,6 @@ export default {
     },
 
     onEditorCreate (res) {
-      this.$refs.editorModal.close()
-
       if (!res || !res.pid) {
         return
       }

@@ -1,18 +1,29 @@
 <template>
   <Modal ref="editorModal" v-model="showModal"
-    class="cat-editor-modal"
-    :title="modalTitle" :width="modalWidth" :loading="loading"
+    class="cat-editor-modal" :title="modalTitle" 
+    :width="modalWidth" :loading="loading"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
-    <cat-editor ref="editor"></cat-editor>
+    <cat-editor v-if="editMode === 'create'" ref="editor"></cat-editor>
+    <Tabs v-else ref="tabs" size="small" v-model="tabName">
+      <TabPane name="basic" label="基本信息">
+        <cat-editor ref="editor" @load="onEditorLoad"></cat-editor>
+      </TabPane>
+
+      <TabPane v-if="formModel" name="data" label="数据">
+        <data-viewer ref="viewer" :cat="formModel" />
+      </TabPane>
+    </Tabs>
   </Modal>
 </template>
 
 <script>
 import CatEditor from './editor'
+import DataViewer from './data-viewer'
 
 export default {
   components: {
-    CatEditor
+    CatEditor,
+    DataViewer
   },
 
   data () {
@@ -20,7 +31,9 @@ export default {
       catId: null,
       editMode: 'create',
       showModal: false,
-      loading: true
+      loading: true,
+      tabName: 'basic',
+      formModel: null
     }
   },
 
@@ -46,6 +59,13 @@ export default {
           return
         }
 
+        if (this.editMode === 'create') {
+          this.update(res.id, () => {
+            this.tabName = 'data'
+            this.$refs.viewer.setCatDataType('data0')
+          })
+        }
+
         let eventName = `on-${this.editMode}`
 
         this.$emit(eventName, res)
@@ -58,36 +78,67 @@ export default {
     onVisibleChange (visible) {
       if (!visible) {
         this.onClose()
+      } else {
+        if (this.$refs.tabs) {
+          this.$refs.tabs.updateBar()
+        }
       }
     },
 
     onClose () {
       let data = this.$refs.editor.formModel
 
-      this.$refs.editor.reset()
+      this.reset()
       this.$emit('on-close', data)
+    },
+
+    onEditorLoad (formModel) {
+      if (!formModel) {
+        return
+      }
+
+      this.formModel = formModel
     },
 
     create (id) {
       this.pid = id
       this.editMode = 'create'
-      this.$refs.editor.create(id).then(() => {
-        this.showModal = true
+
+      this.$nextTick(() => {
+        this.$refs.editor.create(id).then(() => {
+          this.showModal = true
+        })
       })
     },
 
-    update (id) {
+    update (id, cb) {
       this.editMode = 'update'
-      this.$refs.editor.update(id).then((res) => {
-        this.catId = res.id
-        this.showModal = true
-      }).catch(() => {
-        this.close()
+
+      this.$nextTick(() => {
+        this.$refs.editor.update(id).then((res) => {
+          this.catId = res.id
+          this.showModal = true
+
+          if (cb) {
+            this.$nextTick(cb)
+          }
+        }).catch(() => {
+          this.close()
+        })
       })
     },
 
     close () {
       this.showModal = false
+    },
+
+    reset () {
+      this.tabName = 'basic'
+      this.formModel = null
+
+      if (this.$refs.editor) {
+        this.$refs.editor.reset()
+      }
     },
 
     resetLoading () {
@@ -96,6 +147,9 @@ export default {
       this.$nextTick(() => {
         this.loading = true
       })
+    },
+
+    loadData () {
     }
   },
 

@@ -114,7 +114,8 @@ function initialize (zeros, Vue) {
   function alert (opts) {
     if (typeof opts === 'string') {
       opts = {
-        title: opts
+        title: '提示',
+        content: opts
       }
     }
 

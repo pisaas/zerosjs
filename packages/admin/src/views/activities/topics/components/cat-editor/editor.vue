@@ -24,7 +24,7 @@
     </FormItem>
     <FormItem label="描述" prop="desc">
       <Input v-model="formModel.desc" type="textarea" :maxlength="200"
-        :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入描述 (200字以内)" />
+        :autosize="{minRows: 5, maxRows: 10}" placeholder="请输入描述 (200字以内)" />
     </FormItem>
   </Form>
 </template>
@@ -143,6 +143,9 @@ export default {
       return this.$service('cats').get(this.catId).then((res) => {
         let formModel = res
         this.formModel = formModel
+
+        this.$emit('load', this.formModel)
+        
         return formModel
       })
     }
