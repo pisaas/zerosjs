@@ -161,7 +161,10 @@ export default {
     async loadRoot () {
       let catService = this.$service('cats')
 
-      let catData = await catService.find()
+      let catData = await catService.find({
+        query: { pid: '0' }
+      })
+
       let items = this.toTreeItems(catData)
 
       this.treeItems = items

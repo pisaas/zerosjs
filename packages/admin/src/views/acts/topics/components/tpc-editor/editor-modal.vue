@@ -1,38 +1,26 @@
 <template>
   <Modal ref="editorModal" v-model="showModal"
-    class="cat-editor-modal" :title="modalTitle" 
+    class="tpc-editor-modal" :title="modalTitle" 
     :width="modalWidth" :loading="loading"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
-    <cat-editor v-if="editMode === 'create'" ref="editor"></cat-editor>
-    <Tabs v-else ref="tabs" size="small" v-model="tabName">
-      <TabPane name="basic" label="基本信息">
-        <cat-editor ref="editor" @load="onEditorLoad"></cat-editor>
-      </TabPane>
-
-      <TabPane v-if="formModel" name="data" label="数据">
-        <data-viewer ref="viewer" :cat="formModel" />
-      </TabPane>
-    </Tabs>
+    <tpc-editor v-if="editMode === 'create'" ref="editor"></tpc-editor>
   </Modal>
 </template>
 
 <script>
-import CatEditor from './editor'
-import DataViewer from './data-viewer'
+import TpcEditor from './editor'
 
 export default {
   components: {
-    CatEditor,
-    DataViewer
+    TpcEditor
   },
 
   data () {
     return {
-      catId: null,
+      tpcId: null,
       editMode: 'create',
       showModal: false,
       loading: true,
-      tabName: 'basic',
       formModel: null
     }
   },
@@ -40,9 +28,9 @@ export default {
   computed: {
     modalTitle () {
       if (this.editMode === 'update') {
-        return `编辑分类 (${this.catId || ''})`
+        return `编辑活动 (${this.tpcId || ''})`
       }
-      return '新建分类'
+      return '新建活动'
     },
 
     modalWidth () {
@@ -61,11 +49,6 @@ export default {
 
         if (this.editMode === 'create') {
           this.$emit('on-create', res)
-
-          // this.update(res.id, () => {
-          //   this.tabName = 'data'
-          //   this.$refs.viewer.setCatDataType('data0')
-          // })
         } else {
           let eventName = `on-${this.editMode}`
           this.$emit(eventName, res)
@@ -80,10 +63,6 @@ export default {
     onVisibleChange (visible) {
       if (!visible) {
         this.onClose()
-      } else {
-        if (this.$refs.tabs) {
-          this.$refs.tabs.updateBar()
-        }
       }
     },
 
@@ -102,12 +81,11 @@ export default {
       this.formModel = formModel
     },
 
-    create (id) {
-      this.pid = id
+    create (catId) {
       this.editMode = 'create'
 
       this.$nextTick(() => {
-        this.$refs.editor.create(id).then(() => {
+        this.$refs.editor.create(catId).then(() => {
           this.showModal = true
         })
       })
@@ -118,7 +96,7 @@ export default {
 
       this.$nextTick(() => {
         this.$refs.editor.update(id).then((res) => {
-          this.catId = res.id
+          this.tpcId = res.id
           this.showModal = true
 
           if (cb) {
@@ -135,7 +113,6 @@ export default {
     },
 
     reset () {
-      this.tabName = 'basic'
       this.formModel = null
 
       if (this.$refs.editor) {

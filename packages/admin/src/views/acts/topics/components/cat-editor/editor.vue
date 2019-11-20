@@ -50,8 +50,8 @@ export default {
       catId: null,
       formModel: {},
       formRules: {
-        name: [ { required: true, message: '请输入组织名', trigger: 'blur' } ],
-        code: [ { required: true, message: '请输入组织编号', trigger: 'blur' } ]
+        name: [ { required: true, message: '请输入类型名', trigger: 'blur' } ],
+        code: [ { required: true, message: '请输入类型编号', trigger: 'blur' } ]
       }
     }
   },
@@ -80,6 +80,7 @@ export default {
     },
 
     reset () {
+      this.pid = null
       this.catId = null
       this.formModel = {
         sn: 1000,

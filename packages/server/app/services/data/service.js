@@ -6,10 +6,8 @@ exports.EntityService = class EntityService extends Service {
     const paginate = app.get('paginate');
 
     if (typeof options === 'string') {
-      let modelName = options;
-
       options = {
-        Model: app.plugins.orm.models[modelName]
+        modelName: options
       };
     }
 
@@ -19,6 +17,10 @@ exports.EntityService = class EntityService extends Service {
       lean: false,
       paginate
     }, options);
+
+    if (!options.Model && options.modelName) {
+      options.Model = app.plugins.orm.models[options.modelName];
+    }
 
     super(options, app);
 

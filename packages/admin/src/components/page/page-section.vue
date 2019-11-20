@@ -93,6 +93,7 @@ export default {
   }
 
   &-body {
+    overflow: scroll;
   }
 }
 </style>

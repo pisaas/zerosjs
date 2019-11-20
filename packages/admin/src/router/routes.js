@@ -66,15 +66,15 @@ const routes = [
     meta: { title: '活动', icon: 'md-bonfire' },
     children: [
       { path: 't', name: 'app:act:topic', component: Parent,
-        redirect: '/act/t/categories',
+        redirect: '/act/t/list',
         meta: { title: '话题', icon: 'ios-book' },
         children: [
           { path: 'list', name: 'app:act:topic:list',
-            component: load('activities/topics/views/list'),
+            component: load('acts/topics/views/list'),
             meta: { title: '话题列表' },
           },
           { path: 'categories', name: 'app:act:topic:cats',
-            component: load('activities/topics/views/cats'),
+            component: load('acts/topics/views/cats'),
             meta: { title: '话题分类' },
           }
         ]

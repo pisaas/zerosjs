@@ -1,4 +1,4 @@
-import lodash  from 'lodash'
+import _ from 'lodash'
 
 import str     from '@/utils/str'
 import timeago from '@/utils/timeago'
@@ -14,7 +14,7 @@ import apis from '@/apis'
 
 export default ({ zeros, Vue }) => {
   Vue.prototype.$env = env
-  Vue.prototype.$util = { lodash, str, timeago, date, format, regexr }
+  Vue.prototype.$util = { _, str, timeago, date, format, regexr }
   Vue.prototype.$errors = errors
   Vue.prototype.$storage = storage
   Vue.prototype.$uni = uni

@@ -1,6 +1,36 @@
 import apis from '@/apis'
 import { getItemFromList } from '../../util'
 
+export async function loadAllCats ({ commit, state }, payload) {
+  let { force } = payload
+
+  let catList = state.catList
+
+  if (!force && catList && catList.all === true) {
+    return catList
+  }
+
+  let catService = apis.service('cats')
+
+  let catRes = await catService.find({
+    query: {
+      taxid: 'topic',
+      $limit: 1000
+    }
+  })
+
+  let items = catRes.data.map((it) => {
+    it.level = (it.path.split('.').length - 1)
+    return it
+  })
+
+  if (items && items.length) {
+    commit('setAllCatList', { items })
+  }
+
+  return state.catList
+}
+
 export async function loadCats ({ commit, state }, payload) {
   let { pid, ids } = payload
 

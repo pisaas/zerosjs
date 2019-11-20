@@ -1,7 +1,13 @@
 const { EntityService } = require('../service');
 
 module.exports = function (app) {
-  new Cats('cat', app).register('cats', {
+  new Cats({
+    modelName: 'cat',
+    paginate: {
+      default: 20,
+      max: 1000
+    }
+  }, app).register('cats', {
     autoOwner: true,
     fuzzySearchFields: [ 'code', 'name', 'desc' ]
   });

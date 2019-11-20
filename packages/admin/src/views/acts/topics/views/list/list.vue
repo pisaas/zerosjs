@@ -3,12 +3,14 @@
     <page-section title="Title">
       <div slot="header">
         <div class="cat-select">
-          <treeselect :options="catOptions" :load-options="loadCatOptions"
-            placeholder="请选择话题分类" />
+          <Cascader v-model="selCat" :data="catOptions" filterable trigger="hover"
+            placeholder="请选择话题分类"
+            @on-change="onCatChange"></Cascader>
         </div>
       </div>
       
       <div slot="extra">
+        <Button type="primary" icon="md-add" @click="onAdd">新增话题</Button>
       </div>
 
       <Table ref="pgTable" border size="small" :columns="tableColumns" :data="tableItems">
@@ -43,26 +45,33 @@
       <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
         show-total @on-change="onPageChange"></Page>
     </page-section>
+
+    <tpc-editor-modal ref="editorModal" @on-create="onEditorCreate" @on-update="onEditorUpdate" />
   </page>
 </template>
 
 <script>
+import { TpcEditorModal } from '../../components/tpc-editor'
+
 export default {
+  components: {
+    TpcEditorModal
+  },
+
   props: {
   },
 
   data () {
     return {
-      currentCat: null,
+      selCat: [],
       catOptions: [],
 
       tableColumns: [
-        { title: '操作', slot: 'ops', width: 100, align: 'center' },
-        { title: '头像', slot: 'avatar', width: 100, align: 'center' },
-        { title: '基本信息', slot: 'basic', minWidth: 200 },
-        { title: '角色信息', slot: 'roles', minWidth: 180 },
-        { title: '联系信息', slot: 'contact', minWidth: 200 },
-        { title: '更新时间', slot: 'timestamp', width: 170 }
+        { title: '话题', slot: 'topic', minWidth: 200 },
+        { title: '回复', key: 'replies', width: 100, align: 'center' },
+        { title: '浏览', key: 'views', width: 100, align: 'center' },
+        { title: '活跃', slot: 'timestamp', width: 100, align: 'center' },
+        { title: '操作', slot: 'ops', width: 150, align: 'center' },
       ],
       tableItems: [],
       tableTotal: 0,
@@ -86,37 +95,34 @@ export default {
   },
 
   methods: {
-    onCatChange () {
+    onAdd () {
+      let selCat = this.selCat
+      let catId = null
+
+      this.$refs.editorModal.create(catId)
+    },
+
+    onEditorCreate () {
+
+    },
+
+    onEditorUpdate () {
+
+    },
+
+    onCatChange (val, data) {
+      
     },
 
     onPageChange () {
     },
 
-    loadCatOptions (item, callback) {
-      this.catOptions = [
-        { id: 'beijing', label: '北京',
-          children: [
-            { id: 'gugong', label: '故宫' },
-            { id: 'tiantan', label: '天坛' },
-            { id: 'wangfujing', label: '王府井' }
-          ]
-        }, {
-          id: 'jiangsu', label: '江苏',
-          children: [
-            { id: 'nanjing', label: '南京',
-              children: [
-                { id: 'fuzimiao', label: '夫子庙', }
-              ]
-            },
-            { id: 'suzhou', label: '苏州',
-              children: [
-                { id: 'zhuozhengyuan', label: '拙政园', },
-                { id: 'shizilin', label: '狮子林', }
-              ]
-            }
-          ],
-        }
-      ]
+    async loadCatOptions (item, callback) {
+      await this.$store.dispatch('tpc/loadAllCats', {
+        force: true
+      })
+
+      this.catOptions = this.$store.getters['tpc/catTree']
     }
   }
 }
@@ -124,6 +130,6 @@ export default {
 
 <style lang="less" scoped>
 .cat-select {
-  width: 240px;
+  width: 200px;
 }
 </style>

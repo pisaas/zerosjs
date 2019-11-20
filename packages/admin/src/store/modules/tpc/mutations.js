@@ -1,5 +1,13 @@
 import { addItemsToList, removeItemFromList } from '../../util'
 
+export function setAllCatList (state, payload) {
+  if (!payload) {
+    state.catList = {}
+  }
+
+  state.catList = { items: payload.items, all: true }
+}
+
 export function setCatList (state, payload) {
   if (!payload) {
     return

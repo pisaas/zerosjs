@@ -1,7 +1,4 @@
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-
 import ViewUI  from 'view-design'
-import Treeselect from '@riophae/vue-treeselect'
 
 import { Page, PageSection } from '../components/page'
 
@@ -11,8 +8,6 @@ export default ({ zeros, router, Vue }) => {
   Vue.use(ViewUI, {
     // i18n: (key, value) => i18n.t(key, value)
   })
-
-  Vue.component('treeselect', Treeselect)
 
   Vue.component(Page.name, Page)
   Vue.component(PageSection.name, PageSection)
