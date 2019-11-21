@@ -9,19 +9,16 @@ module.exports = function () {
       appid: { type: 'string', required: true, maxlength: 50 }, // 所属app id
       uid: { type: 'string', required: true, maxlength: 50 },  // 创建人id
       
-      code: { type: 'string', required: true, unique: true, maxlength: 50 },
-      name: { type: 'string', required: true, unique: true, maxlength: 100 },
+      catid: { type: 'string', required: true, maxlength: 50 }, // 所属分类 id
+      name: { type: 'string', required: true, unique: true, maxlength: 200 },
   
-      oid: { type: 'string', maxlength: 50 }, // 所属组织org id
-      ocode: { type: 'string', maxlength: 50 }, // 所属组织编号org code
-  
-      logo: { type: 'string', maxlength: 200 },
       desc: { type: 'string', maxlength: 500 },
       data: { type: 'json' },
+      cont: { type: 'text' },
       pubed: { type: 'boolean', default: false },
       frzn: { type: 'boolean', default: false },
     },
-
+    
     toJSON: {
       transform (doc, ret) {
         if (ret.logo) {

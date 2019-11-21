@@ -68,7 +68,9 @@ export default {
     },
 
     activeName () {
-      let routeName = this.$route.name
+      let route = this.$route
+      let routeName = route.name
+      let routeMeta = route.meta
 
       if (!routeName) {
         return null
@@ -76,7 +78,11 @@ export default {
 
       let activeName = routeName
 
-      let nameParts = routeName.split(':')
+      if (routeMeta && routeMeta.hideInMenu && routeMeta.belongTo) {
+        activeName = routeMeta.belongTo
+      }
+
+      let nameParts = activeName.split(':')
       if (nameParts.length >= 4) {
         activeName = nameParts.slice(0, 4).join(':')
       } else if (nameParts.length >= 3) {

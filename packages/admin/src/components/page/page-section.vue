@@ -1,5 +1,6 @@
 <template>
   <div class="page-section" :class="{
+    'border': border,
     'no-padding': noPadding,
     'no-padding-top': noPaddingTop
   }">
@@ -16,6 +17,10 @@
     <div v-if="showBody" class="page-section-body">
       <slot></slot>
     </div>
+
+    <div v-if="showFooter" class="page-section-footer">
+      <slot name="footer"></slot>
+    </div>
   </div>
 </template>
 
@@ -24,6 +29,7 @@ export default {
   name: 'page-section',
 
   props: {
+    border: Boolean,
     noPadding: Boolean,
     noPaddingTop: Boolean,
     title: String
@@ -36,6 +42,10 @@ export default {
 
     showHeader () {
       return this.$slots.header !== undefined
+    },
+
+    showFooter () {
+      return this.$slots.footer !== undefined
     },
 
     showTitle () {
@@ -67,7 +77,11 @@ export default {
 
 <style lang="less">
 .page-section {
-  padding: 10px;
+  padding: 10px 20px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 0 3px 0 @border-color;
+  margin-bottom: 10px;
 
   &.no-padding {
     padding: 0;
@@ -79,7 +93,7 @@ export default {
 
   &-head {
     display: flex;
-    padding: 16px 0;
+    padding: 10px 0;
 
     &>.header {
       flex: 1;
@@ -94,6 +108,23 @@ export default {
 
   &-body {
     overflow: scroll;
+    padding: 10px 0;
+  }
+
+  &-footer {
+    padding: 10px 0;
+  }
+
+  &.border {
+    .page-section {
+      &-head {
+        border-bottom: 1px solid @border-color;
+      }
+
+      &-footer {
+        border-top: 1px solid @border-color;
+      }
+    }
   }
 }
 </style>

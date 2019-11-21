@@ -67,7 +67,7 @@ class Service extends ApiService {
       regData.sn = parseInt(data.sn);
     }
 
-    // 创建关联topic id
+    // TODO: 创建关联topic id
 
 
     if (pReg && pReg.leaf) {

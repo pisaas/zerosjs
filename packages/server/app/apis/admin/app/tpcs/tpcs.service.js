@@ -1,9 +1,9 @@
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
-  new Service().register(app, 'topics', {
+  new Service().register(app, 'tpcs', {
     adapterService: {
-      path: 'data/topics'
+      path: 'data/tpcs'
     }
   });
 };
@@ -35,12 +35,24 @@ class Service extends ApiService {
   }
 
   async create (data, params) {
-    let { user } = params;
+    let { app, user } = params;
 
-    data.uid = user.id;
-    let app = await this.adapterService.create(data);
+    if (!data.catid) {
+      throw new zeros.$errors.BadRequest('请提供类型id');
+    }
 
-    return app;
+    let tpcData = Object.assign({
+      type: ''
+    }, data, {
+      uid: user.id,
+      appid: app.id
+    });
+
+    // TODO: 根据类别为topic设置附加属性
+    
+    let result = await this.adapterService.create(tpcData);
+
+    return result;
   }
 
   async patch (id, data, params) {

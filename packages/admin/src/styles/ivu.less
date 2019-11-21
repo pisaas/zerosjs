@@ -26,10 +26,39 @@
     }
   }
 
+  &-tabs {
+    &.no-content &-bar {
+      margin-bottom: 0;
+    }
+
+    &-nav &-tab-active {
+      font-weight: bold;
+    }
+  }
+
+  &-cascader {
+    &-label {
+      line-height: 27px;
+    }
+  }
+
   &-table {
     &-header {
       thead tr th {
         padding: 5px 0;
+      }
+    }
+  }
+
+  &-form {
+    &-item {
+      margin-bottom: 20px;
+
+      &-content {
+        .tip {
+          opacity: 0.8;
+          line-height: 20px;
+        }
       }
     }
   }

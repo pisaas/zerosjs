@@ -7,7 +7,30 @@ const CatLevels = [
 
 const MaxCatLevel = (CatLevels.length - 1)
 
+function newTopic (catid) {
+  this.$router.tryPush({
+    name: 'app:act:topic:new',
+    query: { catid }
+  })
+}
+
+function getTopicCat (catid) {
+  if (!catid) {
+    return null
+  }
+  
+  let catItems = this.$store.getters['tpc/catItems']
+
+  let catItem = catItems.find((it) => {
+    return it && it.id === catid
+  })
+
+  return catItem
+}
+
 export {
   MaxCatLevel,
-  CatLevels
+  CatLevels,
+  newTopic,
+  getTopicCat
 }

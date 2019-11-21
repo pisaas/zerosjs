@@ -1,5 +1,5 @@
 <template>
-  <page class="page-topic-cats" full-height no-border>
+  <page class="page-topic-cats" full-height>
     <Row v-if="catItems" class="cat-row">
       <cat-column :span="ColSpan"
         pid="0" :selItems="selItems"

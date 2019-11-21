@@ -60,7 +60,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.extended-menu {
-  height: 100%;
-}
 </style>

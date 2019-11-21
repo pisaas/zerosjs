@@ -8,7 +8,7 @@
         <div class="header-main flex-main">
           <RadioGroup v-model="catDataType">
             <Radio label="data"><span>已发布</span></Radio>
-            <Radio label="data0"><span>编辑中</span></Radio>
+            <Radio label="data0"><span>编辑</span></Radio>
           </RadioGroup>
         </div>
         <div class="header-tail">
@@ -61,18 +61,7 @@ export default {
 
   methods: {
     onDataSave () {
-      let data = this.$refs.dataEditor.getData()
-
-      if (!data) {
-        this.$app.toast('数据存在错误，请修正后再保存。')
-        return
-      }
-
-      this.saveCatData0().then((res) => {
-        this.$app.toast('保存成功！', {
-          type: 'success'
-        })
-      })
+      this.save()
     },
 
     onDataPub () {
@@ -113,6 +102,21 @@ export default {
       type = type || 'data'
       
       this.catDataType = type
+    },
+
+    async save () {
+      let data = this.$refs.dataEditor.getData()
+
+      if (!data) {
+        this.$app.toast('数据存在错误，请修正后再保存。')
+        return false
+      }
+
+      await this.saveCatData0()
+
+      this.$app.toast('保存成功！', {
+        type: 'success'
+      })
     },
 
     async pubCatData () {

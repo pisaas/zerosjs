@@ -28,9 +28,9 @@ export default {
   computed: {
     modalTitle () {
       if (this.editMode === 'update') {
-        return `编辑活动 (${this.tpcId || ''})`
+        return `编辑话题 (${this.tpcId || ''})`
       }
-      return '新建活动'
+      return '新建话题'
     },
 
     modalWidth () {

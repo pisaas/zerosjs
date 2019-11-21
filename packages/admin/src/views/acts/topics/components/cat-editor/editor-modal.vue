@@ -9,7 +9,7 @@
         <cat-editor ref="editor" @load="onEditorLoad"></cat-editor>
       </TabPane>
 
-      <TabPane v-if="formModel" name="data" label="数据">
+      <TabPane v-if="formModel" name="data" label="配置">
         <data-viewer ref="viewer" :cat="formModel" />
       </TabPane>
     </Tabs>
@@ -53,8 +53,14 @@ export default {
   methods: {
     onOk () {
       this.$refs.editor.save().then((res) => {
+        if (this.$refs.viewer) {
+          return this.$refs.viewer.save()
+        } else {
+          return res
+        }
+      }).then((res) => {
         this.resetLoading()
-        
+
         if (res === false) {
           return
         }

@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 
 const TypesMap = {
   'string': String,
+  'text': String,
   'number': Number,
   'date': Date,
   'array': Array,
@@ -122,6 +123,15 @@ function normalizeDefField (attribute) {
       let f = field[key];
       field[key] = normalizeDefField(f);
     });
+  }
+
+  // 设置默认最大字段长度
+  if (filedType === 'string' && !field.maxlength) {
+    if (attribute.type === 'text') {
+      field.maxlength = 10000;
+    } else {
+      field.maxlength = 2000;
+    }
   }
 
   return field;

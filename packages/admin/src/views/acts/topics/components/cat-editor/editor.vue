@@ -146,7 +146,7 @@ export default {
         let formModel = res
         this.formModel = formModel
 
-        this.$emit('load', this.formModel)
+        this.$emit('load', res)
         
         return formModel
       })
