@@ -2,7 +2,7 @@ const errors = require('@zerosjs/errors');
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
-  new RescService().register(app, 'rescs', {
+  new RescService().register('rescs', {
     adapterService: {
       path: 'sys/resc',
       methods: 'all'

@@ -22,8 +22,8 @@ exports.ApiService = class ApiService {
   _setup () {
   }
 
-  register (app, path, options) {
-    debug(`register api service "${path}"`, app, options);
+  register (path, options) {
+    debug(`register api service "${path}"`, options);
 
     let opts = Object.assign({
       basePath: this.basePath,
@@ -34,7 +34,7 @@ exports.ApiService = class ApiService {
     }, options);
 
     if (opts.adapterService) {
-      this._registerAdapterService(app, opts.adapterService);
+      this._registerAdapterService(opts.adapterService);
     }
 
     let authOptions = opts.authenticate;
@@ -45,17 +45,16 @@ exports.ApiService = class ApiService {
       opts.hooks = zeros.$service.prependHook(opts.hooks, 'before.all', authenticateHook(authOptions));
     }
 
-    let protoService = zeros.$service.register(app, path, this, opts);
+    let protoService = zeros.$service.register(path, this, opts);
 
     return protoService;
   }
 
   /**
    * 注册代理服务
-   * @param {Application} app 
    * @param {adapterServiceOptions} options 
    */
-  _registerAdapterService (app, options) {
+  _registerAdapterService (options) {
     let { path, methods } = options;
     this.options.adapterServicPath = path;
 

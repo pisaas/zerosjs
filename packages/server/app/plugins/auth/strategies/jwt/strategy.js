@@ -6,8 +6,9 @@ class JWTStrategy extends ZJWTStrategy {
    * @param id The id to use
    * @param params Service call parameters
    */
-  getEntity (id, params) {
-    return super.getEntity(id, params);
+  async getEntity (id, params) {
+    let entityObj = await super.getEntity(id, params);
+    return entityObj;
   }
 }
 

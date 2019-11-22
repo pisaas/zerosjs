@@ -3,7 +3,7 @@ const { fuzzySearch, preEntityCreate } = require('./hooks');
 
 exports.EntityService = class EntityService extends Service {
   constructor (options, app) {
-    const paginate = app.get('paginate');
+    const paginate = zeros.get('paginate');
 
     if (typeof options === 'string') {
       options = {
@@ -19,12 +19,10 @@ exports.EntityService = class EntityService extends Service {
     }, options);
 
     if (!options.Model && options.modelName) {
-      options.Model = app.plugins.orm.models[options.modelName];
+      options.Model = zeros.$datastore.model(options.modelName);
     }
 
     super(options, app);
-
-    this.app = app;
   }
 
   register (path, options) {
@@ -36,7 +34,7 @@ exports.EntityService = class EntityService extends Service {
     }, options);
 
     // 添加自动生成Id Hook
-    opts.hooks =zeros.$service.prependHook(opts.hooks, 'before.create', preEntityCreate(opts));
+    opts.hooks = zeros.$service.prependHook(opts.hooks, 'before.create', preEntityCreate(opts));
 
     // 添加模糊删除Hook
     let { fuzzySearchFields } = opts;
@@ -44,6 +42,6 @@ exports.EntityService = class EntityService extends Service {
       opts.hooks =zeros.$service.prependHook(opts.hooks, 'before.find', fuzzySearch({ fields: fuzzySearchFields }));
     }
 
-    return zeros.$service.register(this.app, path, this, opts);
+    return zeros.$service.register(path, this, opts);
   }
 };

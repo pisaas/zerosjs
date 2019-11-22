@@ -19,7 +19,7 @@ module.exports = function(zeros) {
 
     mongoose.Promise = global.Promise;
 
-    plugin.client = mongoose;
+    zeros.$datastore = plugin.datastore = mongoose;
 
     loadModels(plugin, cb);
   };

@@ -46,22 +46,45 @@ module.exports = function () {
         ts: { type: Date }
       },
   
-      referrer: { type: 'string', maxlength: 50 },  // 推荐人id
+      refid: { type: 'string', maxlength: 50 },  // 推荐人id
+      refname: { type: 'string', maxlength: 100 },  // 推荐人名称
+    },
+
+    virtuals: {
+      displayName (doc) {
+        return getUserDisplayName(doc);
+      }
+    },
+
+    getUserDisplayName,
+
+    toObject: {
+      transform (doc, ret) {
+        delete ret.password;
+        ret.displayName = doc.displayName;
+        return ret;
+      }
     },
 
     toJSON: {
       transform (doc, ret) {
-        ret.displayName = (
-          doc.nickname ||
-          doc.realname ||
-          doc.uname ||
-          doc.mobile ||
-          doc.email ||
-          doc.weixin
-        );
-        
+        ret.displayName = doc.displayName;
         return ret;
       }
     }
   };
 };
+
+function getUserDisplayName (doc) {
+  if (!doc) {
+    return null;
+  }
+
+  return doc.nickname ||
+    doc.realname ||
+    doc.uname ||
+    doc.mobile ||
+    doc.email ||
+    doc.weixin ||
+    doc.id;
+}

@@ -16,7 +16,7 @@ exports.retrieveHooks = (dirname, options) => {
   return hooks;
 };
 
-exports.configureDir = (app, dirname, options) => {
+exports.configureDir = (dirname, options) => {
   dirname = dirname || path.join(__dirname, '.');
 
   options = Object.assign({
@@ -28,12 +28,12 @@ exports.configureDir = (app, dirname, options) => {
   const modules = includeAll(options);
 
   for (let key in modules) {
-    app.configure(modules[key]);
+    zeros.configure(modules[key]);
   }
 };
 
 // 注册服务通用方法
-exports.register = (app, path, service, options) => {
+exports.register = (path, service, options) => {
   let opts = Object.assign({}, options);
 
   let { basePath, hooks } = opts;
@@ -43,7 +43,7 @@ exports.register = (app, path, service, options) => {
     servicePath = `${basePath}/${servicePath}`;
   }
 
-  app.use(servicePath, service);
+  zeros.use(servicePath, service);
 
   const protoService = zeros.service(servicePath);
 

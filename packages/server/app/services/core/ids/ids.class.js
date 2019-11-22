@@ -13,8 +13,6 @@ exports.Ids = class Ids extends CoreService {
   }
 
   _setup (app) {
-    this.app = app;
-
     if (!__flakeIdInstance) {
       initFlakeIdInstance(app);
     }

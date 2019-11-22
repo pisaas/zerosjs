@@ -2,7 +2,7 @@ const errors = require('@zerosjs/errors');
 const { ApiService } = require('../../../service');
 
 module.exports = function (app) {
-  new Service().register(app, 'api');
+  new Service().register('api');
 };
 
 class Service extends ApiService {

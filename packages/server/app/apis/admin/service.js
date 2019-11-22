@@ -10,12 +10,12 @@ exports.ApiService = class AdminApiService extends ApiService {
     });
   }
 
-  register (app, path, options) {
+  register (path, options) {
     let opts = Object.assign({ hooks: {} }, options);
 
     opts.hooks = zeros.$service.prependHook(opts.hooks, 'before.all', appLoad());
 
-    let protoService = super.register(app, path, opts);
+    let protoService = super.register(path, opts);
 
     return protoService;
   }

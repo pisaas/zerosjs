@@ -10,6 +10,7 @@ module.exports = function () {
       id: { type: 'string', required: true, unique: true, maxlength: 50 },
       appid: { type: 'string', required: true, maxlength: 50 }, // 所属app id
       uid: { type: 'string', required: true, maxlength: 50 },  // 所属成员, 一般为创建人id
+      uname: { type: 'string', maxlength: 100 },  // 创建人名称
       
       code: { type: 'string', required: true, unique: true, maxlength: 100 },
       name: { type: 'string', required: true, maxlength: 100 },

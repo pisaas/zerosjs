@@ -10,6 +10,7 @@ module.exports = function () {
     attributes: {
       id: { type: 'string', required: true, unique: true, maxlength: 50 },
       uid: { type: 'string', required: true, maxlength: 50 },  // 一般为创建人id
+      uname: { type: 'string', maxlength: 100 },  // 创建人名称
       
       code: { type: 'string', required: true, unique: true, maxlength: 50 },
       name: { type: 'string', required: true, unique: true, maxlength: 100 },

@@ -25,29 +25,36 @@ module.exports = function() {
    */
   return function Model(definition) {
     this.load = function (cb) {
-      let { fields, indexs, options } = normalizeDef(definition);
+      let { fields, indexs, virtuals, options } = normalizeDef(definition);
 
       let schema = new Schema(fields, options);
 
+      // TODO: 通常只在项目初期启动时执行，项目稳定期应当手工建立索引
       if (indexs && indexs.length) {
         indexs.forEach((idx) => {
           schema.index(idx.keys, idx.options);
         });
       }
 
-      let { docName } = options;
+      if (virtuals) {
+        Object.keys(virtuals).forEach((key) => {
+          let fn = virtuals[key];
 
-      let model;
+          schema.virtual(key).get(function () {
+            return fn(this);
+          });
+        });
+      }
 
-      try {
-        model = mongoose.model(docName);
-      } catch (e) {
-        model = mongoose.model(docName, schema);
+      let modeName = options.modelName || options.docName;
+
+      let model = mongoose.models[modeName];
+
+      if (!model) {
+        model = mongoose.model(modeName, schema);
       }
       
-      _.extend(model, {
-        definition
-      });
+      _.extend(model, { definition });
 
       cb(null, model);
     };
@@ -55,11 +62,12 @@ module.exports = function() {
 };
 
 function normalizeDef (definition) {
-  let options = _.omit(definition, ['attributes']);
+  let options = _.omit(definition, ['attributes', 'indexs', 'virtuals']);
 
   let fields = {};
   let attributes = definition.attributes || {};
   let indexs = definition.indexs || [];
+  let virtuals = definition.virtuals;
 
   // 默认被保护的字段
   let protectedFields = ['_id', '__v'];
@@ -108,7 +116,7 @@ function normalizeDef (definition) {
 
   options.toJSON = toJSONOptions;
 
-  return { fields, indexs, options };
+  return { fields, indexs, virtuals, options };
 }
 
 function normalizeDefField (attribute) {

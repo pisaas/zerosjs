@@ -1,7 +1,7 @@
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
-  new Service().register(app, 'tpcs', {
+  new Service().register('tpcs', {
     adapterService: {
       path: 'data/tpcs'
     }
@@ -22,10 +22,11 @@ class Service extends ApiService {
   }
 
   async find (params) {
-    let { query, user } = params;
+    let { app, query } = params;
     
-    query = Object.assign({}, params.query);
-    query.uid = user.id;
+    query = Object.assign({
+      appid: app.id
+    }, params.query);
 
     let apps = await this.adapterService.find({
       query
@@ -44,8 +45,9 @@ class Service extends ApiService {
     let tpcData = Object.assign({
       type: ''
     }, data, {
+      appid: app.id,
       uid: user.id,
-      appid: app.id
+      uname: user.displayName
     });
 
     // TODO: 根据类别为topic设置附加属性

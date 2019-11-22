@@ -1,10 +1,8 @@
 exports.SysService = class SysService {
-  constructor (options, app) {
+  constructor (options) {
     this.options = Object.assign({
       basePath: 'sys'
     }, options);
-
-    this.app = app;
   }
 
   async get () {
@@ -16,6 +14,6 @@ exports.SysService = class SysService {
       basePath: this.options.basePath
     }, options);
 
-    return zeros.$service.register(this.app, path, this, opts);
+    return zeros.$service.register(path, this, opts);
   }
 };

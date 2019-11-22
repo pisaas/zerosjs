@@ -1,5 +1,5 @@
 const { User } = require('./user.class');
 
-module.exports = function (app) {
-  new User().register(app, 'user');
+module.exports = function () {
+  new User().register('user');
 };

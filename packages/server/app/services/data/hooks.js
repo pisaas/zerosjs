@@ -7,11 +7,12 @@ exports.preEntityCreate = function (options) {
   let opts = Object.assign({
     idField: 'id',
     ownerField: 'uid',
+    ownerNameField: 'uname',
     autoId: true,
     autoOwner: false
   }, options);
 
-  let { idField, ownerField, autoId, autoOwner } = opts;
+  let { idField, ownerField, ownerNameField, autoId, autoOwner } = opts;
 
   return async (context) => {
     if (context.type !== 'before') {
@@ -30,6 +31,7 @@ exports.preEntityCreate = function (options) {
 
     if (data && !data[ownerField] && params.user && autoOwner === true) {
       newData[ownerField] = params.user.id;
+      newData[ownerNameField] = params.user.displayName;
     }
 
     // eslint-disable-next-line require-atomic-updates

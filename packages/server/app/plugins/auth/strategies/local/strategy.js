@@ -86,11 +86,12 @@ class LocalStrategy extends AuthenticationBaseStrategy {
       return result;
     }
 
-    return entityService.get(result[entityId], {
-      inner: true,
+    let entityObj = await entityService.get(result[entityId], {
       ...params,
       [entity]: result
     });
+
+    return entityObj;
   }
 
   async comparePassword (entity, password) {

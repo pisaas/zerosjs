@@ -11,7 +11,7 @@ module.exports = function (zeros) {
 
       let plugin = this;
 
-      plugin.models = {};
+      plugin.modelDefs = {};
 
       async.series([
         (cb) => {
@@ -40,7 +40,7 @@ function loadModelDefinitions (plugin, cb) {
     defs[key] = fn();
   });
 
-  _.extend(plugin.models, defs);
+  _.extend(plugin.modelDefs, defs);
 
   cb();
 }

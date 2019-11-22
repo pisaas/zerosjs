@@ -3,8 +3,6 @@ exports.CoreService = class CoreService {
     this.options = Object.assign({
       basePath: 'core'
     }, options);
-
-    this.app = app;
   }
 
   async get () {
@@ -16,6 +14,6 @@ exports.CoreService = class CoreService {
       basePath: this.options.basePath
     }, options);
 
-    return zeros.$service.register(this.app, path, this, opts);
+    return zeros.$service.register(path, this, opts);
   }
 };

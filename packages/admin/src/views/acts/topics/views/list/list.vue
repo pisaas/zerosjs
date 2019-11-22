@@ -9,6 +9,7 @@
 
           <TabPane label="已发布" name="pubed"></TabPane>
           <TabPane label="待审核" name="pending"></TabPane>
+          <TabPane label="已冻结" name="fronzen"></TabPane>
           <TabPane label="草稿" name="draft"></TabPane>
         </Tabs>
       </div>
@@ -68,26 +69,6 @@ export default {
 
     onAdd () {
       newTopic.call(this)
-    },
-
-    onEditorCreate () {
-    },
-
-    onEditorUpdate () {
-    },
-
-    onCatRefresh () {
-      this.loadCatOptions(true)
-    },
-
-    onCatChange (val, data) {
-    },
-
-    onPageChange () {
-    },
-
-    async loadData () {
-
     }
   }
 }

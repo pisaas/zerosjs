@@ -2,7 +2,7 @@ const errors = require('@zerosjs/errors');
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
-  new Regs().register(app, 'regs', {
+  new Regs().register('regs', {
     adapterService: {
       path: 'data/regs',
       methods: 'all'

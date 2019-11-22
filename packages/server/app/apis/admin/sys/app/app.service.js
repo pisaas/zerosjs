@@ -4,7 +4,7 @@ const { ApiService } = require('../../service');
 const { handleConnection } = require('./app.hooks');
 
 module.exports = function (app) {
-  new Service().register(app, 'app', {
+  new Service().register('app', {
     adapterService: {
       path: 'data/apps'
     },

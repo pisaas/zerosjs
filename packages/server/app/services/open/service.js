@@ -1,10 +1,8 @@
 exports.OpenService = class OpenService {
-  constructor (options, app) {
+  constructor (options) {
     this.options = Object.assign({
       basePath: 'open'
     }, options);
-
-    this.app = app;
   }
 
   async get () {
@@ -16,6 +14,6 @@ exports.OpenService = class OpenService {
       basePath: this.options.basePath
     }, options);
 
-    return zeros.$service.register(this.app, path, this, opts);
+    return zeros.$service.register(path, this, opts);
   }
 };

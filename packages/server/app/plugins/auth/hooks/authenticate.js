@@ -45,15 +45,25 @@ module.exports = (originalSettings, ...originalStrategies) => {
 
       const authResult = await authService.authenticate(authentication, authParams, ...strategies);
 
+      // 设置user params
+      let paramUser = authResult.user;
+
+      if (paramUser && paramUser.toObject) {
+        paramUser = paramUser.toObject();
+      }
+
       // eslint-disable-next-line require-atomic-updates
-      context.params = merge(params, omit(authResult, 'accessToken'), { authenticated: true });
-      
+      context.params = merge(params, omit(authResult, 'user', 'accessToken'), {
+        user: paramUser,
+        authenticated: true
+      });
+
+      // ZERO: 如下写法将使connection丢失
+      // context.params = merge({}, params, omit(authResult, 'accessToken'), { authenticated: true });
+
       if (params.connection) {
         params.connection.authenticated = true;
       }
-      
-      // ZERO: 如下写法将使connection丢失
-      // context.params = merge({}, params, omit(authResult, 'accessToken'), { authenticated: true });
 
       if (!accessUserTypes || !authResult.user || !accessUserTypes.includes(authResult.user.type)) {
         throw new zeros.$errors.NotAuthenticated('Not authenticated');

@@ -1,7 +1,7 @@
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
-  new Orgs().register(app, 'orgs', {
+  new Orgs().register('orgs', {
     adapterService: {
       path: 'data/orgs',
       methods: 'all'

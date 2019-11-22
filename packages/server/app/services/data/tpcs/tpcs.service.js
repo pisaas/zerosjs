@@ -9,7 +9,7 @@ module.exports = function (app) {
     }
   }, app).register('tpcs', {
     autoOwner: true,
-    fuzzySearchFields: [ 'name', 'desc' ]
+    fuzzySearchFields: [ 'name', 'uname', 'desc', 'cont' ]
   });
 };
 

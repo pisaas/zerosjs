@@ -1,7 +1,14 @@
 <template>
   <div class="topic-list-pubed">
-      <div class="q-pb-md">
-        <cat-selector v-model="catid" @change="onCatChange" />
+      <div class="q-pb-md flex">
+        <div class="flex-main">
+          <cat-selector v-model="catid" @change="onCatChange" />
+        </div>
+
+        <div>
+          <Input v-model="tableQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
+            @on-enter="onQuery" style="width: 180px" />
+        </div>
       </div>
 
       <Table ref="pgTable" border size="small" :columns="tableColumns" :data="tableItems">
@@ -62,10 +69,12 @@ export default {
       tableItems: [],
       tableTotal: 0,
       tableQuery: {
-        name: null,
+        search: null,
         page: 1,
         size: 10,
-        sorts: 'code DESC'
+        sort: { id: -1 },
+        equalFields: [ 'id' ],
+        fuzzyFields: [ 'name', 'uname' ]
       }
     }
   },
@@ -76,16 +85,38 @@ export default {
     if (catid) {
       this.catid = catid
     }
+
+    this.loadData()
   },
 
   methods: {
     onCatChange (val, data) {
+      this.onQuery()
     },
 
-    onPageChange () {
+    onQuery () {
+      this.tableQuery.page = 1
+      this.loadData()
+    },
+
+    onPageChange (val) {
+      this.tableQuery.page = val
+      this.loadData()
     },
 
     async loadData () {
+      let query = this.$service.getSearchQuery(this.tableQuery)
+
+      query = Object.assign({
+        pubed: true,
+        frzn: false
+      }, query, {
+        catid: this.catid
+      })
+
+      let result = await this.$service('tpcs').find({ query })
+      this.tableItems = result.items
+      this.tableTotal = result.total
     }
   }
 }

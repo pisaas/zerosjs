@@ -1,7 +1,7 @@
 const { ApiService } = require('../../service');
 
 module.exports = function (app) {
-  new Service().register(app, 'apps', {
+  new Service().register('apps', {
     adapterService: {
       path: 'data/apps'
     }

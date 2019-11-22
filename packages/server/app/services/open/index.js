@@ -1,3 +1,3 @@
-module.exports = function (app) {
-  zeros.$service.configureDir(app, __dirname);
+module.exports = function () {
+  zeros.$service.configureDir(__dirname);
 };
