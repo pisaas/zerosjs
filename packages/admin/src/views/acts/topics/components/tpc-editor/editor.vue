@@ -7,7 +7,7 @@
             :maxlength="100" show-word-limit placeholder="请输入话题的标题" />
         </div>
         <div class="inline q-ml-lg">
-          <cat-selector v-model="catid" @change="onCatChange" />
+          <cat-selector v-model="formModel.catid" @change="onCatChange" />
         </div>
       </div>
       <div class="header-tail">
@@ -19,10 +19,10 @@
     <div class="editor-body">
       <template v-if="topicCat">
         <div class="body-main">
-          <cont-editor :cat="topicCat" />
+          <cont-editor v-model="formModel.cont" />
         </div>
         <div class="body-right">
-          <cont-previewer />
+          <tpc-previewer :topic="formModel" />
         </div>
       </template>
       <page-result v-else title="请先选择话题类型" icon="ios-alert" />
@@ -35,20 +35,19 @@ import { getTopicCat } from '../../common'
 
 import CatSelector from '../cat-selector'
 import ContEditor from './cont-editor'
-import ContPreviewer from './cont-previewer'
+import TpcPreviewer from '../tpc-previewer'
 
 export default {
   components: {
     CatSelector,
     ContEditor,
-    ContPreviewer
+    TpcPreviewer
   },
 
   data () {
     return {
       editMode: 'create', // 编辑模式（update, create）
       tabName: 'cont',
-      catid: null,
       tpcid: null,
       formModel: {},
       formRules: {
@@ -59,8 +58,12 @@ export default {
 
   computed: {
     topicCat () {
-      let catid = this.catid
-      return getTopicCat.call(this, catid)
+      let formModel = this.formModel
+      if (!formModel || !formModel.catid) {
+        return null
+      }
+
+      return getTopicCat.call(this, formModel.catid)
     }
   },
 
@@ -77,25 +80,25 @@ export default {
     onCatChange (val, data) {
     },
 
-    create (catId) {
+    create (catid) {
       this.reset()
       this.editMode = 'create'
-      this.catId = catId
+      this.$set(this.formModel, 'catid', catid)
 
       return Promise.resolve()
     },
 
-    update (tpcId) {
+    update (tpcid) {
       this.reset()
       this.editMode = 'update'
-      this.tpcId = tpcId
+      this.tpcid = tpcid
 
       return this.loadData()
     },
 
     reset () {
-      this.catId = null
-      this.tpcId = null
+      this.catid = null
+      this.tpcid = null
       this.formModel = {}
 
       if (this.$refs.form) {
@@ -124,7 +127,7 @@ export default {
         if (editMode === 'create') {
           return tpcService.create(formModel)
         } else {
-          return tpcService.patch(this.tpcId, formModel)
+          return tpcService.patch(this.tpcid, formModel)
         }
       })
     },
@@ -147,14 +150,14 @@ export default {
     },
 
     loadData () {
-      if (!this.tpcId) {
+      if (!this.tpcid) {
         this.formModel = {}
         this.$refs.form.resetFields()
 
         return Promise.resolve()
       }
 
-      return this.$service('tpcs').get(this.tpcId).then((res) => {
+      return this.$service('tpcs').get(this.tpcid).then((res) => {
         let formModel = res
         this.formModel = formModel
 

@@ -30,11 +30,29 @@ const editorOptions = {
 }
 
 export default {
+  props: {
+    value: [ Object, String ]
+  },
+
+  watch: {
+    value (val) {
+      if (val === this.content) {
+        return
+      }
+      
+      this.content = val
+    },
+
+    content () {
+      this.$emit('input', this.content);
+    }
+  },
+
   data () {
     return {
       editorToolbar,
       editorOptions,
-      content: ''
+      content: this.value
     }
   }
 }
