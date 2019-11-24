@@ -61,6 +61,10 @@ export default {
       this.loadCatOptions(true)
     },
 
+    reset () {
+      this.currentValue = []
+    },
+
     async loadCurrentValue () {
       let value = this.value
       let valItem = getTopicCat.call(this, value)

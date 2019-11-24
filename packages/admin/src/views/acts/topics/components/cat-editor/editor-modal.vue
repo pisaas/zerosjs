@@ -28,7 +28,7 @@ export default {
 
   data () {
     return {
-      catId: null,
+      catid: null,
       editMode: 'create',
       showModal: false,
       loading: true,
@@ -40,7 +40,8 @@ export default {
   computed: {
     modalTitle () {
       if (this.editMode === 'update') {
-        return `编辑分类 (${this.catId || ''})`
+        // return `编辑分类 (${this.catid || ''})`
+        return `编辑分类`
       }
       return '新建分类'
     },
@@ -123,7 +124,7 @@ export default {
 
       this.$nextTick(() => {
         this.$refs.editor.update(id).then((res) => {
-          this.catId = res.id
+          this.catid = res.id
           this.showModal = true
 
           if (cb) {

@@ -7,7 +7,7 @@
             :maxlength="100" show-word-limit placeholder="请输入话题的标题" />
         </div>
         <div class="inline q-ml-lg">
-          <cat-selector v-model="formModel.catid" @change="onCatChange" />
+          <cat-selector ref="selCat" v-model="formModel.catid" @change="onCatChange" />
         </div>
       </div>
       <div class="header-tail">
@@ -97,12 +97,15 @@ export default {
     },
 
     reset () {
-      this.catid = null
       this.tpcid = null
       this.formModel = {}
 
       if (this.$refs.form) {
         this.$refs.form.resetFields()
+      }
+
+      if (this.$refs.selCat) {
+        this.$refs.selCat.reset()
       }
     },
 
