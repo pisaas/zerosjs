@@ -203,7 +203,7 @@ export default {
 
   &-list {
     height: 100%;
-    border-radius: 5px;
+    border-radius: @border-radius;
     background: white;
 
     .list-item {

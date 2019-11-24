@@ -22,11 +22,16 @@ class Service extends ApiService {
   }
 
   async find (params) {
-    let { app, query } = params;
+    let { app, query, user } = params;
     
     query = Object.assign({
       appid: app.id
     }, params.query);
+
+    if (query.status === 'new') {
+      query.uid = user.id;
+      query.pubed = false;
+    }
 
     let apps = await this.adapterService.find({
       query

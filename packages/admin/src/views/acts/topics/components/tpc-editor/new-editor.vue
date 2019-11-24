@@ -1,55 +1,29 @@
 <template>
-  <div class="tpc-editor">
-    <div class="editor-header flex q-pa-sm">
-      <div class="header-main flex-main">
-        <div class="title-input inline">
-          <Input v-model="formModel.name"
-            :maxlength="100" show-word-limit placeholder="请输入话题的标题" />
-        </div>
-        <div class="inline q-ml-lg">
-          <cat-selector v-model="catid" @change="onCatChange" />
-        </div>
-      </div>
-      <div class="header-tail">
-        <Button v-if="isAllowed('save')" @click="onSave">保存</Button>
-        &nbsp;
-        <Button v-if="isAllowed('pub')" @click="onPub">发布</Button>
-      </div>
-    </div>
-    <div class="editor-body">
-      <template v-if="topicCat">
-        <div class="body-main">
-          <cont-editor :cat="topicCat" />
-        </div>
-        <div class="body-right">
-          <cont-previewer />
-        </div>
-      </template>
-      <page-result v-else title="请先选择话题类型" icon="ios-alert" />
-    </div>
-  </div>
+  <Form v-if="formModel" class="tpc-editor" ref="form"
+    :model="formModel" :rules="formRules" :label-width="80">
+    <FormItem label="标题" required prop="name">
+      <Input v-model="formModel.name" :maxlength="50"
+        placeholder="请输入活动标题 (100字以内)" />
+    </FormItem>
+    <FormItem label="分类" required prop="catid">
+      <cat-selector v-model="formModel.catid" transfer />
+    </FormItem>
+  </Form>
 </template>
 
 <script>
-import { getTopicCat } from '../../common'
-
 import CatSelector from '../cat-selector'
-import ContEditor from './cont-editor'
-import ContPreviewer from './cont-previewer'
 
 export default {
   components: {
-    CatSelector,
-    ContEditor,
-    ContPreviewer
+    CatSelector
   },
 
   data () {
     return {
       editMode: 'create', // 编辑模式（update, create）
-      tabName: 'cont',
-      catid: null,
-      tpcid: null,
+      catId: null,
+      tpcId: null,
       formModel: {},
       formRules: {
         name: [ { required: true, message: '请输入话题名称', trigger: 'blur' } ]
@@ -58,25 +32,12 @@ export default {
   },
 
   computed: {
-    topicCat () {
-      let catid = this.catid
-      return getTopicCat.call(this, catid)
-    }
   },
 
   mounted () {
   },
 
   methods: {
-    onSave () {
-    },
-
-    onPub () {
-    },
-
-    onCatChange (val, data) {
-    },
-
     create (catId) {
       this.reset()
       this.editMode = 'create'
@@ -129,10 +90,6 @@ export default {
       })
     },
 
-    isAllowed () {
-      return true
-    },
-
     isAllowedEdit (field) {
       if (!field) {
         return true
@@ -169,46 +126,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tpc-editor {
-  height: 650px;
-}
-
-.editor-header {
-  border-bottom: 1px solid @border-color;
-}
-
-.editor-body {
-  height: calc(100% - 45px);
-  display: flex;
-
-  .body-main {
-    flex: 1;
-  }
-
-  .body-right {
-    background: @bg-color;
-    width: 360px;
-    height: 100%;
-  }
-}
-</style>
-
-<style lang="less">
-.tpc-editor {
-  .editor-header {
-    .title-input {
-      width: 550px;
-
-      .ivu-input-word-count {
-        background: @bg-color;
-      }
-
-      input {
-        border: 0;
-        font-size: 16px;
-        background: @bg-color;
-      }
-    }
-  }
-}
 </style>

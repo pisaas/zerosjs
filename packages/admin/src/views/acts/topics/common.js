@@ -14,6 +14,13 @@ function newTopic (catid) {
   })
 }
 
+function editTopic (id) {
+  this.$router.tryPush({
+    name: 'app:act:topic:edit',
+    query: { id }
+  })
+}
+
 function getTopicCat (catid) {
   if (!catid) {
     return null
@@ -32,5 +39,6 @@ export {
   MaxCatLevel,
   CatLevels,
   newTopic,
+  editTopic,
   getTopicCat
 }

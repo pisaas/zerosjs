@@ -8,12 +8,12 @@ const MILLISECONDS_IN_DAY = 86400000
 export function format (date, format) {
   let d = new Date(date)
   if (!d) return ''
-  if (format === 'datetime') {
-    format = 'YYYY-MM-DD HH:mm'
+  if (format === 'date') {
+    format = 'YYYY-MM-DD'
   } else if (format === 'full') {
     format = 'YYYY-MM-DD HH:mm:ss'
   }
-  return fecha.format(d, format || 'YYYY-MM-DD')
+  return fecha.format(d, format || 'YYYY-MM-DD HH:mm')
 }
 
 // 日期简化版

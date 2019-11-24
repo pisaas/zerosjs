@@ -1,6 +1,16 @@
 <template>
-  <div class="topic-list-pending">
-    <Table ref="pgTable" border size="small" :columns="tableColumns" :data="tableItems">
+  <div class="topic-list-pending page-list">
+    <div class="list-header">
+      <div class="flex-main">
+        <Input v-model="tableQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
+          @on-enter="onQuery" style="width: 180px" />
+      </div>
+
+      <div>
+      </div>
+    </div>
+
+    <Table ref="pgTable" class="list-table" border stripe :columns="tableColumns" :data="tableItems">
       <!-- 不能操作自己 -->
       <div v-if="row.code !== user.code" slot-scope="{ row }" slot="ops" >
         <Button v-if="user.isSuperAdmin" class="text-negative" ghost size="small"
@@ -27,7 +37,7 @@
       </div>
     </Table>
 
-    <div class="q-pt-md">
+    <div class="list-footer">
       <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
         show-total @on-change="onPageChange"></Page>
     </div>
@@ -74,9 +84,9 @@ export default {
   },
 
   methods: {
-    onAdd () {
-      let catId = this.catId
-      newTopic.call(this, catId)
+    onQuery () {
+      this.tableQuery.page = 1
+      this.loadData()
     },
 
     onEditorCreate () {

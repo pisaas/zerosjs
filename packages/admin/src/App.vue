@@ -35,6 +35,9 @@ export default {
 </script>
 
 <style lang="less">
+@import '~view-design/src/styles/index.less';
+
 @import './styles/app.less';
 @import './styles/ivu.less';
+@import './styles/quill.less';
 </style>

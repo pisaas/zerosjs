@@ -4,7 +4,7 @@
     :width="modalWidth" :loading="loading"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
     <cat-editor v-if="editMode === 'create'" ref="editor"></cat-editor>
-    <Tabs v-else ref="tabs" size="small" v-model="tabName">
+    <Tabs v-else ref="tabs" class="no-content" size="small" v-model="tabName">
       <TabPane name="basic" label="基本信息">
         <cat-editor ref="editor" @load="onEditorLoad"></cat-editor>
       </TabPane>

@@ -1,4 +1,5 @@
 const path = require('path')
+// const webpack = require("webpack")
 
 const resolve = dir => {
   return path.join(__dirname, dir)
@@ -30,6 +31,20 @@ module.exports = {
 
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
     types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)))
+
+    // config.module.rule("vue")
+    //   .use("vue-svg-inline-loader")
+    //   .loader("vue-svg-inline-loader")
+    //   .options({})
+
+    // const svgRule = config.module.rule('svg')
+    // svgRule.uses.clear()
+    // svgRule
+    //   .use('babel-loader')
+    //   .loader('babel-loader')
+    //   .end()
+    //   .use('vue-svg-loader')
+    //   .loader('vue-svg-loader')
 
     config.plugin('define').tap((definitions) => {
       definitions[0]['process.env'] = JSON.stringify({

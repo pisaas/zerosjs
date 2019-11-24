@@ -1,10 +1,11 @@
 <template>
   <page>
-    <page-section>
-      <div slot="header">
+    <page-section list-section>
+      <div>
         <Tabs class="no-content" :value="tabName" @on-click="onTabsClick">
-          <div slot="extra">
-            <Button type="primary" icon="md-add" @click="onAdd">新建</Button>
+          <div slot="extra" class="q-mx-md">
+            <Button type="primary" icon="md-add" @click="onNew">新建</Button>
+            <tpc-editor-modal ref="tpcEditorModal" />
           </div>
 
           <TabPane label="已发布" name="pubed"></TabPane>
@@ -17,7 +18,7 @@
       <div>
         <pubed-list v-if="tabName === 'pubed'" />
         <pending-list v-if="tabName === 'pending'" />
-        <div v-if="tabName === 'draft'">Draft</div>
+        <draft-list v-if="tabName === 'draft'" />
       </div>
     </page-section>
   </page>
@@ -26,13 +27,18 @@
 <script>
 import { newTopic } from '../../common'
 
+import { TpcEditorModal } from '../../components/tpc-editor'
+
 import PubedList from './pubed-list'
 import PendingList from './pending-list'
+import DraftList from './draft-list'
 
 export default {
   components: {
+    TpcEditorModal,
     PubedList,
-    PendingList
+    PendingList,
+    DraftList
   },
 
   props: {
@@ -67,15 +73,9 @@ export default {
       })
     },
 
-    onAdd () {
-      newTopic.call(this)
+    onNew () {
+      this.$refs.tpcEditorModal.create()
     }
   }
 }
 </script>
-
-<style lang="less" scoped>
-.cat-select {
-  width: 200px;
-}
-</style>

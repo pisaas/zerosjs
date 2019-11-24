@@ -1,5 +1,5 @@
 <template>
-  <div class="cat-selector">
+  <div class="cat-selector inline">
     <Cascader v-model="currentValue" class="inline"
       :data="optionData" filterable :transfer="transfer"
       trigger="hover" placeholder="请选择话题分类"

@@ -1,6 +1,6 @@
 <template>
-  <Form v-if="formModel" class="cat-editor" ref="form"
-    :model="formModel" :rules="formRules" :label-width="120">
+  <Form v-if="formModel" class="cat-editor padding" ref="form"
+    :model="formModel" :rules="formRules" :label-width="60">
     <FormItem label="名称" required prop="name">
       <Input v-model="formModel.name" :maxlength="50" placeholder="请输入名称 (100字以内)" />
     </FormItem>
@@ -153,8 +153,4 @@ export default {
     }
   }
 }
-
 </script>
-
-<style lang="less" scoped>
-</style>

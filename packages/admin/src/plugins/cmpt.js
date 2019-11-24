@@ -1,6 +1,11 @@
 import ViewUI  from 'view-design'
 
-import { Page, PageSection } from '../components/page'
+import Vue2Editor, { Quill } from 'vue2-editor'
+
+import { ImageExtend } from 'quill-image-extend-module'
+Quill.register("modules/imageExtend", ImageExtend)
+
+import { Page, PageSection, PageResult } from '../components/page'
 
 import { routeCmpts } from '../router/routes'
 
@@ -9,12 +14,20 @@ export default ({ zeros, router, Vue }) => {
     // i18n: (key, value) => i18n.t(key, value)
   })
 
+  // quill editor, 因为 quill-image-resize-module 内使用了window.Quill
+  window.Quill = Quill
+  
+  const ImageResize = require("quill-image-resize-module")
+  Quill.register("modules/imageResize", ImageResize.default)
+
+  Vue.use(Vue2Editor)
+
   Vue.component(Page.name, Page)
   Vue.component(PageSection.name, PageSection)
+  Vue.component(PageResult.name, PageResult)
   
   Vue.prototype.$cmpt = initialize(zeros, Vue)
 }
-
 function initialize (zeros, Vue) {
   function getRouteCmpt (path) {
     return routeCmpts[path]

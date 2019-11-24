@@ -1,9 +1,9 @@
 <template>
   <Modal ref="editorModal" v-model="showModal"
-    class="tpc-editor-modal" :title="modalTitle" 
-    :width="modalWidth" :loading="loading"
-    @on-ok="onOk" @on-visible-change="onVisibleChange">
-    <tpc-editor v-if="editMode === 'create'" ref="editor"></tpc-editor>
+    class-name="tpc-editor-modal" :title="modalTitle" 
+    :width="modalWidth" :loading="loading" footer-hide
+    @on-visible-change="onVisibleChange">
+    <tpc-editor ref="editor"></tpc-editor>
   </Modal>
 </template>
 
@@ -30,11 +30,11 @@ export default {
       if (this.editMode === 'update') {
         return `编辑话题 (${this.tpcId || ''})`
       }
-      return '新建话题'
+      return '创建话题'
     },
 
     modalWidth () {
-      return (this.editMode === 'update' ? 800 : 700)
+      return 1024
     }
   },
 
@@ -135,8 +135,4 @@ export default {
   mounted () {
   }
 }
-
 </script>
-
-<style lang="less" scoped>
-</style>

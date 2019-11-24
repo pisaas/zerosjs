@@ -160,11 +160,16 @@ export default {
 
 <style lang="less" scoped>
 .cat-data-viewer {
-  height: 100%;
+  height: 450px;
+  padding: 10px 20px;
+}
+
+.editor-header {
+  line-height: 25px;
 }
 
 .editor-container {
   padding: 0;
-  height: 420px;
+  height: 400px;
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
   <div class="page-section" :class="{
+    'list-section': listSection,
     'border': border,
     'no-padding': noPadding,
     'no-padding-top': noPaddingTop
@@ -30,6 +31,7 @@ export default {
 
   props: {
     border: Boolean,
+    listSection: Boolean,
     noPadding: Boolean,
     noPaddingTop: Boolean,
     title: String
@@ -79,7 +81,7 @@ export default {
 .page-section {
   padding: 10px 20px;
   background: white;
-  border-radius: 4px;
+  border-radius: @border-radius;
   box-shadow: 0 0 3px 0 @border-color;
   margin-bottom: 10px;
 
@@ -89,6 +91,10 @@ export default {
     &-top {
       padding-top: 0;
     }
+  }
+
+  &.list-section {
+    padding: 0;
   }
 
   &-head {
