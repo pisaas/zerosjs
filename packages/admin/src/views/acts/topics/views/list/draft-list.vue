@@ -8,8 +8,6 @@
         <page-action-buttons ref="pgActionButtons" @on-click="onActionClick">
           <DropdownItem name="delete" :disabled="!isSelected">删除</DropdownItem>
         </page-action-buttons>
-        
-        <tpc-editor-modal ref="editorModal" @submit="onEditSubmit" />
       </div>
       <div class="tail">
         <page-nav-button :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
@@ -103,11 +101,7 @@ export default {
         return
       }
 
-      this.$refs.editorModal.openUpdate(row.id)
-    },
-
-    onEditSubmit () {
-      this.loadData()
+      this.$emit('edit', row.id, row)
     },
 
     onActionClick (name) {
@@ -154,6 +148,11 @@ export default {
 
     onPageChange (val) {
       this.tableQuery.page = val
+      this.loadData()
+    },
+
+    // 供外部调用
+    async reload () {
       this.loadData()
     },
 

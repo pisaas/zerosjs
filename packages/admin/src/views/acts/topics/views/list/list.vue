@@ -5,7 +5,7 @@
         <Tabs class="no-content" :value="tabName" @on-click="onTabsClick">
           <div slot="extra" class="q-mx-md">
             <Button type="primary" icon="md-add" @click="onNew">新建</Button>
-            <tpc-editor-modal ref="tpcEditorModal" />
+            <tpc-editor-modal ref="tpcEditorModal" @submit="onEditSubmit" />
           </div>
 
           <TabPane label="已发布" name="pubed"></TabPane>
@@ -16,9 +16,9 @@
       </div>
 
       <div>
-        <pubed-list v-if="tabName === 'pubed'" />
-        <pending-list v-if="tabName === 'pending'" />
-        <draft-list v-if="tabName === 'draft'" />
+        <pubed-list v-if="tabName === 'pubed'" ref="list" />
+        <pending-list v-if="tabName === 'pending'" ref="list" />
+        <draft-list v-if="tabName === 'draft'" ref="list" @edit="onEdit" />
       </div>
     </page-section>
   </page>
@@ -73,6 +73,21 @@ export default {
 
     onNew () {
       this.$refs.tpcEditorModal.openCreate()
+    },
+
+    onEdit (id) {
+      if (!id) {
+        return
+      }
+      
+      this.$refs.tpcEditorModal.openUpdate(id)
+    },
+
+    onEditSubmit () {
+      let list = this.$refs.list
+      if (list && list.reload) {
+        list.reload()
+      }
     }
   }
 }

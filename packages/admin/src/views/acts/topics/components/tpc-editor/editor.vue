@@ -158,8 +158,7 @@ export default {
 
     loadData () {
       if (!this.tpcid) {
-        this.formModel = {}
-        this.$refs.form.resetFields()
+        this.reset()
 
         return Promise.resolve()
       }
