@@ -1,8 +1,9 @@
 const { EntityService } = require('../service');
 
 module.exports = function (app) {
-  new Cats({
+  new Topics({
     modelName: 'tpc',
+    multi: true,
     paginate: {
       default: 20,
       max: 100
@@ -13,5 +14,5 @@ module.exports = function (app) {
   });
 };
 
-class Cats extends EntityService {
+class Topics extends EntityService {
 }

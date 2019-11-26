@@ -1,8 +1,8 @@
 export default ({ zeros, router, Vue }) => {
-  Vue.prototype.$media = initialize(zeros, Vue)
+  Vue.prototype.$media = initialize()
 }
 
-function initialize (zeros, Vue) {
+function initialize () {
   // 缩放照片(file，文件，)
   // spec: {
   //   MimeType: 'image/jpeg', // 图片格式

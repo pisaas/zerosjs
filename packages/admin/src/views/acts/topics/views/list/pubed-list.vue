@@ -2,12 +2,16 @@
   <div class="topic-list-pubed page-list">
     <div class="list-header">
       <div class="flex-main">
-        <Input v-model="tableQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
+        <cat-selector v-model="catid" @change="onCatChange" inline />
+
+        <Input v-model="tableQuery.search" icon="ios-search"
+          class="q-ml-md" placeholder="主题名称/作者/ID"
           @on-enter="onQuery" style="width: 180px" />
       </div>
 
       <div>
-        <cat-selector v-model="catid" @change="onCatChange" />
+        <page-nav-button :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+          @on-change="onPageChange" />
       </div>
     </div>
 

@@ -6,6 +6,7 @@ import { ImageExtend } from 'quill-image-extend-module'
 Quill.register("modules/imageExtend", ImageExtend)
 
 import { Page, PageSection, PageResult } from '../components/page'
+import { PageNavButton, PageActionButtons } from '../components/table'
 
 import { routeCmpts } from '../router/routes'
 
@@ -25,10 +26,13 @@ export default ({ zeros, router, Vue }) => {
   Vue.component(Page.name, Page)
   Vue.component(PageSection.name, PageSection)
   Vue.component(PageResult.name, PageResult)
+
+  Vue.component(PageNavButton.name, PageNavButton)
+  Vue.component(PageActionButtons.name, PageActionButtons)
   
-  Vue.prototype.$cmpt = initialize(zeros, Vue)
+  Vue.prototype.$cmpt = initialize()
 }
-function initialize (zeros, Vue) {
+function initialize () {
   function getRouteCmpt (path) {
     return routeCmpts[path]
   }

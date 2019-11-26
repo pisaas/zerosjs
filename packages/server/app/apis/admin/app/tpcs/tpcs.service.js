@@ -80,4 +80,26 @@ class Service extends ApiService {
 
     return app;
   }
+
+  async remove (id, params) {
+    let { app, user } = params;
+    let { ids } = params.query;
+
+    if (!ids || !ids.length) {
+      throw new zeros.$errors.BadRequest('请提供要删除的主题id');
+    }
+
+    let query = Object.assign({
+      appid: app.id,
+      uid: user.id,
+      pubed: false,
+      id: { $in: ids }
+    });
+
+    let tpcs = await this.adapterService.remove(null, {
+      query
+    });
+    
+    return tpcs;
+  }
 }

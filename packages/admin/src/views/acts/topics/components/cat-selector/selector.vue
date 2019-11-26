@@ -1,20 +1,31 @@
 <template>
-  <div class="cat-selector inline">
-    <Cascader v-model="currentValue" class="inline"
-      :data="optionData" filterable :transfer="transfer"
-      trigger="hover" placeholder="请选择话题分类"
-      @on-change="onChange"></Cascader>
-    <Button type="text" class="text-link q-ml-xs" @click="onRefresh">刷新</Button>
+  <div class="cat-selector" :class="{ inline: inline }">
+    <div v-if="readonly" class="cat-names">
+      <span>{{ pathNamesStr }}</span>
+    </div>
+    <template v-else>
+      <Cascader v-model="currentValue" :class="{ inline: inline }"
+        :data="optionData" filterable :transfer="transfer"
+        :disabled="disabled"
+        trigger="hover" placeholder="请选择话题分类"
+        @on-change="onChange"></Cascader>
+      <Button v-if="!disabled && refresh" type="text" class="text-link q-ml-xs"
+        @click="onRefresh">刷新</Button>
+    </template>
   </div>
 </template>
 
 <script>
-import { getTopicCat } from '../../common'
+import { getTopicCatPathIds, getTopicCatPathNames } from '../../common'
 
 export default {
   props: {
     value: String,
-    transfer: Boolean
+    transfer: Boolean,
+    disabled: Boolean,
+    readonly: Boolean,
+    refresh: Boolean,
+    inline: Boolean
   },
 
   watch: {
@@ -45,6 +56,21 @@ export default {
         return null
       }
       return curVal[curVal.length - 1]
+    },
+
+    pathNames () {
+      let pathNames = getTopicCatPathNames(this.lastValue)
+      return pathNames
+    },
+
+    pathNamesStr () {
+      let pathNames = this.pathNames
+
+      if (!pathNames || !pathNames.length) {
+        return ''
+      }
+
+      return pathNames.join('/')
     }
   },
 
@@ -58,7 +84,7 @@ export default {
     },
 
     onRefresh () {
-      this.loadCatOptions(true)
+      this.loadOptions(true)
     },
 
     reset () {
@@ -67,22 +93,9 @@ export default {
 
     async loadCurrentValue () {
       let value = this.value
-      let valItem = getTopicCat.call(this, value)
-      
-      if (!valItem || !valItem.path) {
-        return
-      }
-      let paths = valItem.path.split('.')
-      if (!paths || !paths.length) {
-        return
-      }
-      if (paths[0] === '0') {
-        paths = paths.slice(1)
-      }
+      let pathIds = getTopicCatPathIds.call(this, value)
 
-      paths.push(value)
-
-      this.currentValue = paths
+      this.currentValue = pathIds
     },
 
     async loadOptions (force) {

@@ -7,26 +7,13 @@ const CatLevels = [
 
 const MaxCatLevel = (CatLevels.length - 1)
 
-function newTopic (catid) {
-  this.$router.tryPush({
-    name: 'app:act:topic:new',
-    query: { catid }
-  })
-}
-
-function editTopic (id) {
-  this.$router.tryPush({
-    name: 'app:act:topic:edit',
-    query: { id }
-  })
-}
-
 function getTopicCat (catid) {
   if (!catid) {
     return null
   }
   
-  let catItems = this.$store.getters['tpc/catItems']
+  // eslint-disable-next-line
+  let catItems = zerosApp.store.getters['tpc/catItems']
 
   let catItem = catItems.find((it) => {
     return it && it.id === catid
@@ -35,10 +22,46 @@ function getTopicCat (catid) {
   return catItem
 }
 
+function getTopicCatPathIds (catid) {
+  let cat = getTopicCat(catid)
+
+  if (!cat || !cat.path) {
+    return []
+  }
+
+  let parts = cat.path.split('.')
+  if (!parts || !parts.length) {
+    return
+  }
+
+  if (parts[0] === '0') {
+    parts = parts.slice(1)
+  }
+
+  parts.push(catid)
+
+  return parts
+}
+
+function getTopicCatPathNames (catid) {
+  let path = getTopicCatPathIds(catid)
+  let names = path.map((it) => {
+    let cat = getTopicCat(it)
+
+    if (!cat) {
+      return ''
+    }
+
+    return cat.name
+  })
+
+  return names
+}
+
 export {
   MaxCatLevel,
   CatLevels,
-  newTopic,
-  editTopic,
-  getTopicCat
+  getTopicCat,
+  getTopicCatPathIds,
+  getTopicCatPathNames
 }

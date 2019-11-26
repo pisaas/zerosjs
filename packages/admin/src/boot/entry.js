@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 import uni from '../utils/uni'
-import createZeros from './zeros'
+import createApp from './app'
 
 // import pValidator from '../plugins/validator'
 // import pIO        from '../plugins/io'
@@ -13,9 +13,15 @@ import pCmpt         from '../plugins/cmpt'
 Vue.config.devtools = true
 Vue.config.productionTip = false
 
-const { zeros, store, router } = createZeros()
+const { app, store, router } = createApp(Vue)
 
-;[
+// 设置zeros App为全局变量
+let globalIns = global || window
+if (globalIns && !globalIns.zeros) {
+  globalIns.zerosApp = app
+}
+
+[
   // pValidator, pIO,
   pZeros,
   pMedia,
@@ -23,7 +29,7 @@ const { zeros, store, router } = createZeros()
   // pResc
 ].forEach(plugin => {
   plugin({
-    zeros,
+    app,
     router,
     store,
     Vue
@@ -31,7 +37,7 @@ const { zeros, store, router } = createZeros()
 })
 
 function newVue (config) {
-  config = Object.assign(zeros, config)
+  config = Object.assign(app, config)
   new Vue(config)
 }
 

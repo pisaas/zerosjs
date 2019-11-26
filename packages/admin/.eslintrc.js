@@ -8,7 +8,8 @@ module.exports = {
     'eslint:recommended'
   ],
   globals: {
-    'wx': 'on'
+    'wx': 'on',
+    'zerosApp': 'on'
   },
   rules: {
     'x-invalid-end-tag': 'off',

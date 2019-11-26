@@ -2,12 +2,9 @@
   <div class="tpc-editor">
     <div class="editor-header flex q-pa-sm">
       <div class="header-main flex-main">
-        <div class="title-input inline">
+        <div class="title-input">
           <Input v-model="formModel.name"
             :maxlength="100" show-word-limit placeholder="请输入话题的标题" />
-        </div>
-        <div class="inline q-ml-lg">
-          <cat-selector ref="selCat" v-model="formModel.catid" @change="onCatChange" />
         </div>
       </div>
       <div class="header-tail">
@@ -63,7 +60,7 @@ export default {
         return null
       }
 
-      return getTopicCat.call(this, formModel.catid)
+      return getTopicCat(formModel.catid)
     }
   },
 
@@ -80,15 +77,22 @@ export default {
     onCatChange (val, data) {
     },
 
-    create (catid) {
+    open (tpcid) {
+      return this.openUpdate(tpcid)
+    },
+
+    openCreate (catid) {
       this.reset()
       this.editMode = 'create'
-      this.$set(this.formModel, 'catid', catid)
+
+      if (catid) {
+        this.$set(this.formModel, 'catid', catid)
+      }
 
       return Promise.resolve()
     },
 
-    update (tpcid) {
+    openUpdate (tpcid) {
       this.reset()
       this.editMode = 'update'
       this.tpcid = tpcid
@@ -203,7 +207,7 @@ export default {
 .tpc-editor {
   .editor-header {
     .title-input {
-      width: 550px;
+      padding-right: 20px;
 
       .ivu-input-word-count {
         background: @bg-color;

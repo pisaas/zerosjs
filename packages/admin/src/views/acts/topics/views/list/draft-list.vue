@@ -4,10 +4,22 @@
       <div class="flex-main">
         <Input v-model="tableQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
           @on-enter="onQuery" style="width: 180px" />
+        
+        <page-action-buttons ref="pgActionButtons" @on-click="onActionClick">
+          <DropdownItem name="delete" :disabled="!isSelected">删除</DropdownItem>
+        </page-action-buttons>
+        
+        <tpc-editor-modal ref="editorModal" @submit="onEditSubmit" />
+      </div>
+      <div class="tail">
+        <page-nav-button :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+          @on-change="onPageChange" />
       </div>
     </div>
 
-    <Table ref="pgTable" class="list-table" border stripe :columns="tableColumns" :data="tableItems">
+    <Table ref="pgTable" class="list-table" border stripe
+      :columns="tableColumns" :data="tableItems"
+      @on-selection-change="onSelectionChange">
       <div slot-scope="{ row }" slot="topic">
         <div>{{ row.name }}</div>
       </div>
@@ -27,17 +39,20 @@
 </template>
 
 <script>
-import { editTopic } from '../../common'
+import { TpcEditorModal } from '../../components/tpc-editor'
 import CatSelector from '../../components/cat-selector'
 
 export default {
   components: {
+    TpcEditorModal,
     CatSelector
   },
 
   data () {
     return {
       catid: null,
+
+      tableSelection: [],
 
       tableColumns: [
         { type: 'selection', width: 40, align: 'center' },
@@ -60,6 +75,18 @@ export default {
     }
   },
 
+  computed: {
+    isSelected () {
+      let sels = this.tableSelection
+
+      if (!sels || !sels.length) {
+        return false
+      }
+
+      return true
+    }
+  },
+
   mounted () {
     let { catid } = this.$route.query
 
@@ -76,7 +103,40 @@ export default {
         return
       }
 
-      editTopic.call(this, row.id)
+      this.$refs.editorModal.openUpdate(row.id)
+    },
+
+    onEditSubmit () {
+      this.loadData()
+    },
+
+    onActionClick (name) {
+      switch (name) {
+        case 'delete':
+          this.onDelete()
+          break
+      }
+    },
+
+    onDelete () {
+      if (!this.isSelected) {
+        this.$app.alert('请选择要删除的记录。')
+      }
+
+      let ids = this.tableSelection.map((it) => {
+        return it.id
+      })
+
+      this.$app.confirm({
+        title: '删除记录',
+        content: '<p>记录删除后将无法恢复，确认删除选中的记录？</p>',
+        onOk: () => {
+          this.doDelete(ids).then(() => {
+            this.$app.toast('删除成功！', { type: 'success' })
+            this.loadData()
+          })
+        }
+      })
     },
 
     onQuery () {
@@ -84,9 +144,24 @@ export default {
       this.loadData()
     },
 
+    onSelectionChange (selection) {
+      this.tableSelection = selection
+
+      this.$nextTick(() => {
+        this.$refs.pgActionButtons.checkDisabled()
+      })
+    },
+
     onPageChange (val) {
       this.tableQuery.page = val
       this.loadData()
+    },
+
+    async doDelete (ids) {
+      let results = await this.$service('tpcs').remove(null, { query: {
+        status: 'new',
+        ids
+      } })
     },
 
     async loadData () {

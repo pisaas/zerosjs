@@ -3,61 +3,97 @@
     class-name="tpc-editor-modal" :title="modalTitle" 
     :width="modalWidth" :loading="loading" footer-hide
     @on-visible-change="onVisibleChange">
-    <tpc-editor ref="editor"></tpc-editor>
+    <new-tpc-editor v-if="editMode === 'create'" ref="editor"
+      @cancel="onCancel" @create="onCreate" />
+    <tpc-editor v-else ref="editor"
+      @save="onSave" @publish="onPublish"></tpc-editor>
   </Modal>
 </template>
 
 <script>
+import { getTopicCatPathNames } from '../../common'
+
+import NewTpcEditor from './new-editor'
 import TpcEditor from './editor'
 
 export default {
   components: {
+    NewTpcEditor,
     TpcEditor
   },
 
   data () {
     return {
-      tpcId: null,
+      tpcid: null,
+      catid: null,
       editMode: 'create',
       showModal: false,
-      loading: true,
-      formModel: null
+      loading: true
     }
   },
 
   computed: {
     modalTitle () {
+      let title = '创建话题'
+
       if (this.editMode === 'update') {
-        return `编辑话题 (${this.tpcId || ''})`
+        title = '编辑话题'
       }
-      return '创建话题'
+
+      let catPathNames = this.catPathNamesStr
+
+      if (catPathNames) {
+        title = `${title} - ${catPathNames}`
+      }
+
+      return title
     },
 
     modalWidth () {
       return 1024
+    },
+
+    catPathNamesStr () {
+      let pathNames = getTopicCatPathNames(this.catid)
+
+      if (!pathNames || !pathNames.length) {
+        return ''
+      }
+
+      return pathNames.join('/')
     }
   },
 
   methods: {
-    onOk () {
-      this.$refs.editor.save().then((res) => {
-        this.resetLoading()
-        
-        if (res === false) {
-          return
-        }
+    onCancel (e) {
+      this.resetLoading()
+      this.close()
+      
+      this.$emit('cancel', e)
+    },
 
-        if (this.editMode === 'create') {
-          this.$emit('on-create', res)
-        } else {
-          let eventName = `on-${this.editMode}`
-          this.$emit(eventName, res)
-        }
+    onCreate (e) {
+      if (!e || !e.id) {
+        return
+      }
 
-        this.$emit('on-save', res)
-      }).catch(() => {
-        this.resetLoading()
-      })
+      this.resetLoading()
+      this.$emit('create', e)
+      this.$emit('submit', e)
+
+      this.openUpdate(e.id)
+    },
+
+    onSave (e) {
+      this.resetLoading()
+      this.$emit('save', e)
+      this.$emit('submit', e)
+    },
+
+    onPublish (e) {
+      this.resetLoading()
+      this.$emit('publish', e)
+      this.$emit('submit', e)
     },
 
     onVisibleChange (visible) {
@@ -67,36 +103,31 @@ export default {
     },
 
     onClose () {
-      let data = this.$refs.editor.formModel
-
       this.reset()
-      this.$emit('on-close', data)
+      this.$emit('close')
     },
 
-    onEditorLoad (formModel) {
-      if (!formModel) {
-        return
-      }
-
-      this.formModel = formModel
-    },
-
-    create (catId) {
+    openCreate (catid) {
       this.editMode = 'create'
 
-      this.$nextTick(() => {
-        this.$refs.editor.create(catId).then(() => {
-          this.showModal = true
+      let editor = this.$refs.editor
+
+      if (editor) {
+        this.$nextTick(() => {
+          editor.open(catid).then(() => {
+            this.showModal = true
+          })
         })
-      })
+      }
     },
 
-    update (id, cb) {
+    openUpdate (id, cb) {
       this.editMode = 'update'
 
       this.$nextTick(() => {
-        this.$refs.editor.update(id).then((res) => {
-          this.tpcId = res.id
+        this.$refs.editor.open(id).then((res) => {
+          this.tpcid = res.id
+          this.catid = res.catid
           this.showModal = true
 
           if (cb) {
@@ -113,7 +144,8 @@ export default {
     },
 
     reset () {
-      this.formModel = null
+      this.catid = null
+      this.tpcid = null
 
       if (this.$refs.editor) {
         this.$refs.editor.reset()

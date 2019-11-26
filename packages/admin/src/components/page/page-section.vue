@@ -2,6 +2,7 @@
   <div class="page-section" :class="{
     'list-section': listSection,
     'border': border,
+    'fixed': fixed,
     'no-padding': noPadding,
     'no-padding-top': noPaddingTop
   }">
@@ -31,6 +32,7 @@ export default {
 
   props: {
     border: Boolean,
+    fixed: Boolean, // 高度、宽度确定
     listSection: Boolean,
     noPadding: Boolean,
     noPaddingTop: Boolean,
@@ -79,6 +81,7 @@ export default {
 
 <style lang="less">
 .page-section {
+  position: relative;
   padding: 10px 20px;
   background: white;
   border-radius: @border-radius;
@@ -119,6 +122,16 @@ export default {
 
   &-footer {
     padding: 10px 0;
+  }
+
+  &.fixed {
+    .page-section {
+      &-footer {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+      }
+    }
   }
 
   &.border {

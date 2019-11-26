@@ -12,7 +12,7 @@ import uni     from '@/utils/uni'
 import env from '@/env'
 import apis from '@/apis'
 
-export default ({ zeros, Vue }) => {
+export default ({ store, router, Vue }) => {
   Vue.prototype.$env = env
   Vue.prototype.$util = { _, str, timeago, date, format, regexr }
   Vue.prototype.$errors = errors
@@ -21,12 +21,12 @@ export default ({ zeros, Vue }) => {
 
   Vue.prototype.$apis = apis
   Vue.prototype.$service = apis.service
-  Vue.prototype.$app = initialize(zeros, Vue)
+  Vue.prototype.$app = initialize({ store, router, Vue })
 }
 
-function initialize (zeros, Vue) {
+function initialize ({ store, router, Vue }) {
   function appBasic (key) {
-    let appBasic = Object.assign({}, zeros.store.getters['app/basic'])
+    let appBasic = Object.assign({}, store.getters['app/basic'])
 
     if (!key || !appBasic) {
       return appBasic
@@ -35,7 +35,7 @@ function initialize (zeros, Vue) {
   }
 
   function userBasic (key) {
-    let userBasic = zeros.store.getters['usr/basic']
+    let userBasic = store.getters['usr/basic']
     if (!key || !userBasic) {
       return userBasic
     }
@@ -43,7 +43,7 @@ function initialize (zeros, Vue) {
   }
 
   function zerosBasic (key) {
-    let zerosBasic = Object.assign({}, zeros.store.getters['zeros/basic'])
+    let zerosBasic = Object.assign({}, store.getters['zeros/basic'])
 
     if (!key || !zerosBasic) {
       return zerosBasic
@@ -76,7 +76,7 @@ function initialize (zeros, Vue) {
    * @return {Boolean} [description]
    */
   function isLogin () {
-    return zeros.store.getters['usr/isLogin']
+    return store.getters['usr/isLogin']
   }
 
   /**
@@ -91,15 +91,15 @@ function initialize (zeros, Vue) {
   }
 
   function loadApp (id) {
-    return zeros.store.dispatch('app/load', {
+    return store.dispatch('app/load', {
       id
     }).then(() => {
-      zeros.router.goHome()
+      router.goHome()
     })
   }
 
   function isAppLoaded () {
-    return zeros.store.getters['app/isLoaded']
+    return store.getters['app/isLoaded']
   }
 
   function toast (title, opts) {

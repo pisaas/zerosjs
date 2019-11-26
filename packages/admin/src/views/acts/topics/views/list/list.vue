@@ -25,8 +25,6 @@
 </template>
 
 <script>
-import { newTopic } from '../../common'
-
 import { TpcEditorModal } from '../../components/tpc-editor'
 
 import PubedList from './pubed-list'
@@ -74,7 +72,7 @@ export default {
     },
 
     onNew () {
-      this.$refs.tpcEditorModal.create()
+      this.$refs.tpcEditorModal.openCreate()
     }
   }
 }
