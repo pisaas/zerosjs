@@ -3,12 +3,14 @@ import ViewUI  from 'view-design'
 import Vue2Editor, { Quill } from 'vue2-editor'
 
 import { ImageExtend } from 'quill-image-extend-module'
-Quill.register("modules/imageExtend", ImageExtend)
+import QuillUndoRedo from '@/libs/quill/quill-undo-redo-module'
+import QuillWordCounter from '@/libs/quill/quill-word-counter-module'
 
-import { Page, PageSection, PageResult } from '../components/page'
-import { PageNavButton, PageActionButtons } from '../components/table'
+import { Page, PageSection, PageResult } from '@/components/page'
+import { ListActions, ListNav, ListItemActions, ListItemAction } from '@/components/list'
+import { UserAvatar } from '@/components/user'
 
-import { routeCmpts } from '../router/routes'
+import { routeCmpts } from '@/router/routes'
 
 export default ({ zeros, router, Vue }) => {
   Vue.use(ViewUI, {
@@ -18,17 +20,30 @@ export default ({ zeros, router, Vue }) => {
   // quill editor, 因为 quill-image-resize-module 内使用了window.Quill
   window.Quill = Quill
   
+  Quill.register("modules/imageExtend", ImageExtend)
+  Quill.register("modules/undoRedo", QuillUndoRedo)
+  Quill.register("modules/wordCounter", QuillWordCounter)
+
   const ImageResize = require("quill-image-resize-module")
   Quill.register("modules/imageResize", ImageResize.default)
 
+  const QuillSize = Quill.import("attributors/style/size")
+  QuillSize.whitelist = ["12px", false, "15px", "16px", "17px", "18px", "20px", "24px"]
+  Quill.register(QuillSize, true)
+
   Vue.use(Vue2Editor)
 
+  // 注册全局自定义组件
   Vue.component(Page.name, Page)
   Vue.component(PageSection.name, PageSection)
   Vue.component(PageResult.name, PageResult)
 
-  Vue.component(PageNavButton.name, PageNavButton)
-  Vue.component(PageActionButtons.name, PageActionButtons)
+  Vue.component(ListActions.name, ListActions)
+  Vue.component(ListNav.name, ListNav)
+  Vue.component(ListItemActions.name, ListItemActions)
+  Vue.component(ListItemAction.name, ListItemAction)
+
+  Vue.component(UserAvatar.name, UserAvatar)
   
   Vue.prototype.$cmpt = initialize()
 }

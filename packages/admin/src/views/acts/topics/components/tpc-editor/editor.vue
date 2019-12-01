@@ -8,13 +8,13 @@
         </div>
       </div>
       <div class="header-tail">
-        <Button v-if="isAllowed('save')" @click="onSave">保存</Button>
+        <Button :disabled="!isAllowed('save')" @click="onSave">保存</Button>
         &nbsp;
-        <Button v-if="isAllowed('pub')" @click="onPub">发布</Button>
+        <Button :disabled="!isAllowed('pub')" @click="onPublish">发布</Button>
       </div>
     </div>
     <div class="editor-body">
-      <template v-if="topicCat">
+      <template v-if="catid">
         <div class="body-main">
           <cont-editor v-model="formModel.cont" />
         </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { getTopicCat } from '../../common'
+import { getTopicCat, getTopicCatPathNames } from '../../common'
 
 import CatSelector from '../cat-selector'
 import ContEditor from './cont-editor'
@@ -54,13 +54,21 @@ export default {
   },
 
   computed: {
-    topicCat () {
-      let formModel = this.formModel
-      if (!formModel || !formModel.catid) {
+    catid () {
+      if (!this.formModel) {
         return null
       }
+      return this.formModel.catid
+    },
 
-      return getTopicCat(formModel.catid)
+    catPathNamesStr () {
+      let pathNames = getTopicCatPathNames(this.catid)
+
+      if (!pathNames || !pathNames.length) {
+        return ''
+      }
+
+      return pathNames.join('/')
     }
   },
 
@@ -69,9 +77,17 @@ export default {
 
   methods: {
     onSave () {
+      this.save()
     },
 
-    onPub () {
+    onPublish () {
+      this.$app.confirm({
+        title: '发布话题',
+        content: `<p>话题将被发布到“${this.catPathNamesStr}”分类下！确认发布？</p>`,
+        onOk: () => {
+          this.publish()
+        }
+      })
     },
 
     onCatChange (val, data) {
@@ -102,7 +118,9 @@ export default {
 
     reset () {
       this.tpcid = null
-      this.formModel = {}
+      this.formModel = {
+        name: '标题'
+      }
 
       if (this.$refs.form) {
         this.$refs.form.resetFields()
@@ -113,46 +131,84 @@ export default {
       }
     },
 
-    save () {
+    async save () {
       let editMode = this.editMode
       let formModel = this.formModel
 
-      return new Promise((resolve, reject) => {
-        if (!formModel) {
-          return resolve(false)
-        }
-        this.$refs.form.validate((valid) => {
-          return resolve(valid)
-        })
-      }).then((valid) => {
-        if (!valid) {
-          return false
-        }
+      let valid = await this.validate()
 
-        let tpcService = this.$service('tpcs')
+      if (!valid) {
+        return false
+      }
 
-        if (editMode === 'create') {
-          return tpcService.create(formModel)
-        } else {
-          return tpcService.patch(this.tpcid, formModel)
-        }
-      })
+      let tpcService = this.$service('tpcs')
+
+      let result = null
+
+      if (editMode === 'create') {
+        result = await tpcService.create(formModel)
+      } else {
+        result = await tpcService.patch(this.tpcid, formModel)
+      }
+
+      this.$app.toast('保存成功！', { type: 'success' })
+
+      this.$emit('save', result)
     },
 
-    isAllowed () {
+    async publish () {
+      let formModel = this.formModel
+
+      let valid = await this.validate({ publish: true })
+
+      if (!valid) {
+        return false
+      }
+
+      let tpcService = this.$service('tpcs')
+      let result = await tpcService.patch(this.tpcid, {
+        verb: 'publish',
+        data: formModel
+      })
+
+      this.$app.toast('发布成功！', { type: 'success' })
+
+      this.$emit('publish', result)
+
+      return result
+    },
+
+    async validate (options) {
+      options = Object.assign({}, options)
+
+      let formModel = this.formModel
+
+      if (!formModel || !formModel.catid) {
+        this.$app.toast('请选择话题分类。')
+        return false
+      } else if (!formModel.name) {
+        this.$app.toast('请提供话题标题。')
+        return false
+      }
+
+      if (options.publish) {
+        if (!formModel.cont || formModel.cont.length < 10) {
+          this.$app.toast('话题内容不能少于5字。')
+          return false
+        }
+      }
+      
       return true
     },
 
-    isAllowedEdit (field) {
-      if (!field) {
-        return true
-      }
+    isAllowed (action) {
+      let formModel = this.formModel || {}
 
-      switch (field) {
-        case 'code':
-          return !this.formModel.pubed
+      switch (action) {
+        case 'save':
+        case 'pub':
+          return formModel.name && formModel.catid
       }
-
       return true
     },
 
@@ -164,7 +220,10 @@ export default {
       }
 
       return this.$service('tpcs').get(this.tpcid).then((res) => {
-        let formModel = res
+        let formModel = this.$lodash.pick(res, [
+          'id', 'catid', 'name', 'data', 'cont'
+        ])
+
         this.formModel = formModel
 
         this.$emit('load', this.formModel)
@@ -207,6 +266,7 @@ export default {
   .editor-header {
     .title-input {
       padding-right: 20px;
+      width: 680px;
 
       .ivu-input-word-count {
         background: @bg-color;

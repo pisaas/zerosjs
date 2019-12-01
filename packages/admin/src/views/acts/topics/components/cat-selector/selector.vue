@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { getTopicCatPathIds, getTopicCatPathNames } from '../../common'
+import { getTopicCatPathIds, getTopicCatPathNamesStr } from '../../common'
 
 export default {
   props: {
@@ -58,19 +58,8 @@ export default {
       return curVal[curVal.length - 1]
     },
 
-    pathNames () {
-      let pathNames = getTopicCatPathNames(this.lastValue)
-      return pathNames
-    },
-
     pathNamesStr () {
-      let pathNames = this.pathNames
-
-      if (!pathNames || !pathNames.length) {
-        return ''
-      }
-
-      return pathNames.join('/')
+      return getTopicCatPathNamesStr(this.lastValue)
     }
   },
 

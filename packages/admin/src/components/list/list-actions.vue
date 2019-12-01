@@ -1,12 +1,13 @@
 <template>
-  <Dropdown class="page-action-buttons" :class="{ 'no-padding': noPadding }"
+  <Dropdown class="list-actions" transfer
+    :class="{ 'no-padding': noPadding, 'show-disabled': showDisabled }"
     trigger="custom" :visible="visible"
     @on-click="onDropDownClick" @on-clickoutside="onDropDownClickOutside">
     <Button :disabled="isDisabled" @click="onBtnClick">
        <span>操作</span>
        <Icon class="icon-right" type="ios-arrow-down" />
     </Button>
-    <DropdownMenu ref="dropdownMenu" slot="list">
+    <DropdownMenu slot="list" class="list-actions-dropdown">
       <slot />
     </DropdownMenu>
   </Dropdown>
@@ -14,19 +15,12 @@
 
 <script>
 export default {
-  name: 'page-action-buttons',
+  name: 'list-actions',
 
   props: {
     noPadding: Boolean,
     disabled: Boolean,
-    current: {
-      type: Number,
-      default: 1
-    },
-    pageSize: {
-      type: Number,
-      default: 10
-    }
+    showDisabled: Boolean
   },
 
   data () {
@@ -36,14 +30,8 @@ export default {
     }
   },
 
-  watch: {
-    current () {
-      this.currentPage = this.current
-    }
-  },
-
   computed: {
-      isDisabled () {
+    isDisabled () {
       if (this.disabled === true) {
         return true
       }
@@ -85,10 +73,12 @@ export default {
 
     checkDisabled () {
       let items = []
-      let menu = this.$refs.dropdownMenu
 
-      if (menu) {
-        items = menu.$children
+      let defaultSlot = this.$slots.default
+      if (defaultSlot && defaultSlot.length) {
+        items = defaultSlot.map((it) => {
+          return it.componentInstance
+        })
       }
 
       let disabled = false
@@ -100,7 +90,7 @@ export default {
           return !it.disabled
         }))
       }
-      
+
       this.isAllSubDisabled = disabled
     }
   }
@@ -108,11 +98,29 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.page-action-buttons {
+.list-actions {
   padding-left: @space-base;
 
   &.no-padding {
     padding-left: 0;
+  }
+}
+</style>
+
+<style lang="less">
+.list-actions-dropdown {
+  &.show-disabled {
+    .ivu-dropdown-item-disabled {
+      display: block;
+    }
+  }
+
+  .ivu-dropdown-item-disabled {
+    display: none;
+    
+    &.show-disabled {
+      display: block;
+    }
   }
 }
 </style>

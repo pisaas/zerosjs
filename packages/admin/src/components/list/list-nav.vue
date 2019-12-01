@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: 'page-nav-button',
+  name: 'list-nav',
 
   props: {
     total: {

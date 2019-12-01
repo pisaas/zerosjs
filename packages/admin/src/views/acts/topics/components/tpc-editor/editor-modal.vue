@@ -1,7 +1,8 @@
 <template>
   <Modal ref="editorModal" v-model="showModal"
-    class-name="tpc-editor-modal" :title="modalTitle" 
-    :width="modalWidth" :loading="loading" footer-hide
+    class-name="tpc-editor-modal"
+    :title="modalTitle" :width="modalWidth"
+    :loading="loading" footer-hide
     @on-visible-change="onVisibleChange">
     <new-tpc-editor v-if="editMode === 'create'" ref="editor"
       @cancel="onCancel" @create="onCreate" />
@@ -78,6 +79,7 @@ export default {
       }
 
       this.resetLoading()
+      
       this.$emit('create', e)
       this.$emit('submit', e)
 
@@ -86,12 +88,15 @@ export default {
 
     onSave (e) {
       this.resetLoading()
+
       this.$emit('save', e)
       this.$emit('submit', e)
     },
 
     onPublish (e) {
       this.resetLoading()
+      this.close()
+      
       this.$emit('publish', e)
       this.$emit('submit', e)
     },

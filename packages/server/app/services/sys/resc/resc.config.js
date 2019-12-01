@@ -27,7 +27,7 @@ module.exports = function (app) {
         }
       },
 
-      'usrAvatar': {
+      'usr/avatar': {
         'name': '用户头像',
         'type': 'usr',
         'avatar': true,
@@ -35,27 +35,27 @@ module.exports = function (app) {
         'getKey': (options) => {
           let opts = _.defaultsDeep(options, { ts: (+new Date()) });
           return {
-            key: `users/${opts.ucode}/avatar_${opts.ts}`,
-            avatarKey: `usr.${opts.ucode}`,
+            key: `users/${opts.uid}/avatar_${opts.ts}`,
+            avatarKey: `usr.${opts.uid}`,
             options: opts
           };
         }
       },
 
-      'usrResc': {
+      'usr/resc': {
         'name': '用户资源',
         'type': 'usr',
         'storage': 'qiniu',
         'getKey': (options) => {
           let opts = options || {};
           return {
-            key: `apps/${opts.appId}/users/${opts.ucode}/${opts.key}`,
+            key: `apps/${opts.appid}/users/${opts.uid}/${opts.key}`,
             options: opts
           };
         }
       },
 
-      'appLogo': {
+      'app/logo': {
         'name': '应用Logo',
         'type': 'app',
         'avatar': true,
@@ -63,14 +63,14 @@ module.exports = function (app) {
         'getKey': (options) => {
           let opts = _.defaultsDeep(options, { ts: (+new Date()) });
           return {
-            key: `apps/${opts.appId}/logo_${opts.ts}`,
-            avatarKey: `app.${opts.appId}`,
+            key: `apps/${opts.appid}/logo_${opts.ts}`,
+            avatarKey: `a_${opts.appid}`,
             options: opts
           };
         }
       },
 
-      'appMaterial': {
+      'app/material': {
         'name': '应用素材',
         'type': 'app',
         'storage': 'qiniu',
@@ -86,35 +86,35 @@ module.exports = function (app) {
         'getKey': (options) => {
           let opts = options || {};
           return {
-            key: `apps/${opts.appId}/m/${opts.category}/${opts.key}`,
+            key: `apps/${opts.appid}/m/${opts.category}/${opts.key}`,
             options: opts
           };
         }
       },
 
-      'topicResc': {
-        'name': 'topic图片',
+      'topic/material': {
+        'name': '主题素材',
         'type': 'app',
         'storage': 'qiniu',
         'getKey': (options) => {
           let opts = options || {};
           return {
-            key: `apps/${opts.appId}/topics/${opts.key}`,
+            key: `apps/${opts.appid}/t/${opts.tid}/${opts.key}`,
             options: opts
           };
         }
       },
       
-      'roomIcon': {
-        'name': '聊天室icon',
+      'room/avatar': {
+        'name': '聊天室logo',
         'type': 'app',
         'avatar': true,
         'storage': 'qiniu',
         'getKey': (options) => {
           let opts = _.defaultsDeep(options, { ts: (+new Date()) });
           return {
-            key: `rooms/${opts.rcode}/icon_${opts.ts}`,
-            avatarKey: `room.${opts.rcode}`,
+            key: `rooms/${opts.rcode}/avatar_${opts.ts}`,
+            avatarKey: `r_${opts.rcode}`,
             options: opts
           };
         }

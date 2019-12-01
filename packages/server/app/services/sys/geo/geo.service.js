@@ -6,6 +6,6 @@ module.exports = function (app) {
 };
 
 class GeoService extends SysService {
-  _setup (app) {
+  _setup () {
   }
 }

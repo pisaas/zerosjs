@@ -113,7 +113,6 @@ export default {
         if (editMode === 'create') {
           formModel.pid = this.pid
           formModel.taxid = 'topic'
-          formModel.type = 'json'
           return catService.create(formModel)
         } else {
           return catService.patch(this.catId, formModel)

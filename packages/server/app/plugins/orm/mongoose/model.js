@@ -46,12 +46,12 @@ module.exports = function() {
         });
       }
 
-      let modeName = options.modelName || options.docName;
+      let modelName = options.modelName || options.docName || options.collection;
 
-      let model = mongoose.models[modeName];
+      let model = mongoose.models[modelName];
 
       if (!model) {
-        model = mongoose.model(modeName, schema);
+        model = mongoose.model(modelName, schema);
       }
       
       _.extend(model, { definition });
@@ -115,6 +115,7 @@ function normalizeDef (definition) {
   }
 
   options.toJSON = toJSONOptions;
+  options.collection = options.collection || options.docName;
 
   return { fields, indexs, virtuals, options };
 }

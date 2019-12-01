@@ -42,6 +42,7 @@ class Service extends ApiService {
     }
 
     let regData = Object.assign({}, data, {
+      type: 'app',
       uid: user.id,
       appid: app.id
     });
@@ -68,7 +69,6 @@ class Service extends ApiService {
     }
 
     // TODO: 创建关联topic id
-
 
     if (pReg && pReg.leaf) {
       await this.adapterService.patch(pid, { leaf: false });

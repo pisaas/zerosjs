@@ -5,12 +5,13 @@
         <Input v-model="tableQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
           @on-enter="onQuery" style="width: 180px" />
         
-        <page-action-buttons ref="pgActionButtons" @on-click="onActionClick">
-          <DropdownItem name="delete" :disabled="!isSelected">删除</DropdownItem>
-        </page-action-buttons>
+        <list-actions ref="pgActionButtons" @on-click="onActionTrigger">
+          <DropdownItem name="edit" :disabled="!isAllowedActive('edit')">编辑</DropdownItem>
+          <DropdownItem name="delete" :disabled="!isAllowedActive('delete')">删除</DropdownItem>
+        </list-actions>
       </div>
       <div class="tail">
-        <page-nav-button :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+        <list-nav :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
           @on-change="onPageChange" />
       </div>
     </div>
@@ -18,14 +19,24 @@
     <Table ref="pgTable" class="list-table" border stripe
       :columns="tableColumns" :data="tableItems"
       @on-selection-change="onSelectionChange">
-      <div slot-scope="{ row }" slot="topic">
-        <div>{{ row.name }}</div>
+      <div slot-scope="{ row }" slot="topic" class="col-topic relative">
+        <div class="title">
+          <span>{{ row.name }}</span>
+        </div>
+        <div class="detail">
+          <div class="catpath">分类：{{ getTopicCatPathNamesStr(row.catid) }}</div>
+        </div>
+        
+        <list-item-actions @trigger="onItemActionTrigger" :data="row">
+          <list-item-action icon="md-open" label="编辑话题" action="edit" />
+        </list-item-actions>
       </div>
-      <div slot-scope="{ row }" slot="timestamp">
-        <div>{{ $util.date.format(row.updatedAt) }}</div>
-      </div>
-      <div slot-scope="{ row }" slot="ops" >
-        <Button class="link" ghost size="small" @click="onEdit(row)">编辑</Button>
+      <div slot-scope="{ row }" slot="ts" class="col-ts">
+        <div class="ts">{{ $util.date.format(row.updatedAt) }}</div>
+        <div class="detail">
+          <!-- <user-avatar :id="row.uid" size="small" /> -->
+          <span class="uname">{{ row.uname }}</span>
+        </div>
       </div>
     </Table>
 
@@ -37,6 +48,8 @@
 </template>
 
 <script>
+import { getTopicCatPathNamesStr } from '../../common'
+
 import { TpcEditorModal } from '../../components/tpc-editor'
 import CatSelector from '../../components/cat-selector'
 
@@ -49,15 +62,15 @@ export default {
   data () {
     return {
       catid: null,
+      
+      getTopicCatPathNamesStr,
 
       tableSelection: [],
 
       tableColumns: [
         { type: 'selection', width: 40, align: 'center' },
         { title: '话题', slot: 'topic', minWidth: 200 },
-        { title: '作者', key: 'uname', width: 100, align: 'center' },
-        { title: '更新', slot: 'timestamp', width: 150, align: 'center' },
-        { title: '操作', slot: 'ops', width: 120, align: 'center' },
+        { title: '更新时间', slot: 'ts', width: 150 },
       ],
 
       tableItems: [],
@@ -74,14 +87,21 @@ export default {
   },
 
   computed: {
+    selectedItems () {
+      let sels = this.tableSelection || []
+      return sels
+    },
+
     isSelected () {
-      let sels = this.tableSelection
+      return this.selectedItems.length > 0
+    },
 
-      if (!sels || !sels.length) {
-        return false
-      }
+    isSingleSelected () {
+      return this.selectedItems.length === 1
+    },
 
-      return true
+    isMultiSelected () {
+      return this.selectedItems.length > 1
     }
   },
 
@@ -96,7 +116,34 @@ export default {
   },
 
   methods: {
+    onActionTrigger (name) {
+      switch (name) {
+        case 'edit':
+          this.onEdit()
+          break
+        case 'delete':
+          this.onDelete()
+          break
+      }
+    },
+
+    onItemActionTrigger (name, data) {
+      if (!name || !data) {
+        return
+      }
+
+      switch (name) {
+        case 'edit':
+          this.onEdit(data)
+          break
+      }
+    },
+
     onEdit (row) {
+      if (!row) {
+        row = this.tableSelection[0]
+      }
+
       if (!row || !row.id) {
         return
       }
@@ -104,22 +151,14 @@ export default {
       this.$emit('edit', row.id, row)
     },
 
-    onActionClick (name) {
-      switch (name) {
-        case 'delete':
-          this.onDelete()
-          break
-      }
-    },
-
     onDelete () {
-      if (!this.isSelected) {
-        this.$app.alert('请选择要删除的记录。')
-      }
-
       let ids = this.tableSelection.map((it) => {
         return it.id
       })
+
+      if (!ids || !ids.length) {
+        this.$app.alert('请选择要删除的记录。')
+      }
 
       this.$app.confirm({
         title: '删除记录',
@@ -151,6 +190,15 @@ export default {
       this.loadData()
     },
 
+    isAllowedActive (action) {
+      switch (action) {
+        case 'delete':
+          return this.isSelected
+        case 'edit':
+          return this.isSingleSelected
+      }
+    },
+
     // 供外部调用
     async reload () {
       this.loadData()
@@ -179,8 +227,23 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.pg-table {
-  border-radius: 5px;
-  border: 1px solid @border-color;
+.list-table {
+  .col-topic {
+    padding: 5px;
+
+    &>.title {
+      font-size: 14px;
+    }
+
+    &>.detail {
+      color: @tip-color;
+    }
+  }
+
+  .col-ts {
+    &>.detail {
+      color: @tip-color;
+    }
+  }
 }
 </style>

@@ -102,6 +102,8 @@ class RescService extends SysService {
     }
   
     const qiniuService = zeros.service('open/qiniu');
+    const dataService = zeros.service('data/rescs');
+
     const rescKeyData = await store.getKey(data);
   
     if (data.tmpKey) {
@@ -131,6 +133,11 @@ class RescService extends SysService {
         options: { force: true }
       });
     }
+
+    // 存储数据到数据库
+    dataService.create({
+      data: rescKeyData
+    });
   
     return rescKeyData;
   }
@@ -154,6 +161,7 @@ class RescService extends SysService {
     }
 
     const qiniuService = zeros.service('open/qiniu');
+    const dataService = zeros.service('data/rescs');
 
     await qiniuService.remove({
       bucket: 'resc',
@@ -166,5 +174,7 @@ class RescService extends SysService {
         key: data.delAvatarKey
       });
     }
+
+    await dataService.remove({ query: { key } });
   }
 }

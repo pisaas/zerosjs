@@ -4,8 +4,8 @@
       <div>
         <Tabs class="no-content" :value="tabName" @on-click="onTabsClick">
           <div slot="extra" class="q-mx-md">
-            <Button type="primary" icon="md-add" @click="onNew">新建</Button>
-            <tpc-editor-modal ref="tpcEditorModal" @submit="onEditSubmit" />
+            <list-actions ref="listActions" :name="tabName" visible
+              @submit="onActionSubmit" />
           </div>
 
           <TabPane label="已发布" name="pubed"></TabPane>
@@ -25,30 +25,24 @@
 </template>
 
 <script>
-import { TpcEditorModal } from '../../components/tpc-editor'
-
 import PubedList from './pubed-list'
 import PendingList from './pending-list'
 import DraftList from './draft-list'
 
+import ListActions from './list-actions'
+
 export default {
   components: {
-    TpcEditorModal,
     PubedList,
     PendingList,
-    DraftList
-  },
-
-  props: {
+    DraftList,
+    ListActions
   },
 
   data () {
     return {
       tabName: null
     }
-  },
-
-  watch: {
   },
 
   mounted () {
@@ -71,20 +65,13 @@ export default {
       })
     },
 
-    onNew () {
-      this.$refs.tpcEditorModal.openCreate()
-    },
-
     onEdit (id) {
-      if (!id) {
-        return
-      }
-      
-      this.$refs.tpcEditorModal.openUpdate(id)
+      this.$refs.listActions.openUpdate(id)
     },
 
-    onEditSubmit () {
+    onActionSubmit () {
       let list = this.$refs.list
+
       if (list && list.reload) {
         list.reload()
       }

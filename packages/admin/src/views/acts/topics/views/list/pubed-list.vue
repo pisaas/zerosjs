@@ -10,7 +10,7 @@
       </div>
 
       <div>
-        <page-nav-button :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+        <list-nav :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
           @on-change="onPageChange" />
       </div>
     </div>

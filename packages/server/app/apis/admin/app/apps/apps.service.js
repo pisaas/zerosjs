@@ -56,8 +56,8 @@ class Service extends ApiService {
     delete data.logo;
 
     app = await this.adapterService.patch(id, data);
-    
-    app = await this.adapterService.updateLogo(app, logo);
+
+    app = await zeros.service('sys/app').updateLogo(app, logo);
 
     return app;
   }

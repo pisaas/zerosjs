@@ -31,7 +31,7 @@ function getTopicCatPathIds (catid) {
 
   let parts = cat.path.split('.')
   if (!parts || !parts.length) {
-    return
+    return []
   }
 
   if (parts[0] === '0') {
@@ -58,10 +58,15 @@ function getTopicCatPathNames (catid) {
   return names
 }
 
+function getTopicCatPathNamesStr (catid) {
+  return getTopicCatPathNames(catid).join('/')
+}
+
 export {
   MaxCatLevel,
   CatLevels,
   getTopicCat,
   getTopicCatPathIds,
-  getTopicCatPathNames
+  getTopicCatPathNames,
+  getTopicCatPathNamesStr
 }

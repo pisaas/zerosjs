@@ -3,7 +3,7 @@ const { AppIdKey } = require('../../common');
 const { ApiService } = require('../../service');
 const { handleConnection } = require('./app.hooks');
 
-module.exports = function (app) {
+module.exports = function () {
   new Service().register('app', {
     adapterService: {
       path: 'data/apps'

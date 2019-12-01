@@ -71,12 +71,7 @@ class Service extends ApiService {
       throw new zeros.$errors.BadRequest('无法获取应用');
     }
 
-    let logo = data.logo;
-    delete data.logo;
-
     app = await this.adapterService.patch(id, data);
-    
-    app = await this.adapterService.updateLogo(app, logo);
 
     return app;
   }
