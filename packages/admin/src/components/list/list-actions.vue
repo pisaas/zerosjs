@@ -17,10 +17,17 @@
 export default {
   name: 'list-actions',
 
+  provide () {
+    return {
+      listActions: this
+    }
+  },
+
   props: {
     noPadding: Boolean,
     disabled: Boolean,
-    showDisabled: Boolean
+    showDisabled: Boolean,
+    data: Object
   },
 
   data () {
@@ -71,6 +78,14 @@ export default {
       this.visible = false
     },
 
+    triggerFn (action, data) {
+      if (data === undefined) {
+        data = this.data
+      }
+      
+      this.$emit('trigger', action, data)
+    },
+
     checkDisabled () {
       let items = []
 
@@ -103,24 +118,6 @@ export default {
 
   &.no-padding {
     padding-left: 0;
-  }
-}
-</style>
-
-<style lang="less">
-.list-actions-dropdown {
-  &.show-disabled {
-    .ivu-dropdown-item-disabled {
-      display: block;
-    }
-  }
-
-  .ivu-dropdown-item-disabled {
-    display: none;
-    
-    &.show-disabled {
-      display: block;
-    }
   }
 }
 </style>

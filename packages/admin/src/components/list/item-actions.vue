@@ -5,7 +5,9 @@
   }">
     <div class="actions-wrapper">
       <Dropdown v-if="collapsed" transfer>
-        <Button class="btn-action" icon="ios-more" :disabled="isDisabled" />
+        <slot name="trigger">
+          <Button class="btn-action" :icon="icon" :disabled="isDisabled" />
+        </slot>
         <DropdownMenu slot="list">
           <slot />
         </DropdownMenu>
@@ -31,6 +33,10 @@ export default {
     collapsed: Boolean,
     disabled: Boolean,
     showDisabled: Boolean,
+    icon: {
+      type: String,
+      default: 'ios-more'
+    },
     data: Object
   },
 

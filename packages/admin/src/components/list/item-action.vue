@@ -1,8 +1,10 @@
 <template>
   <DropdownItem v-if="isCollapsedAction" class="list-item-action dropdown"
     :class="{ 'hidden': isHidden }"
-    :name="action" :disabled="disabled">
-    <div @click="onClick">{{ label }}</div>
+    :name="action" :disabled="disabled" :divided="divided">
+    <div @click="onClick">
+      <slot>{{ label }}</slot>
+    </div>
   </DropdownItem>
   <Tooltip v-else class="list-item-action tooltip" transfer
     :class="{ 'hidden': isHidden }" :placement="placement" :disabled="!showLabel">
@@ -24,6 +26,7 @@ export default {
     label: String,
     data: Object,
     action: String,
+    divided: Boolean,
     placement: {
       type: String,
       default: 'top-start'
@@ -69,11 +72,14 @@ export default {
 
   methods: {
     onClick () {
+      this.trigger()
+      this.$emit('click', this.action, this.data)
+    },
+
+    trigger () {
       if (this.itemActions && this.itemActions.triggerFn) {
         this.itemActions.triggerFn(this.action, this.data)
       }
-
-      this.$emit('click', this.action, this.data)
     }
   }
 }

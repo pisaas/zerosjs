@@ -7,7 +7,7 @@ import QuillUndoRedo from '@/libs/quill/quill-undo-redo-module'
 import QuillWordCounter from '@/libs/quill/quill-word-counter-module'
 
 import { Page, PageSection, PageResult } from '@/components/page'
-import { ListActions, ListNav, ListItemActions, ListItemAction } from '@/components/list'
+import { ListNav, ListActions, ListAction, ListItemActions, ListItemAction } from '@/components/list'
 import { UserAvatar } from '@/components/user'
 
 import { routeCmpts } from '@/router/routes'
@@ -38,8 +38,9 @@ export default ({ zeros, router, Vue }) => {
   Vue.component(PageSection.name, PageSection)
   Vue.component(PageResult.name, PageResult)
 
-  Vue.component(ListActions.name, ListActions)
   Vue.component(ListNav.name, ListNav)
+  Vue.component(ListActions.name, ListActions)
+  Vue.component(ListAction.name, ListAction)
   Vue.component(ListItemActions.name, ListItemActions)
   Vue.component(ListItemAction.name, ListItemAction)
 

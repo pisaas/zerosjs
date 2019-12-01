@@ -5,9 +5,9 @@
         <Input v-model="tableQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
           @on-enter="onQuery" style="width: 180px" />
         
-        <list-actions ref="pgActionButtons" @on-click="onActionTrigger">
-          <DropdownItem name="edit" :disabled="!isAllowedActive('edit')">编辑</DropdownItem>
-          <DropdownItem name="delete" :disabled="!isAllowedActive('delete')">删除</DropdownItem>
+        <list-actions ref="pgActionButtons" @trigger="onActionTrigger">
+          <list-action action="edit" :disabled="!isAllowedActive('edit')">编辑</list-action>
+          <list-action action="delete" :disabled="!isAllowedActive('delete')">删除</list-action>
         </list-actions>
       </div>
       <div class="tail">
@@ -179,10 +179,6 @@ export default {
 
     onSelectionChange (selection) {
       this.tableSelection = selection
-
-      this.$nextTick(() => {
-        this.$refs.pgActionButtons.checkDisabled()
-      })
     },
 
     onPageChange (val) {
