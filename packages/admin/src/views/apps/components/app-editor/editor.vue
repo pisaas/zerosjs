@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import ImageUpload from '@/components/upload/image-upload'
+import ImageUpload from '@components/upload/image-upload'
 
 const LogoImageSpec = {
   MimeType: 'image/png', // 图片格式

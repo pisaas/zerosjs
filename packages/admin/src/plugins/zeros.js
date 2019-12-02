@@ -1,4 +1,4 @@
-import lodash from 'lodash'
+import filesize from 'filesize'
 
 import str     from '@/utils/str'
 import timeago from '@/utils/timeago'
@@ -14,13 +14,10 @@ import apis from '@/apis'
 
 export default ({ store, router, Vue }) => {
   Vue.prototype.$env = env
-  Vue.prototype.$lodash = lodash
-  Vue.prototype.$util = { str, timeago, date, format, regexr }
+  Vue.prototype.$util = { str, timeago, date, format, filesize, regexr }
   Vue.prototype.$errors = errors
   Vue.prototype.$storage = storage
   Vue.prototype.$uni = uni
-
-
 
   Vue.prototype.$apis = apis
   Vue.prototype.$service = apis.service

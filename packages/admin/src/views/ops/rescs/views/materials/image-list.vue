@@ -5,8 +5,8 @@
         <Input v-model="tableQuery.search" icon="ios-search" placeholder="名称/描述/ID"
           @on-enter="onQuery" style="width: 180px" />
         
-        <list-actions ref="pgActionButtons" @on-click="onActionClick">
-          <DropdownItem name="delete" :disabled="!isSelected">删除</DropdownItem>
+        <list-actions @trigger="onActionTrigger">
+          <list-action action="delete" :disabled="!isSelected">删除</list-action>
         </list-actions>
       </div>
       <div class="tail">
@@ -26,8 +26,11 @@
           <span class="name">{{ row.name }}</span>
         </div>
       </div>
-      <div slot-scope="{ row }" slot="ops" >
-        <Button class="link" ghost size="small" @click="onEdit(row)">编辑</Button>
+      <div slot-scope="{ row }" slot="ts" class="col-ts">
+        <div class="ts">{{ $util.date.format(row.updatedAt) }}</div>
+        <div class="detail">
+          <span class="uname">{{ row.uname }}</span>
+        </div>
       </div>
     </Table>
 
@@ -50,8 +53,7 @@ export default {
       tableColumns: [
         { type: 'selection', width: 40, align: 'center' },
         { title: '图片', slot: 'content', minWidth: 200 },
-        { title: '更新时间', slot: 'ts', width: 150, align: 'center' },
-        { title: '操作', slot: 'ops', width: 120, align: 'center' },
+        { title: '更新时间', slot: 'ts', width: 150, align: 'center' }
       ],
 
       tableItems: [],
@@ -84,15 +86,7 @@ export default {
   },
 
   methods: {
-    onEdit (row) {
-      if (!row || !row.id) {
-        return
-      }
-
-      this.$emit('edit', row.id, row)
-    },
-
-    onActionClick (name) {
+    onActionTrigger (name) {
       switch (name) {
         case 'delete':
           this.onDelete()
@@ -100,14 +94,26 @@ export default {
       }
     },
 
-    onDelete () {
-      if (!this.isSelected) {
-        this.$app.alert('请选择要删除的记录。')
+    onEdit (row) {
+      if (!row) {
+        row = this.tableSelection[0]
       }
 
+      if (!row || !row.id) {
+        return
+      }
+
+      this.$emit('edit', row.id, row)
+    },
+
+    onDelete () {
       let ids = this.tableSelection.map((it) => {
         return it.id
       })
+
+      if (!ids || !ids.length) {
+        this.$app.alert('请选择要删除的记录。')
+      }
 
       this.$app.confirm({
         title: '删除记录',
@@ -128,10 +134,6 @@ export default {
 
     onSelectionChange (selection) {
       this.tableSelection = selection
-
-      this.$nextTick(() => {
-        this.$refs.pgActionButtons.checkDisabled()
-      })
     },
 
     onPageChange (val) {

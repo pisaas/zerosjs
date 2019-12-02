@@ -83,7 +83,7 @@ const routes = [
   },
 
   { path: '/ops', name: 'app:ops',  component: App,
-    redirect: '/ops/rescs',
+    redirect: '/ops/resc',
     meta: { title: '管理', icon: 'ios-bulb' },
     children: [
       { path: 'msgs', name: 'app:ops:msgs', component: Parent,
@@ -108,12 +108,12 @@ const routes = [
           },
         ]
       },
-      { path: 'rescs', name: 'app:ops:rescs', component: Parent,
-        redirect: '/ops/rescs/list',
+      { path: 'resc', name: 'app:ops:resc', component: Parent,
+        redirect: '/ops/resc/materials',
         meta: { title: '素材管理', icon: 'md-filing' },
         children: [
-          { path: 'list', name: 'app:ops:rescs:list',
-            component: load('ops/rescs/views/list'),
+          { path: 'materials', name: 'app:ops:resc:materials',
+            component: load('ops/rescs/views/materials'),
             meta: { title: '素材列表' },
           },
         ]

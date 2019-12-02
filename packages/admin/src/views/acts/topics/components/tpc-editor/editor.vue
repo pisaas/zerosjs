@@ -220,7 +220,7 @@ export default {
       }
 
       return this.$service('tpcs').get(this.tpcid).then((res) => {
-        let formModel = this.$lodash.pick(res, [
+        let formModel = _.pick(res, [
           'id', 'catid', 'name', 'data', 'cont'
         ])
 

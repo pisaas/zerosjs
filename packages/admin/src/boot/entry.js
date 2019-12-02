@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import _ from 'lodash'
 
 import uni from '../utils/uni'
 import createApp from './app'
@@ -19,6 +20,10 @@ const { app, store, router } = createApp(Vue)
 let globalIns = global || window
 if (globalIns && !globalIns.zeros) {
   globalIns.zerosApp = app
+
+  if (!globalIns._) {
+    globalIns._ = _
+  }
 }
 
 [

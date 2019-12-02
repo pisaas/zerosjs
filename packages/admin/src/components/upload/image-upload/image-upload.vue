@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import FileUpload from '@/components/upload/file-upload'
+import FileUpload from '@components/upload/file-upload'
 
 const DefaultImageSpec = {
   MimeType: 'image/jpeg', // 图片格式

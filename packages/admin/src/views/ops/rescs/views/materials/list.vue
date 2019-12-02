@@ -57,7 +57,7 @@ export default {
       this.tabName = name
       
       this.$router.tryPush({
-        name: 'app:ops:rescs:list',
+        name: 'app:ops:resc:materials',
         query: { type: name }
       })
     },

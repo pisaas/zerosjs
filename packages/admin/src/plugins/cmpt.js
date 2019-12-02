@@ -6,9 +6,9 @@ import { ImageExtend } from 'quill-image-extend-module'
 import QuillUndoRedo from '@/libs/quill/quill-undo-redo-module'
 import QuillWordCounter from '@/libs/quill/quill-word-counter-module'
 
-import { Page, PageSection, PageResult } from '@/components/page'
-import { ListNav, ListActions, ListAction, ListItemActions, ListItemAction } from '@/components/list'
-import { UserAvatar } from '@/components/user'
+import { Page, PageSection, PageResult } from '@components/page'
+import { ListNav, ListActions, ListAction, ListItemActions, ListItemAction } from '@components/list'
+import { UserAvatar } from '@components/user'
 
 import { routeCmpts } from '@/router/routes'
 

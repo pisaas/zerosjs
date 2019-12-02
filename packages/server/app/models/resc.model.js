@@ -14,7 +14,7 @@ module.exports = function () {
 
       name: { type: 'string', required: true, maxlength: 100 }, // 资源名
       utype: { type: 'string', required: true, maxlength: 100 }, // 所属类型（app, tpc, usr）
-      mtype: { type: 'string', required: true, maxlength: 100 }, // 资源类型（图片，视频，音频，文档等）
+      rtype: { type: 'string', required: true, maxlength: 100 }, // 资源类型（图片，视频，音频，文档等）
       
       store: { type: 'string', required: true, maxlength: 100 },  // 存储名，如usr/avatar, app/logo, app/material等
       storage: { type: 'string', required: true, maxlength: 100 },  // 存储方式

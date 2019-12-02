@@ -1,10 +1,9 @@
 <template>
   <Modal ref="editorModal" v-model="showModal"
     class-name="image-uploader-modal"
-    title="上传图片" :width="600"
-    :loading="loading" footer-hide
+    :title="title" :width="500" footer-hide
     @on-visible-change="onVisibleChange">
-    <uploader-panel ref="uploaderPanel" />
+    <uploader-panel ref="uploaderPanel" @all-completed="onUploadCompleted" />
   </Modal>
 </template>
 
@@ -16,14 +15,17 @@ export default {
     UploaderPanel
   },
 
-  data () {
-    return {
-      showModal: false,
-      loading: true
+  props: {
+    title: {
+      type: String,
+      default: '上传'
     }
   },
 
-  computed: {
+  data () {
+    return {
+      showModal: false
+    }
   },
 
   methods: {
@@ -38,18 +40,12 @@ export default {
       this.$emit('close')
     },
 
-    onUpload (e) {
-      this.resetLoading()
-
-      if (!e || !e.id) {
-        return
-      }
-      
-      this.$emit('upload', e)
-      this.$emit('submit', e)
+    onUploadCompleted (items) {
+      this.$emit('completed', items)
     },
 
-    open () {
+    open (params) {
+      this.$refs.uploaderPanel.set(params)
       this.showModal = true
     },
 
@@ -59,15 +55,7 @@ export default {
 
     reset () {
       this.showModal = false
-      this.resetLoading()
-    },
-
-    resetLoading () {
-      this.loading = false
-
-      this.$nextTick(() => {
-        this.loading = true
-      })
+      this.$refs.uploaderPanel.reset()
     }
   },
 

@@ -1,15 +1,19 @@
 <template>
   <div v-show="visible" class="image-actions page-actions">
-    <image-uploader ref="uploader" @submit="onUploadSubmit" />
+    <resc-uploader ref="uploader"
+      modal-title="图片上传"
+      store-key="app/material" resc-type="image"
+      open-file close-when-completed
+      @completed="onUploadCompleted" />
   </div>
 </template>
 
 <script>
-import { ImageUploader } from '../../components/image'
+import RescUploader from '../../components/uploader'
 
 export default {
   components: {
-    ImageUploader
+    RescUploader
   },
 
   props: {
@@ -22,7 +26,8 @@ export default {
       this.$refs.uploader.open()
     },
 
-    onUploadSubmit (e) {
+    onUploadCompleted (e) {
+      // post process
       this.$emit('upload', this.name, e)
       this.$emit('submit', this.name, e)
     }

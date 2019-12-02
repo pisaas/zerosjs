@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import ImageUpload from '@/components/upload/image-upload'
+import ImageUpload from '@components/upload/image-upload'
 import RecordBar from './record-bar'
 import ExtendPopup from './extend-popup'
 

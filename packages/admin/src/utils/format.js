@@ -1,3 +1,5 @@
+import filesize from 'filesize'
+
 const units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB']
 
 export function between (v, min, max) {
@@ -109,6 +111,7 @@ export default {
   between,
   pad,
   truncate,
+  filesize,
   humanStorageSize,
   normalizeToInterval,
   addrStr,

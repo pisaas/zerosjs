@@ -5,8 +5,10 @@
     </div>
 
     <slot />
-
-    <input ref="file" type="file" :accept="accept" @change="onFileSelected()" />
+    <form ref="iptForm">
+      <input ref="file" type="file" :accept="accept" :multiple="multipleStr"
+        @change="onFileSelected()" />
+    </form>
   </div>
 </template>
 
@@ -14,10 +16,18 @@
 export default {
   props: {
     border: [String, Boolean],
-    accept: String
+    accept: String,
+    multi: Boolean
   },
 
   computed: {
+    multipleStr () {
+      if (this.multi) {
+        return 'multiple'
+      }
+      return false
+    },
+
     borderStyle () {
       let border = this.border
 
@@ -37,18 +47,26 @@ export default {
 
   methods: {
     onFileSelected () {
-      let file = this.getFile()
-      this.$emit('file-selected', file)
-    },
+      let files = this.getFiles()
 
-    getFile () {
-      let input = this.$refs.file
-      if (!input || !input.files || !input.files.length) {
+      if (!files.length) {
         return
       }
 
-      let file = input.files[0]
-      return file
+      if (this.multi) {
+        this.$emit('file-selected', files)
+      } else {
+        this.$emit('file-selected', files[0])
+      }
+
+      this.$emit('selected', files)
+
+      this.$refs.iptForm.reset()
+    },
+
+    getFiles () {
+      let input = this.$refs.file
+      return input.files
     },
 
     reset () {
@@ -67,6 +85,7 @@ export default {
 <style lang="less" scoped>
 .file-upload {
   position: relative;
+  display: inline-block;
 
   &.border {
     border-color: @border-color;
