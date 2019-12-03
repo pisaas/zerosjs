@@ -10,6 +10,17 @@ module.exports = function () {
     'AccessKey': 'NaBGgt0FeN6Hza1YAwmZ3NHrB-rRYzDljm6IaCsR',
     'SecretKey': 'eif4-lScxZStteETV4S-GwdJtuoT5Vz-MuSKFo9e',
     'clientUploadUrl': 'https://upload.qiniup.com',
+
+    'pipeline': 'pisaas-resc',
+
+    'processes': {
+      'thumb': {
+        'fop': 'imageView2/0/w/600/h/600/format/jpg'
+      },
+      'avatar': {
+        'fop': 'imageView2/0/w/600/h/600/format/jpg'
+      }
+    },
   
     'buckets': {
       'resc': {

@@ -86,7 +86,17 @@ export default {
         return this.onUploaded(item, result)
       }
 
+      if (!result || !result.key || !item.file) {
+        return result
+      }
+
       // 后续处理
+      await this.$service('resc').create({
+        store: this.storeKey,
+        key: result.key,
+        name: item.file.name,
+        rtype: this.rescType
+      })
 
       return result
     }

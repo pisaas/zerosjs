@@ -74,19 +74,21 @@ module.exports = function (app) {
         'name': '应用素材',
         'type': 'app',
         'storage': 'qiniu',
-        'categories': {
-          'required': true,
-          'default': 'others',
-          'items': {
-            'logo': '应用标志',
-            'app_banner': '应用头部',
-            'others': '其他'
-          }
-        },
         'getKey': (options) => {
           let opts = options || {};
+          let { data, params } = opts;
+          let appid;
+
+          if (data && data.appid) {
+            appid = data.appid;
+          }
+
+          if (params && params.app) {
+            appid = params.app.id;
+          }
+
           return {
-            key: `apps/${opts.appid}/m/${opts.category}/${opts.key}`,
+            key: `apps/${appid}/m/${data.id}`,
             options: opts
           };
         }

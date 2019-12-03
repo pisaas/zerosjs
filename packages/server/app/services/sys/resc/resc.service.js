@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const path = require('path');
 const errors = require('@zerosjs/errors');
 
 const { SysService } = require('../service');
@@ -84,62 +85,158 @@ class RescService extends SysService {
    * @param {string} key 存储key
    * @param {ref} data 数据
    */
-  async store (key, data) {
+  async store (storeKey, data, options, params) {
+    if (!params && options) {
+      params = options;
+    }
+
+    let { app, user } = Object.assign({ app: {}, user: {} }, params);
+    
     let { tmpKey, url } = data;
   
     if (!tmpKey && !url) {
       throw new errors.InnerError('请提供资源临时key或地址。');
     }
 
-    const store = this.getStore(key);
+    const store = this.getStore(storeKey);
   
     if (!store) {
-      throw new errors.InnerError(`未找到名称为"${key}"的存储。`);
+      throw new errors.InnerError(`未找到名称为"${storeKey}"的存储。`);
     }
   
     if (!store.getKey) {
       throw new errors.InnerError('获取资源键错误。');
     }
-  
+    
+    const destBucket = 'resc';
     const qiniuService = zeros.service('open/qiniu');
     const dataService = zeros.service('data/rescs');
 
-    const rescKeyData = await store.getKey(data);
-  
-    if (data.tmpKey) {
-      await qiniuService.move({
-        srcBucket: 'tmp',
-        srcKey: data.tmpKey,
-        destBucket: 'resc',
-        destKey: rescKeyData.key
+    let rescKeyData = null;
+    let statInfo = null;
+
+    // 资源持久化处理队列
+    let fops = [];
+
+    let modelData = _.pick(data, [
+      'id', 'appid', 'uid', 'uname', 'rtype',
+      'name', 'extra', 'status', 'pubed'
+    ]);
+
+    modelData = Object.assign({
+      appid: app.id,
+      uid: user.id,
+      uname: user.displayName
+    }, modelData, {
+      store: storeKey,
+      stype: store.type,
+      storage: store.storage
+    });
+
+    // 为了防止多个await竞争，这里放弃await模式
+    return await Promise.resolve().then(() => {
+      if (data.id) {
+        return;
+      }
+
+      // 自定义id
+      return zeros.service('core/ids').gen().then((id) => {
+        data.id = id;
       });
-    } else if (data.url) {
-      await qiniuService.fetch({
-        url: data.url,
-        bucket: 'resc',
+    }).then(() => {
+      if (store.getKey.then) {
+        return store.getKey({ data, options, params }).then((res) => {
+          rescKeyData = res;
+        });
+      } else {
+        rescKeyData = store.getKey({ data, options, params });
+      }
+    }).then(() => {
+      modelData.path = rescKeyData.key;
+
+      if (!modelData.name) {
+        modelData.name = path.basename(rescKeyData.key);
+      }
+
+      if (data.tmpKey) {
+        return qiniuService.move({
+          srcBucket: 'tmp',
+          srcKey: data.tmpKey,
+          destBucket,
+          destKey: rescKeyData.key,
+          options
+        });
+      } else if (data.url) {
+        return qiniuService.fetch({
+          url: data.url,
+          bucket: destBucket,
+          key: rescKeyData.key,
+          options
+        });
+      }
+    }).then(() => {
+      // 获取存储文件信息
+      return qiniuService.stat({
+        bucket: destBucket,
         key: rescKeyData.key
+      }).then((res) => {
+        statInfo = res;
       });
-    }
-  
-    // 用户头像
-    if (store.avatar
-      && rescKeyData
-      && rescKeyData.avatarKey) {
-      await qiniuService.copy({
-        srcBucket: 'resc',
-        srcKey: rescKeyData.key,
-        destBucket: 'resc',
-        destKey: `avatars/${rescKeyData.avatarKey}`,
+    }).then(() => {
+      if (!modelData.rtype && statInfo.mimeType) {
+        modelData.rtype = statInfo.mimeType.split('/')[0];
+      }
+
+      modelData = Object.assign(modelData, {
+        fsize: statInfo.fsize,
+        mime: statInfo.mimeType,
+        md5: statInfo.md5
+      });
+
+      // 图片文件，保存缩略图
+      if (modelData.rtype === 'image') {
+        modelData.path_thumb = `${rescKeyData.key}_thumb`;
+
+        fops.push({
+          fop: 'imageView2/0/w/600/h/600/format/jpg',
+          key: modelData.path_thumb
+        });
+      }
+
+      // 用户头像
+      if (store.avatar && rescKeyData && rescKeyData.avatarKey) {
+        fops.push({
+          fop: 'imageView2/0/w/200/h/200/format/jpg',
+          key: `avatars/${rescKeyData.avatarKey}`
+        });
+      }
+
+      if (!fops.length) {
+        return;
+      }
+
+      return qiniuService.pfop({
+        bucket: destBucket,
+        key: rescKeyData.key,
+        fops,
         options: { force: true }
       });
-    }
-
-    // 存储数据到数据库
-    dataService.create({
-      data: rescKeyData
+    }).then(() => {
+      // 用户头像
+      if (store.avatar
+        && rescKeyData
+        && rescKeyData.avatarKey) {
+        return qiniuService.copy({
+          srcBucket: destBucket,
+          srcKey: rescKeyData.key,
+          destBucket: destBucket,
+          destKey: `avatars/${rescKeyData.avatarKey}`,
+          options: { force: true }
+        });
+      }
+    }).then(() => {
+      return dataService.create(modelData);
     });
-  
-    return rescKeyData;
   }
 
   /**

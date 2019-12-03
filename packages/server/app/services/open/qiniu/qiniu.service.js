@@ -1,4 +1,4 @@
-const debug = require('debug')('@zerosjs/server/services/open/qiniu');
+const debug = require('debug')('@zerosjs/qiniu');
 
 const _ = require('lodash');
 const qiniu = require('qiniu');
@@ -8,13 +8,14 @@ const { OpenService } = require('../service');
 
 let __digestMac = null;
 let __bucketManager = null;
+let __operationManager = null;
 
 module.exports = function (app) {
   new QiniuService({ }, app).register('qiniu', {
   });
 };
 
-// const ManageOps = [ 'fetch', 'move', 'copy', 'remove', 'removeAfterDays', 'refreshUrls' ];
+// const ManageOps = [ 'fetch', 'move', 'copy', 'stat', 'remove', 'removeAfterDays', 'refreshUrls' ];
 // const ImageSlimNames = { avatar: 'avatar' };
 // const ImageSlimExprs = { avatar: 'imageView2/2/w/100/h/100/q/75|imageslim' };
 
@@ -89,6 +90,18 @@ class QiniuService extends OpenService {
     return __bucketManager;
   }
 
+  getOperationManager () {
+    if (__operationManager) {
+      return __operationManager;
+    }
+
+    let mac = __digestMac;
+    const config = new qiniu.conf.Config();
+    __operationManager = new qiniu.fop.OperationManager(mac, config);
+
+    return __operationManager;
+  }
+
   async getUptoken (params) {
     let { bucketKey, srcKey } = params;
 
@@ -121,7 +134,7 @@ class QiniuService extends OpenService {
     let { url, bucket: descBucket, key: srcKey } = params;
     let bucketName = this.getBucketName(descBucket);
 
-    return this.getQiniuPromise('fetch', url, bucketName, srcKey);
+    return this.getBucketManagerPromise('fetch', url, bucketName, srcKey);
   }
 
   /**
@@ -134,7 +147,7 @@ class QiniuService extends OpenService {
     let srcBucketName = this.getBucketName(srcBucketKey);
     let destBucketName = this.getBucketName(descBucketKey);
 
-    return this.getQiniuPromise('move', srcBucketName, srcKey, destBucketName, destKey, options);
+    return this.getBucketManagerPromise('move', srcBucketName, srcKey, destBucketName, destKey, options);
   }
 
   /**
@@ -147,7 +160,7 @@ class QiniuService extends OpenService {
     let srcBucketName = this.getBucketName(srcBucketKey);
     let destBucketName = this.getBucketName(descBucketKey);
 
-    return this.getQiniuPromise('copy', srcBucketName, srcKey, destBucketName, destKey, options);
+    return this.getBucketManagerPromise('copy', srcBucketName, srcKey, destBucketName, destKey, options);
   }
 
   /**
@@ -159,7 +172,19 @@ class QiniuService extends OpenService {
     let { bucket: bucketKey, key: srcKey } = params;
     let bucketName = this.getBucketName(bucketKey);
 
-    return this.getQiniuPromise('delete', bucketName, srcKey);
+    return this.getBucketManagerPromise('delete', bucketName, srcKey);
+  }
+
+  /**
+   * 获取文件信息
+   * @param  {[type]} params [description]
+   * @return {[type]}        [description]
+   */
+  stat (params) {
+    let { bucket: bucketKey, key: srcKey } = params;
+    let bucketName = this.getBucketName(bucketKey);
+
+    return this.getBucketManagerPromise('stat', bucketName, srcKey);
   }
 
   /**
@@ -171,13 +196,40 @@ class QiniuService extends OpenService {
     let { bucket: bucketKey, key: srcKey, days } = params;
     let bucketName = this.getBucketName(bucketKey);
 
-    return this.getQiniuPromise('deleteAfterDays', bucketName, srcKey, days);
+    return this.getBucketManagerPromise('deleteAfterDays', bucketName, srcKey, days);
   }
 
   // 文件刷新
   refreshUrls (params) {
     let { urls } = params;
-    return this.getQiniuPromise('refreshUrls', urls);
+    return this.getBucketManagerPromise('refreshUrls', urls);
+  }
+
+  // 持久化数据处理
+  pfop (params) {
+    const cfg = this.getConfig();
+
+    let { bucket: bucketKey, key: srcKey, fops: fopsArr, pipeline, options } = params;
+
+    if (!fopsArr || !fopsArr.length) {
+      return Promise.resolve();
+    }
+
+    let bucketName = this.getBucketName(bucketKey);
+    pipeline = pipeline || cfg.pipeline;
+
+    let fops = fopsArr.map((it) => {
+      let saveasUri = qiniu.util.urlsafeBase64Encode(`${bucketName}:${it.key}`);
+      return `${it.fop}|saveas/${saveasUri}`;
+    });
+
+    return this.getOperationManagerPromise('pfop', bucketName, srcKey, fops, pipeline, options);
+  }
+
+  getOperationManagerPromise (op) {
+    let args = _.drop(arguments);
+    const manager = this.getOperationManager();
+    return this.getQiniuManagerPromise(manager, op, args);
   }
 
   /**
@@ -185,12 +237,16 @@ class QiniuService extends OpenService {
    * @param  {[type]} op [description]
    * @return {[type]}    [description]
    */
-  getQiniuPromise (op) {
+  getBucketManagerPromise (op) {
+    let args = _.drop(arguments);
+    const manager = this.getBucketManager();
+    return this.getQiniuManagerPromise(manager, op, args);
+  }
+
+  getQiniuManagerPromise (manager, op, args) {
+    args = args || [];
+    
     return new Promise((resolve, reject) => {
-      const bucketManager = this.getBucketManager();
-
-      let args = _.drop(arguments);
-
       args.push((err, body, info) => {
         if (err) {
           return reject(err);
@@ -206,7 +262,7 @@ class QiniuService extends OpenService {
       });
 
       try {
-        bucketManager[op].apply(bucketManager, args);
+        manager[op].apply(manager, args);
       } catch (ex) {
         return reject(ex);
       }

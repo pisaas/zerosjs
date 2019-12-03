@@ -51,7 +51,7 @@ export default {
       multi: false,
       accept: '',
       autoUpload: false,
-      onUpladeded: null,
+      onUploaded: null,
 
       items: {}
     }
@@ -145,15 +145,15 @@ export default {
       this.addFiles(files)
     },
 
-    set ({ files, multi, accept, autoUpload, onUpladeded }) {
+    set ({ files, multi, accept, autoUpload, onUploaded }) {
       this.multi = (multi === true)
       this.accept = accept || null
       this.autoUpload = (autoUpload === true)
 
-      if (typeof onUpladeded === 'function') {
-        this.onUpladeded = onUpladeded
+      if (typeof onUploaded === 'function') {
+        this.onUploaded = onUploaded
       } else {
-        this.onUpladeded = null
+        this.onUploaded = null
       }
 
       this.addFiles(files)
@@ -235,8 +235,8 @@ export default {
 
         this.$emit('uploaded', item, result)
 
-        if (this.onUpladeded) {
-          return this.onUpladeded(item, result).then((res) => {
+        if (this.onUploaded) {
+          return this.onUploaded(item, result).then((res) => {
             this.onUploadCompleted(item, result)
           })
         } else {
@@ -293,7 +293,7 @@ export default {
       this.multi = false
       this.accept = ''
       this.autoUpload = false
-      this.onUpladeded = null
+      this.onUploaded = null
 
       this.cancelAllUploads()
 

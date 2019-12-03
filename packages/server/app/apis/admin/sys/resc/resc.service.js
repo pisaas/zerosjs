@@ -24,6 +24,36 @@ class Service extends ApiService {
     return result;
   }
 
+  async create (data, params) {
+    let { user, app } = params;
+    let { key, store, rtype, name, extra } = data;
+
+    if (!key) {
+      throw new errors.BadRequest('请提供需要转存的资源。');
+    }
+
+    if (!store) {
+      throw new errors.BadRequest('请提供资源存储方式。');
+    }
+
+    let rescData = {
+      tmpKey: key,
+      name,
+      extra
+    };
+
+    // 图片直接发布
+    if (rtype === 'image') {
+      rescData.status = 'pubed';
+      rescData.pubed = true;
+    }
+
+    let rescService = zeros.service('sys/resc');
+    let result = await rescService.store(store, rescData, { app, user });
+
+    return result;
+  }
+
   async getUptoken (params) {
     let { appId, objId, prefix, bucket, extName } = params.query;
   
