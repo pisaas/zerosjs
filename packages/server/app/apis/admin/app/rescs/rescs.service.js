@@ -26,7 +26,7 @@ class Service extends ApiService {
     
     query = Object.assign({}, query, {
       appid: app.id,
-      utype: 'app'
+      stype: 'app'
     });
 
     let results = await this.adapterService.find({ query });
@@ -34,61 +34,67 @@ class Service extends ApiService {
     return results;
   }
 
-  async create (data, params) {
-    let { app, user } = params;
-
-    if (!data.catid) {
-      throw new zeros.$errors.BadRequest('请提供类型id');
-    }
-
-    let tpcData = Object.assign({
-      type: ''
-    }, data, {
-      appid: app.id,
-      uid: user.id,
-      uname: user.displayName
-    });
-
-    // TODO: 根据类别为topic设置附加属性
-    
-    let result = await this.adapterService.create(tpcData);
-
-    return result;
-  }
-
+  // 自能修改extra中的数据
   async patch (id, data, params) {
-    let { user } = params;
+    let { app } = params;
 
-    let app = await this.adapterService.get(id);
+    let rescModel = await this.adapterService.get(id);
 
-    if (!app || app.uid !== user.id) {
-      throw new zeros.$errors.BadRequest('无法获取应用');
+    if (!rescModel || app.id !== rescModel.id) {
+      throw new zeros.$errors.BadRequest('获取资源失败');
     }
 
-    app = await this.adapterService.patch(id, data);
+    if (rescModel.frzn) {
+      throw new zeros.$errors.BadRequest('获取已冻结');
+    }
 
-    return app;
+    let extra = Object.assign({}, rescModel.extra, data);
+
+    rescModel = await this.adapterService.patch(id, { extra });
+
+    return rescModel;
   }
 
   async remove (id, params) {
-    let { app, user } = params;
+    let { app } = params;
     let { ids } = params.query;
 
-    if (!ids || !ids.length) {
-      throw new zeros.$errors.BadRequest('请提供要删除的主题id');
+    if (id) {
+      ids = [id];
     }
 
-    let query = Object.assign({
-      appid: app.id,
-      uid: user.id,
-      pubed: false,
-      id: { $in: ids }
+    if (!ids || !ids.length) {
+      throw new zeros.$errors.BadRequest('请提供要删除的资源');
+    }
+
+    if (ids.length > 50) {
+      throw new zeros.$errors.BadRequest('一次删除不能超过50条资源信息');
+    }
+
+    let findResult = await this.adapterService.find({
+      query: {
+        appid: app.id,
+        id: { $in: ids },
+        frzn: { $ne: true }
+      }
     });
 
-    let tpcs = await this.adapterService.remove(null, {
-      query
+    if (!findResult.total) {
+      return {};
+    }
+
+    let removeIds = findResult.data.map((it) => {
+      return it.id;
     });
+
+    const rescService = zeros.service('sys/resc');
+
+    let removeOps = removeIds.map((it) => {
+      return rescService.remove(it);
+    });
+
+    let results = await Promise.all(removeOps);
     
-    return tpcs;
+    return results;
   }
 }

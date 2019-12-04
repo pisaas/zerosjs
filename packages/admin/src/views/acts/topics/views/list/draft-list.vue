@@ -19,11 +19,11 @@
     <Table ref="pgTable" class="list-table" border stripe
       :columns="tableColumns" :data="tableItems"
       @on-selection-change="onSelectionChange">
-      <div slot-scope="{ row }" slot="topic" class="col-topic relative">
-        <div class="title">
+      <div slot-scope="{ row }" slot="topic" class="table-col">
+        <div class="col-title">
           <span>{{ row.name }}</span>
         </div>
-        <div class="detail">
+        <div class="col-subtitle">
           <div class="catpath">分类：{{ getTopicCatPathNamesStr(row.catid) }}</div>
         </div>
         
@@ -31,9 +31,9 @@
           <list-item-action icon="md-open" label="编辑话题" action="edit" />
         </list-item-actions>
       </div>
-      <div slot-scope="{ row }" slot="ts" class="col-ts">
-        <div class="ts">{{ $util.date.format(row.updatedAt) }}</div>
-        <div class="detail">
+      <div slot-scope="{ row }" slot="ts" class="table-col">
+        <div class="col-text">{{ $util.date.format(row.updatedAt) }}</div>
+        <div class="col-subtitle">
           <!-- <user-avatar :id="row.uid" size="small" /> -->
           <span class="uname">{{ row.uname }}</span>
         </div>
@@ -221,25 +221,3 @@ export default {
   }
 }
 </script>
-
-<style lang="less" scoped>
-.list-table {
-  .col-topic {
-    padding: 5px;
-
-    &>.title {
-      font-size: 14px;
-    }
-
-    &>.detail {
-      color: @tip-color;
-    }
-  }
-
-  .col-ts {
-    &>.detail {
-      color: @tip-color;
-    }
-  }
-}
-</style>

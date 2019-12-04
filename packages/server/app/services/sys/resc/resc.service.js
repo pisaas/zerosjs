@@ -40,7 +40,7 @@ class RescService extends SysService {
   async getUptoken (options) {
     let cfg = this.cfg;
 
-    let { appId, objId, prefix, bucket, extName } = options;
+    let { appId, objId, prefix, bucket, extName, policyOptions } = options;
     bucket = bucket || 'tmp';
 
     const { rescPrefixs } = cfg;
@@ -72,9 +72,15 @@ class RescService extends SysService {
 
     const qiniuService = zeros.service('open/qiniu');
     
+    policyOptions = Object.assign({}, policyOptions);
+    if (!policyOptions.fsizeLimit || policyOptions.fsizeLimit > cfg.maxUploadSize) {
+      policyOptions.fsizeLimit = cfg.maxUploadSize;
+    }
+    
     let uptoken = await qiniuService.getUptoken({
       bucketKey: bucket,
-      srcKey
+      srcKey,
+      policyOptions
     });
 
     return uptoken;
@@ -195,19 +201,23 @@ class RescService extends SysService {
 
       // 图片文件，保存缩略图
       if (modelData.rtype === 'image') {
-        modelData.path_thumb = `${rescKeyData.key}_thumb`;
+        modelData.thumb = `${rescKeyData.key}_thumb`;
 
         fops.push({
-          fop: 'imageView2/0/w/600/h/600/format/jpg',
-          key: modelData.path_thumb
+          fop: zeros.$resc.QiniuFops.thumb,
+          key: modelData.thumb
         });
       }
 
       // 用户头像
       if (store.avatar && rescKeyData && rescKeyData.avatarKey) {
+        let avatarKey = `avatars/${rescKeyData.avatarKey}`;
+
+        modelData.avatar = avatarKey;
+
         fops.push({
-          fop: 'imageView2/0/w/200/h/200/format/jpg',
-          key: `avatars/${rescKeyData.avatarKey}`
+          fop: zeros.$resc.QiniuFops.avatar,
+          key: avatarKey
         });
       }
 
@@ -222,19 +232,6 @@ class RescService extends SysService {
         options: { force: true }
       });
     }).then(() => {
-      // 用户头像
-      if (store.avatar
-        && rescKeyData
-        && rescKeyData.avatarKey) {
-        return qiniuService.copy({
-          srcBucket: destBucket,
-          srcKey: rescKeyData.key,
-          destBucket: destBucket,
-          destKey: `avatars/${rescKeyData.avatarKey}`,
-          options: { force: true }
-        });
-      }
-    }).then(() => {
       return dataService.create(modelData);
     });
   }
@@ -244,34 +241,55 @@ class RescService extends SysService {
    * @param {string} key 资源名
    * @param {ref} data 数据
    */
-  async remove (key, data) {
-    let delKey = data.delKey || data.key;
-
-    if (!delKey) {
-      throw new Error('请提供资源key。');
+  async remove (id) {
+    if (!id) {
+      throw new errors.InnerError('请提供资源id。');
     }
 
-    const store = this.getStore(key);
-
-    if (!store) {
-      throw new Error(`未找到名称为"${key}"的存储。`);
-    }
-
-    const qiniuService = zeros.service('open/qiniu');
     const dataService = zeros.service('data/rescs');
 
-    await qiniuService.remove({
-      bucket: 'resc',
-      key: delKey
-    });
+    let rescModel = await dataService.get(id);
 
-    if (data.delAvatarKey) {
-      await qiniuService.remove({
-        bucket: 'resc',
-        key: data.delAvatarKey
-      });
+    if (!rescModel) {
+      throw new errors.InnerError('资源不存在或已删除。');
     }
 
-    await dataService.remove({ query: { key } });
+    if (rescModel.frzn) {
+      throw new errors.InnerError('资源已冻结。');
+    }
+
+    const store = this.getStore(rescModel.store);
+
+    if (!store) {
+      throw new errors.InnerError(`未找到名称为"${rescModel.store}"的存储。`);
+    }
+    
+    // TODO: 是否需要在删除前先冻结记录
+    // rescModel = await dataService.patch(id, { frzn: true });
+
+    const qiniuService = zeros.service('open/qiniu');
+
+    let delOps = [];
+
+    // 目前只支持七牛存储
+    if (rescModel.storage === 'qiniu') {
+      if (rescModel.thumb) {
+        delOps.push(qiniuService.remove({ key: rescModel.thumb }));
+      }
+
+      if (rescModel.avatar) {
+        delOps.push(qiniuService.remove({ key: rescModel.avatar }));
+      }
+
+      if (rescModel.path) {
+        delOps.push(qiniuService.remove({ key: rescModel.path }));
+      }
+    }
+
+    await Promise.all(delOps);
+
+    rescModel = await dataService.remove(id);
+
+    return rescModel;
   }
 }

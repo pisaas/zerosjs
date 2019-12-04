@@ -3,7 +3,7 @@
     <resc-uploader ref="uploader"
       modal-title="图片上传"
       store-key="app/material" resc-type="image"
-      open-file close-when-completed
+      open-file close-when-completed multi
       @completed="onUploadCompleted" />
   </div>
 </template>

@@ -18,17 +18,19 @@
     <Table ref="pgTable" class="list-table" border stripe
       :columns="tableColumns" :data="tableItems"
       @on-selection-change="onSelectionChange">
-      <div slot-scope="{ row }" slot="topic" class="col-topic">
-        <div class="content">
-          图片
-        </div>
+      <div slot-scope="{ row }" slot="content" class="table-col col-content">
+        <div class="thumb" :style="{ 'backgroundImage': `url(${row.thumb})` }"
+          @click="onImagePreview(row)" />
         <div class="detail">
-          <span class="name">{{ row.name }}</span>
+          <div class="col-title image-name">{{ row.name }}</div>
+          <div class="col-subtitle">
+            <span v-if="row.fsize">大小：{{ $util.filesize(row.fsize) }}</span>
+          </div>
         </div>
       </div>
-      <div slot-scope="{ row }" slot="ts" class="col-ts">
-        <div class="ts">{{ $util.date.format(row.updatedAt) }}</div>
-        <div class="detail">
+      <div slot-scope="{ row }" slot="ts" class="table-col">
+        <div class="col-text">{{ $util.date.format(row.updatedAt) }}</div>
+        <div class="col-subtitle">
           <span class="uname">{{ row.uname }}</span>
         </div>
       </div>
@@ -38,12 +40,16 @@
       <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
         show-total @on-change="onPageChange"></Page>
     </div>
+
+    <image-previewer ref="imagePreviewer" :items="tableItems" />
   </div>
 </template>
 
 <script>
+import ImagePreviewer from '../../components/image/previewer'
 export default {
   components: {
+    ImagePreviewer
   },
 
   data () {
@@ -53,7 +59,8 @@ export default {
       tableColumns: [
         { type: 'selection', width: 40, align: 'center' },
         { title: '图片', slot: 'content', minWidth: 200 },
-        { title: '更新时间', slot: 'ts', width: 150, align: 'center' }
+        { title: '状态', key: 'statusName', width: 100 },
+        { title: '更新时间', slot: 'ts', width: 150 }
       ],
 
       tableItems: [],
@@ -86,6 +93,10 @@ export default {
   },
 
   methods: {
+    onImagePreview (row) {
+      this.$refs.imagePreviewer.open(row.id)
+    },
+
     onActionTrigger (name) {
       switch (name) {
         case 'delete':
@@ -112,12 +123,12 @@ export default {
       })
 
       if (!ids || !ids.length) {
-        this.$app.alert('请选择要删除的记录。')
+        this.$app.alert('请选择要删除的图片。')
       }
 
       this.$app.confirm({
-        title: '删除记录',
-        content: '<p>记录删除后将无法恢复，确认删除选中的记录？</p>',
+        title: '删除图片',
+        content: '<p>图片删除后将无法恢复，确认删除选中的图片？</p>',
         onOk: () => {
           this.doDelete(ids).then(() => {
             this.$app.toast('删除成功！', { type: 'success' })
@@ -147,10 +158,9 @@ export default {
     },
 
     async doDelete (ids) {
-      let results = await this.$service('tpcs').remove(null, { query: {
-        status: 'new',
-        ids
-      } })
+      let results = await this.$service('rescs').remove(null, {
+        query: { ids }
+      })
     },
 
     async loadData () {
@@ -168,20 +178,20 @@ export default {
 
 <style lang="less" scoped>
 .list-table {
-  .col-topic {
-    padding: 5px;
+  .col-content {
+    display: flex;
 
-    &>.title {
-      font-size: 14px;
+    .thumb {
+      width: 100px;
+      height: 60px;
+      cursor: pointer;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
-    &>.detail {
-      font-size: 12px;
-      line-height: 20px;
-
-      &>.ts {
-        opacity: 0.6;
-      }
+    .detail {
+      padding: 10px;
     }
   }
 }

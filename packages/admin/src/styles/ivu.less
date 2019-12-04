@@ -97,6 +97,26 @@
 
     &-wrapper.list-table {
       border-left: 0;
+
+      .table-col {
+        padding: 5px;
+        position: relative;
+
+        .col-title {
+          font-size: 14px;
+          font-weight: bold;
+          line-height: 24px;
+        }
+
+        .col-text {
+          font-size: @text-size;
+        }
+
+        .col-subtitle {
+          font-size: 12px;
+          color: @tip-color;
+        }
+      }
     }
 
     &-wrapper.list-table &-border {

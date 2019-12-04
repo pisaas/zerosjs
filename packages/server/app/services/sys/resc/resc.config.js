@@ -6,6 +6,8 @@ module.exports = function (app) {
   return {
     domains: qiniuCfg.domains,
 
+    maxUploadSize: 500 * 1024 * 1024,  // 500MB
+
     // 上传前缀限制
     rescPrefixs: [
       'APP',  // 应用

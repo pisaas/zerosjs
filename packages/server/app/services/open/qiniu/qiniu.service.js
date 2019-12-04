@@ -48,6 +48,8 @@ class QiniuService extends OpenService {
   }
 
   getBucketName (name) {
+    name = name || 'resc';
+    
     let bucket = this.getBucket(name);
     if (!bucket) {
       return null;
@@ -83,7 +85,7 @@ class QiniuService extends OpenService {
       return __bucketManager;
     }
 
-    let mac = __digestMac;
+    let mac = this.getDigestMac();
     const config = new qiniu.conf.Config();
     __bucketManager = new qiniu.rs.BucketManager(mac, config);
 
@@ -95,7 +97,7 @@ class QiniuService extends OpenService {
       return __operationManager;
     }
 
-    let mac = __digestMac;
+    let mac = this.getDigestMac();
     const config = new qiniu.conf.Config();
     __operationManager = new qiniu.fop.OperationManager(mac, config);
 
@@ -103,22 +105,21 @@ class QiniuService extends OpenService {
   }
 
   async getUptoken (params) {
-    let { bucketKey, srcKey } = params;
+    let { bucketKey, srcKey, policyOptions } = params;
 
     let bucket = this.getBucket(bucketKey);
 
     let { name, domain } = bucket;
     let { expires, returnBody } = bucket.uptoken;
 
-
-    let opts = {
+    policyOptions = Object.assign({
       scope: `${name}:${srcKey}`,
       expires,
       returnBody: zeros.util.stringify(returnBody)
-    };
+    }, policyOptions);
 
     const qiniuMac = this.getDigestMac();
-    const putPolicy = this.getRsPutPolicy(opts);
+    const putPolicy = this.getRsPutPolicy(policyOptions);
     const token = putPolicy.uploadToken(qiniuMac);
     const uploadUrl = this.cfg.clientUploadUrl;
 
@@ -252,8 +253,15 @@ class QiniuService extends OpenService {
           return reject(err);
         }
 
+        // 删除时文件不存在，不报错
+        if (op === 'delete') {
+          if (info.statusCode === 612) {
+            return resolve(body);
+          }
+        }
+
         if (info.statusCode !== 200) {
-          debug('QiniuRequest:', info, body, arguments);
+          debug('QiniuRequest:', op, info, body, args);
 
           return reject(new errors.InnerError('调用七牛接口出错。'));
         }
