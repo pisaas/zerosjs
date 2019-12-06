@@ -230,6 +230,33 @@ export function isErrorPageMessage (message) {
   return false
 }
 
+export function downloadUrl (url, filename) {
+  debugger
+  return http.request({
+    method: 'GET',
+    url,
+    responseType: 'blob'
+  }).then((res) => {
+    debugger
+
+    let bolb = new Blob([res.data])
+    let objectUrl = URL.createObjectURL(bolb)
+
+    let link = document.createElement('a')
+        link.style.display = 'none'
+        link.href = objectUrl
+        link.setAttribute('download', filename)
+
+    document.body.appendChild(link)
+    link.click()
+
+    // document.body.removeChild(link)
+  }).catch((err) => {
+    debugger
+    showToast('下载错误，请重试。')
+  })
+}
+
 export default {
   TokenKey,
   AppIdKey,
@@ -246,5 +273,6 @@ export default {
   request,
   delay,
   isErrorPageMessage,
-  getReqErrorMessage
+  getReqErrorMessage,
+  downloadUrl
 }

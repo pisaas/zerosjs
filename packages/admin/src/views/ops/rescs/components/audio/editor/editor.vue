@@ -4,7 +4,15 @@
     <FormItem label="名称" required prop="name">
       <Input v-model="formModel.name" :maxlength="50" placeholder="请输入名称 (100字以内)" />
     </FormItem>
-    <FormItem label="文件" required prop="fname">
+    <FormItem v-show="modelData && modelData.id" label="音频" required prop="fname">
+      <div v-if="modelData && modelData.fname">{{ modelData.fname }}</div>
+      <div v-if="isCheckingTranscoding" class="transcoding">
+        <span>正在转码...</span>
+        <Spin class="inline q-ml-md"></Spin>
+      </div>
+      <audio-player v-show="!isTranscoding && !isCheckingTranscoding" ref="player" />
+    </FormItem>
+    <FormItem v-if="!rescId" label="音频" required prop="fname">
       <div class="tip">
         {{ `格式支持 ${UploadSpec.supportFormats}，文件大小不超过${UploadSpec.fsizeLimit}M，音频时长不超过${UploadSpec.durationLimit}分钟。` }}
       </div>
@@ -26,11 +34,6 @@
         </Progress>
       </div>
 
-      <div v-if="uploadData.transcoding" class="transcoding">
-        <span>正在转码...</span>
-        <Spin class="inline q-ml-md"></Spin>
-      </div>
-
       <div v-if="uploadData.errorMsg" class="text-error">
         {{ uploadData.errorMsg }}
       </div>
@@ -45,6 +48,7 @@
 <script>
 import { rescUpload, checkPersistent } from '@resc-components/utils'
 import RescUploader from '@resc-components/uploader'
+import { AudioPlayer } from '@resc-components/audio/player'
 
 const FsizeLimit = 200  // 大小限制：200 MB
 const DurationLimit = 60  // 时长限制：60分钟
@@ -63,7 +67,8 @@ const UploadSpec = {
 
 export default {
   components: {
-    RescUploader
+    RescUploader,
+    AudioPlayer
   },
 
   data () {
@@ -76,6 +81,7 @@ export default {
       audioErrorMsg: null,
       uploadData: {},
       modelData: null,
+      isCheckingTranscoding: false,
       formModel: {},
       formRules: {
         name: [ { required: true, message: '请输入名称', trigger: 'blur' } ],
@@ -101,6 +107,26 @@ export default {
       }
 
       return this.audioFile.name
+    },
+
+    isTranscoding () {
+      let modelData = this.modelData
+
+      if (!modelData) {
+        return false
+      }
+
+      return modelData.status === 'transcoding'
+    },
+
+    isPubed () {
+      let modelData = this.modelData
+
+      if (!modelData) {
+        return false
+      }
+
+      return modelData.pubed === true
     }
   },
 
@@ -192,54 +218,52 @@ export default {
       this.audioFile = null
       this.audioFileMeta = null
       this.audioErrorMsg = null
+      this.modelData = null
+      this.isCheckingTranscoding = false
 
       if (this.$refs.form) {
         this.$refs.form.resetFields()
       }
     },
 
-    save () {
+    async save () {
       let editMode = this.editMode
       let formModel = this.formModel
 
       if (this.audioErrorMsg) {
-        return Promise.resolve()
+        return false
       }
 
-      return new Promise((resolve, reject) => {
-        if (!formModel) {
-          return resolve(false)
-        }
-        
-        this.$refs.form.validate((valid) => {
-          return resolve(valid)
-        })
-      }).then((valid) => {
-        if (!valid) {
-          return
-        }
-        
-        if (this.editMode === 'update') {
-          return this.update()
-        } else {
-          return this.create()
-        }
-      })
+      let valid = await this.validateForm()
+
+      if (!valid) {
+        return false
+      }
+
+      let result = null
+
+      if (this.editMode === 'update') {
+        result = await this.update()
+      } else {
+        result = await this.create()
+      }
+
+      this.$emit('save', result)
+
+      return result
     },
 
     async update () {
-      if (!this.rescId || this.editMode !== 'update') {
-        return
-      }
-
-      let formModel = {
-        name: this.formModel.name
-      }
-
-      return this.$service('resc').patch(this.rescId, formModel)
+      let result = this.$service('rescs').patch(this.rescId, this.formModel)
+      this.$emit('update', result)
+      return result
     },
 
     async create () {
+      if (this.modelData && this.modelData.id) {
+        return false
+      }
+
       return this.uploadFile().then((res) => {
         if (!res.persistentId) {
           return Promise.reject(new Error('文件转码错误，请重试。'))
@@ -260,7 +284,12 @@ export default {
         }, this.formModel)
 
         return this.$service('resc').create(formModel).then((res) => {
-          this.$emit('created', res)
+          this.rescId = res.id
+          this.modelData = res
+
+          this.checkTranscoding()
+
+          this.$emit('create', res)
           return res
         })
       }).catch ((err) => {
@@ -275,7 +304,67 @@ export default {
           transcoding: false,
           errorMsg
         })
+
+        return false
       })
+    },
+
+    validateForm () {
+      return new Promise ((resolve) => {
+        if (!this.formModel) {
+          return resolve(false)
+        }
+
+        this.$refs.form.validate((valid) => {
+          resolve(valid)
+        })
+      })
+    },
+    
+    checkTranscoding () {
+      if (this.isCheckingTranscoding) {
+        return
+      }
+
+      let modelData = this.modelData
+
+      if (!modelData || !this.isTranscoding) {
+        return
+      }
+
+      this.isCheckingTranscoding = true
+
+      let checking = false
+
+      const check = (() => {
+        if (checking === true) {
+          return
+        }
+
+        if (!this.isTranscoding) {
+          this.onTranscodingChecked()
+          return
+        }
+
+        checking = true
+
+        checkPersistent(modelData.id).then((res) => {
+          this.modelData = res
+          checking = false
+
+          setTimeout(check, 3000)
+        })
+      }).bind(this)
+
+      check()
+    },
+
+    onTranscodingChecked () {
+      this.isCheckingTranscoding = false
+
+      this.loadPlayer()
+
+      this.$emit('trans-checked', this.modelData)
     },
 
     async uploadFile () {
@@ -337,6 +426,20 @@ export default {
       return { valid: true, filemeta }
     },
 
+    loadPlayer () {
+      let audioPath = this.modelData.path;
+      let audioPlayer = this.$refs.player
+
+      if (!this.isPubed || !audioPath) {
+        return
+      }
+
+      audioPlayer.play({
+        src: audioPath,
+        autoPlay: false
+      })
+    },
+
     loadData () {
       if (!this.rescId) {
         this.formModel = {}
@@ -347,7 +450,12 @@ export default {
 
       return this.$service('rescs').get(this.rescId).then((res) => {
         this.modelData = res
-        this.formModel = _.pick(res, ['name'])
+        this.formModel = _.pick(res, ['name', 'fname', 'desc'])
+
+        this.$nextTick(() => {
+          this.loadPlayer()
+          this.checkTranscoding()
+        })
 
         this.$emit('load', res)
         

@@ -3,7 +3,7 @@
     class="audio-editor-modal" :title="modalTitle"
     :width="700" :loading="loading" :mask-closable="false"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
-    <audio-editor ref="editor"></audio-editor>
+    <audio-editor ref="editor" @trans-checked="onTransChecked"></audio-editor>
   </Modal>
 </template>
 
@@ -35,17 +35,20 @@ export default {
 
   methods: {
     onOk () {
-      this.$refs.editor.save().then((res) => {
-        this.resetLoading()
+      let editMode = this.editMode
 
-        if (res === false) {
+      this.$refs.editor.save().then((res) => {
+        if (!res) {
+          this.resetLoading()
           return
         }
 
-        let eventName = `on-${this.editMode}`
-        this.$emit(eventName, res)
+        this.$emit(editMode, res)
 
-        this.$emit('on-submit', res)
+        if (editMode === 'update') {
+          this.resetLoading()
+          this.$emit('submit', res)
+        }
         
         return res
       }).catch(() => {
@@ -63,7 +66,7 @@ export default {
       let data = this.$refs.editor.formModel
 
       this.reset()
-      this.$emit('on-close', data)
+      this.$emit('close', data)
     },
 
     onEditorLoad (formModel) {
@@ -72,6 +75,14 @@ export default {
       }
 
       this.formModel = formModel
+    },
+
+    onTransChecked (e) {
+      this.$emit('trans-checked', e)
+
+      if (this.editMode === 'create') {
+        this.$emit('submit', e)
+      }
     },
 
     openCreate () {
@@ -85,11 +96,10 @@ export default {
     },
 
     openUpdate (id, cb) {
-      debugger
       this.editMode = 'update'
 
       this.$nextTick(() => {
-        this.$refs.editor.open(id).then((res) => {
+        this.$refs.editor.openUpdate(id).then((res) => {
           this.showModal = true
 
           if (cb) {

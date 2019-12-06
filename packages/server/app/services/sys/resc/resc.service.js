@@ -126,7 +126,7 @@ class RescService extends SysService {
     
     let modelData = _.pick(data, [
       'id', 'appid', 'uid', 'uname', 'rtype', 'pfopid',
-      'name', 'extra'
+      'name', 'fname', 'desc', 'extra'
     ]);
 
     modelData = Object.assign({

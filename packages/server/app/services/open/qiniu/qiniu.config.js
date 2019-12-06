@@ -25,7 +25,7 @@ module.exports = function () {
       },
       'audio': {
         'pipelineKey': 'media',
-        'cmd': 'imageView2/0/w/600/h/600/format/jpg'
+        'cmd': 'avthumb/mp3/ab/128k/ar/44100/acodec/libmp3lame'
       },
       'video': {
         'pipelineKey': 'media',

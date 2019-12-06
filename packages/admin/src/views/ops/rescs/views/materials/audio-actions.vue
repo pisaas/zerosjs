@@ -2,7 +2,7 @@
   <div v-show="visible" class="audio-actions page-actions">
     <Button type="primary" icon="md-musical-notes" @click="onUpload">添加音频</Button>
     
-    <audio-editor-modal ref='editorModal' />
+    <audio-editor-modal ref='editorModal' @submit="onEditSubmit" />
   </div>
 </template>
 
@@ -22,6 +22,11 @@ export default {
   methods: {
     onUpload () {
       this.$refs.editorModal.openCreate()
+    },
+
+    onEditSubmit (e) {
+      this.$refs.editorModal.close()
+      this.$emit('submit', this.name, e)
     }
   }
 }

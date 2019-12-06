@@ -19,19 +19,25 @@
       :columns="tableColumns" :data="tableItems"
       @on-selection-change="onSelectionChange">
       <div slot-scope="{ row }" slot="content" class="table-col col-content">
-        <div class="thumb" :style="{ 'backgroundImage': `url(${row.thumb})` }"
-          @click="onImagePreview(row)" />
+        <div class="audio-play" :class="{ disabled: !row.pubed }">
+          <Icon type="md-arrow-dropright-circle" size="30" class="text-primary"
+            @click="openPlay(row)" />
+        </div>
         <div class="detail">
-          <div class="col-title image-name">{{ row.name }}</div>
+          <div class="col-title audio-name">{{ row.name }}</div>
           <div class="col-subtitle">
-            <span v-if="row.extra && row.extra.duration">时长：{{ row.extra.duration }}</span>
-            <span v-if="row.fsize">大小：{{ $util.filesize(row.fsize) }}</span>
+            <span v-if="row.extra && row.extra.duration">
+              时长：{{ $util.format.prettySeconds(row.extra.duration) }}
+            </span>
+            <span v-if="row.fsize" class="q-ml-md">大小：{{ $util.filesize(row.fsize) }}</span>
           </div>
         
           <list-item-actions @trigger="onItemActionTrigger" :data="row">
-            <list-item-action icon="md-open" label="编辑话题" action="edit" />
+            <list-item-action icon="md-open" label="编辑" action="edit" />
             <list-item-action v-if="row.status === 'transcoding'" 
               icon="md-sync" label="检查转码" action="check_transcoding" />
+            <list-item-action v-if="row.pubed" 
+              icon="md-download" label="下载" action="download" />
           </list-item-actions>
         </div>
       </div>
@@ -47,12 +53,20 @@
       <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
         show-total @on-change="onPageChange"></Page>
     </div>
+
+    <audio-player-modal ref="playerModal" />
+    <audio-editor-modal ref='editorModal' @submit="onEditSubmit" />
   </div>
 </template>
 
 <script>
+import { AudioPlayerModal } from '@resc-components/audio/player'
+import { AudioEditorModal } from '@resc-components/audio/editor'
+
 export default {
   components: {
+    AudioPlayerModal,
+    AudioEditorModal
   },
 
   data () {
@@ -96,8 +110,16 @@ export default {
   },
 
   methods: {
-    onImagePreview (row) {
-      this.$refs.imagePreviewer.open(row.id)
+    openPlay (row) {
+      if (!row.pubed) {
+        return
+      }
+
+      this.$refs.playerModal.open({
+        title: row.name,
+        src: row.path,
+        autoPlay: true
+      })
     },
 
     onActionTrigger (name) {
@@ -120,6 +142,9 @@ export default {
         case 'check_transcoding':
           this.onCheckTranscoding(data)
           break
+        case 'download':
+          this.onDownload(data)
+          break
       }
     },
 
@@ -132,7 +157,17 @@ export default {
         return
       }
 
-      this.$emit('edit', row.id, row)
+      this.$refs.editorModal.openUpdate(row.id)
+    },
+
+    onEditSubmit () {
+      this.$refs.editorModal.close()
+      this.loadData()
+    },
+
+    onDownload (row) {
+      let fname = row.fname || row.name
+      this.$uni.downloadUrl(row.path, row.name)
     },
 
     onCheckTranscoding (row) {
@@ -147,8 +182,18 @@ export default {
       this.$service('resc').get('check_transcoding', {
         query: { id: row.id }
       }).then((res) => {
+        if (res.status === 'transcoding') {
+          this.$app.toast('正在转码中 ...')
+        }
+
         if (res.status === row.status) {
           return
+        }
+
+        if (res.pubed) {
+          this.$app.toast('音频已发布。', { type: 'success' })
+        } else {
+          this.$app.toast(`音频 ${res.statusName}`)
         }
 
         this.loadData()
@@ -219,19 +264,14 @@ export default {
 <style lang="less" scoped>
 .list-table {
   .col-content {
-    display: flex;
-
-    .thumb {
-      width: 100px;
-      height: 60px;
-      cursor: pointer;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .detail {
+    .audio-play {
       padding: 10px;
+      padding-left: 0;
+      cursor: pointer;
+
+      &.disabled {
+        opacity: 0.5;
+      }
     }
   }
 }

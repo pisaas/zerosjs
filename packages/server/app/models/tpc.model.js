@@ -27,22 +27,20 @@ module.exports = function () {
           ret.logo = zeros.$resc.fullUrl(`${ret.logo}`);
         }
         
-        let status = '';
-        let statusName = '';
+        let status = doc.status;
 
-        if (doc.frzn) {
-          status = 'frozen';
-          statusName = '已冻结';
-        } else if (doc.pubed) {
-          status = 'published';
-          statusName = '已发布';
-        } else {
-          status = 'unpublished';
-          statusName = '未发布';
+        if (!status) {
+          if (doc.frzn) {
+            status = 'frzn';
+          } else if (doc.pubed) {
+            status = 'pubed';
+          } else {
+            status = 'unpubed';
+          }
         }
 
         ret.status = status;
-        ret.statusName = statusName;
+        ret.statusName = zeros.$model.statusName(status);
         
         return ret;
       }

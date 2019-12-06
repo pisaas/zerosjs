@@ -133,8 +133,9 @@ export default {
       let rescData = {
         store: this.storeKey,
         key: result.key,
-        name: item.file.name,
         rtype: this.rescType,
+        name: item.file.name,
+        fname: item.file.name,
         extra
       }
 

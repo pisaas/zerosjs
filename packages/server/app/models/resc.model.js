@@ -18,13 +18,14 @@ module.exports = function () {
       
       store: { type: 'string', required: true, protected: true, maxlength: 100 },  // 存储名，如usr/avatar, app/logo, app/material等
       storage: { type: 'string', required: true, protected: true, maxlength: 100 },  // 存储方式
-      pfopid: { type: 'string' }, // 数据处理队列id
+      pfopid: { type: 'string', protected: true }, // 数据处理队列id
       md5: { type: 'string', protected: true }, // 用于文件去重
       path: { type: 'string' }, // 文件路径
       thumb: { type: 'string' }, // 缩略图路径
       avatar: { type: 'string' }, // 头像、封面路径
       mime: { type: 'string' }, // mime类型
       fsize: { type: 'string' }, // 文件大小
+      fname: { type: 'string' }, // 文件名
       desc: { type: 'string' }, // 资源描述,
       extra: { type: 'json' }, // 根据类型不同，文件附加信息
 
@@ -52,11 +53,11 @@ module.exports = function () {
 
         if (!status) {
           if (doc.frzn) {
-            status = 'frozen';
+            status = 'frzn';
           } else if (doc.pubed) {
-            status = 'published';
+            status = 'pubed';
           } else {
-            status = 'unpublished';
+            status = 'unpubed';
           }
         }
 

@@ -31,7 +31,7 @@ class Service extends ApiService {
 
   async create (data, params) {
     let { user, app } = params;
-    let { store, key, pfopid, rtype, name, extra } = data;
+    let { store, key, pfopid, rtype, name, fname, desc, extra } = data;
 
     if (!key) {
       throw new errors.BadRequest('请提供需要转存的资源。');
@@ -46,6 +46,8 @@ class Service extends ApiService {
       tmpKey: key,
       pfopid,
       name,
+      fname,
+      desc,
       extra
     };
 

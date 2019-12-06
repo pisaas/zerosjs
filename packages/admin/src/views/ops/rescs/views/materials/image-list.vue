@@ -21,7 +21,7 @@
       <div slot-scope="{ row }" slot="content" class="table-col col-content">
         <div class="thumb" :style="{ 'backgroundImage': `url(${row.thumb})` }"
           @click="onImagePreview(row)" />
-        <div class="detail">
+        <div class="col-detail">
           <div class="col-title image-name">{{ row.name }}</div>
           <div class="col-subtitle">
             <span v-if="row.fsize">原图大小：{{ $util.filesize(row.fsize) }}</span>
@@ -105,18 +105,6 @@ export default {
       }
     },
 
-    onEdit (row) {
-      if (!row) {
-        row = this.tableSelection[0]
-      }
-
-      if (!row || !row.id) {
-        return
-      }
-
-      this.$emit('edit', row.id, row)
-    },
-
     onDelete () {
       let ids = this.tableSelection.map((it) => {
         return it.id
@@ -181,8 +169,6 @@ export default {
 <style lang="less" scoped>
 .list-table {
   .col-content {
-    display: flex;
-
     .thumb {
       width: 100px;
       height: 60px;
@@ -190,10 +176,6 @@ export default {
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-    }
-
-    .detail {
-      padding: 10px;
     }
   }
 }

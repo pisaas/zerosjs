@@ -1,4 +1,5 @@
 import filesize from 'filesize'
+import prettyMs from 'pretty-ms'
 
 const units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB']
 
@@ -105,6 +106,10 @@ export function normalizeToInterval (v, min, max) {
   return index === 0 ? 0 : index // fix for (-a % a) => -0
 }
 
+export function prettySeconds (secs) {
+  return prettyMs(secs * 1000)
+}
+
 export default {
   capitalize,
   pluralize,
@@ -116,5 +121,7 @@ export default {
   normalizeToInterval,
   addrStr,
   addrRegion,
-  addrRegionStr
+  addrRegionStr,
+  prettySeconds,
+  prettyMs
 }

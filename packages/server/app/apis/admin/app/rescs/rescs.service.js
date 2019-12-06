@@ -40,17 +40,21 @@ class Service extends ApiService {
 
     let rescModel = await this.adapterService.get(id);
 
-    if (!rescModel || app.id !== rescModel.id) {
+    if (!rescModel || app.id !== rescModel.appid) {
       throw new zeros.$errors.BadRequest('获取资源失败');
     }
 
     if (rescModel.frzn) {
-      throw new zeros.$errors.BadRequest('获取已冻结');
+      throw new zeros.$errors.BadRequest('资源已冻结');
     }
 
-    let extra = Object.assign({}, rescModel.extra, data);
+    let updates = {};
 
-    rescModel = await this.adapterService.patch(id, { extra });
+    if (rescModel.rtype === 'audio') {
+      updates = _.pick(data, ['name', 'desc']);
+    }
+
+    rescModel = await this.adapterService.patch(id, updates);
 
     return rescModel;
   }

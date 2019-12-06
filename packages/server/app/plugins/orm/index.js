@@ -5,9 +5,9 @@ const includeAll = require('include-all');
 const ModelStatusNames= {
   new: '新建',
   draft: '草稿',
-  frozen: '已冻结',
-  published: '已发布',
-  unpublished: '未发布',
+  frzn: '已冻结',
+  pubed: '已发布',
+  unpubed: '未发布',
   transcoding: '转码中',
   transcoding_failed: '转码失败',
   transcoding_no_opid: '没有转码号',

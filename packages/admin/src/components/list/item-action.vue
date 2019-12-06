@@ -2,14 +2,16 @@
   <DropdownItem v-if="isCollapsedAction" class="list-item-action dropdown"
     :class="{ 'hidden': isHidden }"
     :name="action" :disabled="disabled" :divided="divided">
-    <div @click="onClick">
-      <slot>{{ label }}</slot>
-    </div>
+    <slot>
+      <div @click="onClick">{{ label }}</div>
+    </slot>
   </DropdownItem>
   <Tooltip v-else class="list-item-action tooltip" transfer
     :class="{ 'hidden': isHidden }" :placement="placement" :disabled="!showLabel">
-    <Button class="btn-action" :icon="icon" @click="onClick" :disabled="disabled" />
-    <div v-if="showLabel" slot="content" class="label">{{ label }}</div>
+    <slot>
+      <Button class="btn-action" :icon="icon" @click="onClick" :disabled="disabled" />
+      <div v-if="showLabel" slot="content" class="label">{{ label }}</div>
+    </slot>
   </Tooltip>
 </template>
 

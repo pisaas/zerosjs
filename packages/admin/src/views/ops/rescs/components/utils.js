@@ -78,38 +78,16 @@ export function rescUpload (file, options) {
   })
 }
 
-export function checkPersistent (rescId, persistentId) {
-  return qiniuRequest ('/status/get/prefop', {
-    id: persistentId
-  }).then((res) => {
-    if (!res || isNaN(res.code)) {
-      return Promise.reject(new Error('请求转码状态错误'))
-    }
+export function checkPersistent (rescId) {
+  if (!rescId) {
+    return Promise.resolve()
+  }
 
-    // res.code: 状态码 0成功，1等待处理，2正在处理，3处理失败，4通知提交失败
-    if (res.code === 0) {
-      return res;
-    }
+  const vmService = zerosApp.vm.prototype.$service
 
-    if (res.code <= 2) {
-      return delay(3000).then(() => {
-        return checkPersistent(persistentId)
-      })
-    }
-
-    return Promise.reject(new Error(res.desc))
-  }).catch (() => {
-    return Promise.reject(new Error('请求转码状态错误'))
+  return vmService('resc').get('check_transcoding', {
+    query: { id: rescId }
   })
-}
-
-export function qiniuRequest (uri, options) {
-  options = Object.assign({
-    method: 'GET',
-    url: `https://api.qiniu.com${uri}`
-  }, options)
-
-  return uni.request(options)
 }
 
 export default {
