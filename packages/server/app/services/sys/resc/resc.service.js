@@ -37,28 +37,31 @@ class RescService extends SysService {
    * @param  {type} extName    description
    * @return {type}            description
    */
-  async getUptoken (options) {
-    let cfg = this.cfg;
+  async getUptoken (options, params) {
+    let cfg = this.getConfig();
 
-    let { appId, objId, prefix, bucket, extName, policyOptions } = options;
-    bucket = bucket || 'tmp';
-
-    const { rescPrefixs } = cfg;
-
-    if (prefix && !_.includes(rescPrefixs, prefix)) {
-      return null;
+    if (!params && options) {
+      params = options;
     }
 
-    const idsService = zeros.service('core/ids');
-    let srcIdKey = await idsService.gen();
+    const { app } = Object.assign({ app: {}, user: {} }, params);
+    const bucket = 'tmp'; // uptoken只支持上传到tmp
 
-    let srcKey = appId || '_';
+    let { objid, prefix, rtype, extName, policyOptions } = options || {};
+
+    if (prefix && !_.includes(cfg.rescPrefixs, prefix)) {
+      throw new errors.InnerError('未找到对应前缀。');
+    }
+
+    let srcIdKey = await zeros.service('core/ids').gen();
+
+    let srcKey = app.id || '_';
 
     if (prefix) {
       srcKey += `/${prefix}`;
 
-      if (objId) {
-        srcKey += objId;
+      if (objid) {
+        srcKey += objid;
       }
     } else {
       srcKey += '/_TMP';
@@ -76,10 +79,17 @@ class RescService extends SysService {
     if (!policyOptions.fsizeLimit || policyOptions.fsizeLimit > cfg.maxUploadSize) {
       policyOptions.fsizeLimit = cfg.maxUploadSize;
     }
+
+    let fopKey = null;
+
+    if (rtype === 'audio') {
+      fopKey = 'audio';
+    }
     
     let uptoken = await qiniuService.getUptoken({
       bucketKey: bucket,
       srcKey,
+      fopKey,
       policyOptions
     });
 
@@ -114,19 +124,9 @@ class RescService extends SysService {
       throw new errors.InnerError('获取资源键错误。');
     }
     
-    const destBucket = 'resc';
-    const qiniuService = zeros.service('open/qiniu');
-    const dataService = zeros.service('data/rescs');
-
-    let rescKeyData = null;
-    let statInfo = null;
-
-    // 资源持久化处理队列
-    let fops = [];
-
     let modelData = _.pick(data, [
-      'id', 'appid', 'uid', 'uname', 'rtype',
-      'name', 'extra', 'status', 'pubed'
+      'id', 'appid', 'uid', 'uname', 'rtype', 'pfopid',
+      'name', 'extra'
     ]);
 
     modelData = Object.assign({
@@ -141,99 +141,140 @@ class RescService extends SysService {
 
     // 为了防止多个await竞争，这里放弃await模式
     return await Promise.resolve().then(() => {
-      if (data.id) {
+      if (modelData.id) {
         return;
       }
 
       // 自定义id
       return zeros.service('core/ids').gen().then((id) => {
-        data.id = id;
+        modelData.id = id;
       });
     }).then(() => {
-      if (store.getKey.then) {
-        return store.getKey({ data, options, params }).then((res) => {
-          rescKeyData = res;
-        });
+      if (modelData.pfopid) {
+        return this.storeByPfop(store, modelData, data, options, params);
       } else {
-        rescKeyData = store.getKey({ data, options, params });
+        return this.storeByResc(store, modelData, data, options, params);
       }
-    }).then(() => {
-      modelData.path = rescKeyData.key;
+    });
+  }
+
+  // 根据资源Key或url存储资源
+  async storeByResc (store, modelData, data, options, params) {
+    const srcBucket = 'tmp';
+    const destBucket = 'resc';
+
+    const qiniuService = zeros.service('open/qiniu');
+    const dataService = zeros.service('data/rescs');
+
+    if (!store.getKey) {
+      throw new errors.InnerError('获取资源键错误。');
+    }
+
+    let destRescKeyData = null;
+
+    let modelChanges = {};
+    
+    modelData = await Promise.resolve().then(() => {
+      return store.getKey({ model: modelData, params });
+    }).then((res) => {
+      destRescKeyData = res;
+      modelChanges.path = res.key;
 
       if (!modelData.name) {
-        modelData.name = path.basename(rescKeyData.key);
+        modelChanges.name = path.basename(modelData.path);
       }
 
-      if (data.tmpKey) {
-        return qiniuService.move({
-          srcBucket: 'tmp',
-          srcKey: data.tmpKey,
-          destBucket,
-          destKey: rescKeyData.key,
-          options
-        });
-      } else if (data.url) {
-        return qiniuService.fetch({
-          url: data.url,
-          bucket: destBucket,
-          key: rescKeyData.key,
-          options
-        });
+      // 存在_id，则代表模型已创建模型已创建
+      if (modelData._id) {
+        return dataService.patch(modelData.id, modelChanges);
+      } else {
+        modelData = Object.assign(modelData, modelChanges);
+        return dataService.create(modelData);
       }
-    }).then(() => {
-      // 获取存储文件信息
-      return qiniuService.stat({
-        bucket: destBucket,
-        key: rescKeyData.key
-      }).then((res) => {
-        statInfo = res;
+    });
+
+    let destRescKey = destRescKeyData.key;
+
+    if (data.tmpKey) {
+      await qiniuService.move({
+        srcBucket: srcBucket,
+        srcKey: data.tmpKey,
+        destBucket,
+        destKey: destRescKey,
+        options
       });
-    }).then(() => {
-      if (!modelData.rtype && statInfo.mimeType) {
-        modelData.rtype = statInfo.mimeType.split('/')[0];
-      }
-
-      modelData = Object.assign(modelData, {
-        fsize: statInfo.fsize,
-        mime: statInfo.mimeType,
-        md5: statInfo.md5
-      });
-
-      // 图片文件，保存缩略图
-      if (modelData.rtype === 'image') {
-        modelData.thumb = `${rescKeyData.key}_thumb`;
-
-        fops.push({
-          fop: zeros.$resc.QiniuFops.thumb,
-          key: modelData.thumb
-        });
-      }
-
-      // 用户头像
-      if (store.avatar && rescKeyData && rescKeyData.avatarKey) {
-        let avatarKey = `avatars/${rescKeyData.avatarKey}`;
-
-        modelData.avatar = avatarKey;
-
-        fops.push({
-          fop: zeros.$resc.QiniuFops.avatar,
-          key: avatarKey
-        });
-      }
-
-      if (!fops.length) {
-        return;
-      }
-
-      return qiniuService.pfop({
+    } else if (data.url) {
+      return qiniuService.fetch({
+        url: data.url,
         bucket: destBucket,
-        key: rescKeyData.key,
+        key: destRescKey,
+        options
+      });
+    }
+
+    let modelUpdates = {};
+
+    let statInfo = await qiniuService.stat({
+      destBucket,
+      key: destRescKey
+    });
+
+    modelUpdates = Object.assign(modelUpdates, {
+      fsize: statInfo.fsize,
+      mime: statInfo.mimeType,
+      md5: statInfo.md5
+    });
+
+    // 图片文件，保存缩略图
+    if (modelData.rtype === 'image') {
+      modelUpdates.thumb = `${destRescKey}_thumb`;
+    }
+
+    // 用户头像
+    if (store.avatar && destRescKeyData.avatarKey) {
+      modelUpdates.avatar = `avatars/${destRescKeyData.avatarKey}`;
+    }
+
+    // 资源持久化处理队列
+    let fops = [];
+
+    // 图片文件，保存缩略图
+    if (modelUpdates.thumb) {
+      fops.push({ fopKey: 'thumb', descKey: modelUpdates.thumb });
+    }
+
+    // 用户头像
+    if (modelUpdates.avatar) {
+      fops.push({ fopKey: 'avatar', key: modelUpdates.avatar });
+    }
+
+    if (fops.length) {
+      await qiniuService.pfop({
+        bucket: destBucket,
+        key: destRescKey,
         fops,
         options: { force: true }
       });
-    }).then(() => {
-      return dataService.create(modelData);
-    });
+    }
+
+    modelUpdates.status = 'pubed';
+    modelUpdates.pubed = true;
+
+    let modelResult = await dataService.patch(modelData.id, modelUpdates);
+
+    return modelResult;
+  }
+
+  async storeByPfop (store, modelData, data, options, params) {
+    const dataService = zeros.service('data/rescs');
+
+    modelData.status = 'transcoding';
+
+    let rescModel = await dataService.create(modelData);
+
+    let modelResult = await this.checkPersistent(rescModel, params);
+
+    return modelResult;
   }
 
   /**
@@ -289,6 +330,104 @@ class RescService extends SysService {
     await Promise.all(delOps);
 
     rescModel = await dataService.remove(id);
+
+    return rescModel;
+  }
+
+  // 检查转码状态
+  async checkPersistent (rescModel, params) {
+    let { user } = Object.assign({ app: {}, user: {} }, params);
+
+    const dataService = zeros.service('data/rescs');
+    const qiniuService = zeros.service('open/qiniu');
+
+    if (typeof rescModel === 'string') {
+      rescModel = await dataService.get(rescModel);
+    }
+
+    if (!rescModel) {
+      throw new errors.NotFound('资源不存在。');
+    }
+
+    if (user && user.id && user.id !== rescModel.uid) {
+      throw new errors.Forbidden('资源无法访问。');
+    }
+
+    if (rescModel.status !== 'transcoding') {
+      return rescModel;
+    }
+
+    if (!rescModel.pfopid) {
+      rescModel = await dataService.patch(rescModel.id, {
+        status: 'transcoding_no_opid'
+      });
+
+      return rescModel;
+    }
+
+    let { pfopid } = rescModel;
+
+    let prefopResult = await qiniuService.prefop(pfopid);
+
+    if (!prefopResult
+      || isNaN(prefopResult.code)
+      || (prefopResult.code > 0 && prefopResult.code <= 2)) {
+      return rescModel;
+    }
+
+    if (prefopResult.code > 2) {
+      rescModel = await dataService.patch(rescModel.id, {
+        status: 'transcoding_failed'
+      });
+      return rescModel;
+    }
+
+    let tmpKey = null;
+
+    if (prefopResult.items && prefopResult.items.length) {
+      let prefopItem = prefopResult.items[0];
+      tmpKey = prefopItem.key;
+    }
+
+    const store = this.getStore(rescModel.store);
+
+    rescModel = await this.storeByResc (store, rescModel, {
+      tmpKey
+    }, { force: true }, params);
+
+    return rescModel;
+  }
+
+  // 执行转码，正在转码的资源无法执行转码
+  async rePersistent (id, params) {
+    const dataService = zeros.service('data/rescs');
+    const qiniuService = zeros.service('open/qiniu');
+
+    let rescModel = await this.checkPersistent(id, params);
+
+    if (rescModel.pubed || rescModel.status === 'transcoding') {
+      return rescModel;
+    }
+
+    if (!rescModel.pfopid) {
+      throw new errors.Forbidden('未找到转码id。');
+    }
+
+    let prefopResult = await qiniuService.prefop(rescModel.pfopid);
+
+    let prefopCmd = prefopResult.items[0].cmd;
+
+    let pfopResult = await qiniuService.pfop({
+      bucket: prefopResult.inputBucket,
+      key: prefopResult.inputKey,
+      fopCmds: [{ cmd: prefopCmd, pipeline: prefopResult.pipeline }],
+      options: { force: true }
+    });
+    
+    rescModel = await dataService.patch(id, {
+      status: 'transcoding',
+      pfopid: pfopResult.persistentId
+    });
 
     return rescModel;
   }

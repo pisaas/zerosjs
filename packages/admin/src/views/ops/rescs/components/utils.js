@@ -1,5 +1,7 @@
 import * as qiniu from 'qiniu-js'
+import uni from '@/utils/uni'
 import { getUptoken } from '@/apis/zeros'
+import { delay } from '../../../../utils/uni'
 
 export const RescMimeTypes = {
   'image': "image/*",
@@ -36,15 +38,24 @@ export async function getFileThumbnail (file) {
   return url
 }
 
+export function getRescUptoken (options) {
+  return getUptoken(options)
+}
+
 export function rescUpload (file, options) {
   options = Object.assign ({
     onProgress: () => {},
     onUpload: () => {}
   }, options)
 
-  let { key, putExtra, config } = options
-
-  return getUptoken().then((uptoken) => {
+  let { key, uptoken, putExtra, config, tokenOptions } = options
+  
+  return Promise.resolve().then(() => {
+    if (uptoken) {
+      return uptoken
+    }
+    return getRescUptoken(tokenOptions)
+  }).then((uptoken) => {
     const { token, uploadUrl, uploadData } = uptoken
 
     config = Object.assign({}, config)
@@ -67,10 +78,46 @@ export function rescUpload (file, options) {
   })
 }
 
+export function checkPersistent (rescId, persistentId) {
+  return qiniuRequest ('/status/get/prefop', {
+    id: persistentId
+  }).then((res) => {
+    if (!res || isNaN(res.code)) {
+      return Promise.reject(new Error('请求转码状态错误'))
+    }
+
+    // res.code: 状态码 0成功，1等待处理，2正在处理，3处理失败，4通知提交失败
+    if (res.code === 0) {
+      return res;
+    }
+
+    if (res.code <= 2) {
+      return delay(3000).then(() => {
+        return checkPersistent(persistentId)
+      })
+    }
+
+    return Promise.reject(new Error(res.desc))
+  }).catch (() => {
+    return Promise.reject(new Error('请求转码状态错误'))
+  })
+}
+
+export function qiniuRequest (uri, options) {
+  options = Object.assign({
+    method: 'GET',
+    url: `https://api.qiniu.com${uri}`
+  }, options)
+
+  return uni.request(options)
+}
+
 export default {
   RescMimeTypes,
   isSameFile,
   isImageFile,
   getFileThumbnail,
-  rescUpload
+  getRescUptoken,
+  rescUpload,
+  checkPersistent
 }

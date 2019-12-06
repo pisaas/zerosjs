@@ -57,6 +57,24 @@ class QiniuService extends OpenService {
     return bucket.name;
   }
 
+  getFop (key) {
+    const cfg = this.getConfig();
+    let fop = cfg.fops[key];
+
+    if (!fop.pipeline) {
+      fop.pipeline = this.getPipeline(fop.pipelineKey);
+    }
+
+    return fop;
+  }
+
+  getPipeline (key) {
+    key = key || 'default';
+    const cfg = this.getConfig();
+    let pipeline = cfg.pipelines[key];
+    return pipeline;
+  }
+
   /**
    * 获取七牛digest mac
    * @return {[type]} [description]
@@ -105,18 +123,31 @@ class QiniuService extends OpenService {
   }
 
   async getUptoken (params) {
-    let { bucketKey, srcKey, policyOptions } = params;
+    let { bucketKey, srcKey, fopKey, policyOptions } = params;
 
     let bucket = this.getBucket(bucketKey);
 
-    let { name, domain } = bucket;
+    let { name: bucketName, domain } = bucket;
     let { expires, returnBody } = bucket.uptoken;
 
     policyOptions = Object.assign({
-      scope: `${name}:${srcKey}`,
+      scope: `${bucketName}:${srcKey}`,
       expires,
       returnBody: zeros.util.stringify(returnBody)
     }, policyOptions);
+
+    if (fopKey) {
+      let fop = this.getFop(fopKey);
+
+      if (!fop) {
+        throw new errors.InnerError('无法找到对应的fop。');
+      }
+
+      let saveasUri = this.getSaveAsUri(bucketName, srcKey, fopKey);
+
+      policyOptions.persistentOps = `${fop.cmd}|${saveasUri}`;
+      policyOptions.persistentPipeline = fop.pipeline;
+    }
 
     const qiniuMac = this.getDigestMac();
     const putPolicy = this.getRsPutPolicy(policyOptions);
@@ -124,6 +155,17 @@ class QiniuService extends OpenService {
     const uploadUrl = this.cfg.clientUploadUrl;
 
     return { token, domain, uploadUrl, key: srcKey };
+  }
+
+  getSaveAsUri (bucketName, key, prefix) {
+    let scope = `${bucketName}:${key}`;
+
+    if (prefix) {
+      scope += `_${prefix}`;
+    }
+
+    let uri = qiniu.util.urlsafeBase64Encode(scope);
+    return `saveas/${uri}`;
   }
 
   /**
@@ -208,23 +250,55 @@ class QiniuService extends OpenService {
 
   // 持久化数据处理
   pfop (params) {
-    const cfg = this.getConfig();
+    const thiz = this;
 
-    let { bucket: bucketKey, key: srcKey, fops: fopsArr, pipeline, options } = params;
+    let { bucket: bucketKey, key: srcKey, fopCmds, fops: fopsArr, options } = params;
 
-    if (!fopsArr || !fopsArr.length) {
+    let bucketName = this.getBucketName(bucketKey);
+    let pipeline = thiz.getPipeline();
+
+    let fops = [];
+
+    (fopCmds || []).forEach((it) => {
+      if (it.pipelineKey) {
+        pipeline = thiz.getPipeline(it.pipelineKey);
+      } else if (it.pipeline) {
+        pipeline = it.pipeline;
+      }
+
+      fops.push(it.cmd);
+    });
+    
+    (fopsArr || []).forEach((it) => {
+      let fop = this.getFop(it.fopKey);
+
+      if (!fop) {
+        throw new errors.InnerError('无法找到对应的fop。');
+      }
+
+      if (fop.pipeline) {
+        pipeline = fop.pipeline;
+      }
+
+      if (!it.descKey) {
+        it.descKey = `${srcKey}_${it.fopKey}`;
+      }
+
+      let saveasUri = this.getSaveAsUri(bucketName, it.descKey);
+      let fopCmd = `${fop.cmd}|${saveasUri}`;
+
+      fops.push(fopCmd);
+    });
+
+    if (!fops.length) {
       return Promise.resolve();
     }
 
-    let bucketName = this.getBucketName(bucketKey);
-    pipeline = pipeline || cfg.pipeline;
-
-    let fops = fopsArr.map((it) => {
-      let saveasUri = qiniu.util.urlsafeBase64Encode(`${bucketName}:${it.key}`);
-      return `${it.fop}|saveas/${saveasUri}`;
-    });
-
     return this.getOperationManagerPromise('pfop', bucketName, srcKey, fops, pipeline, options);
+  }
+
+  prefop (id) {
+    return this.getOperationManagerPromise('prefop', id);
   }
 
   getOperationManagerPromise (op) {

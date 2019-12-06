@@ -16,9 +16,14 @@ class Service extends ApiService {
     }
 
     let result = null;
-    
-    if (id === 'uptoken') {
+
+    switch (id) {
+    case 'uptoken':
       result = await this.getUptoken(params);
+      break;
+    case 'check_transcoding':
+      result = await this.checkPersistent(params);
+      break;
     }
 
     return result;
@@ -26,7 +31,7 @@ class Service extends ApiService {
 
   async create (data, params) {
     let { user, app } = params;
-    let { key, store, rtype, name, extra } = data;
+    let { store, key, pfopid, rtype, name, extra } = data;
 
     if (!key) {
       throw new errors.BadRequest('请提供需要转存的资源。');
@@ -37,36 +42,39 @@ class Service extends ApiService {
     }
 
     let rescData = {
+      rtype,
       tmpKey: key,
+      pfopid,
       name,
       extra
     };
 
-    // 图片直接发布
-    if (rtype === 'image') {
-      rescData.status = 'pubed';
-      rescData.pubed = true;
-    }
-
-    let rescService = zeros.service('sys/resc');
-    let result = await rescService.store(store, rescData, { app, user });
+    let result = await this.adapterService.store(store, rescData, { app, user });
 
     return result;
   }
 
   async getUptoken (params) {
-    let { appId, objId, prefix, bucket, extName } = params.query;
+    let { objid, prefix, bucket, rtype, extName } = params.query;
   
-    if (appId && appId !== '0') {
-      let app = await zeros.service('data/apps').get(appId);
-  
-      if (!app) {
-        throw new errors.BadRequest('当前app未注册或不存在。');
-      }
-    } else {
-      appId = '0';
-    }
-  
-    return await this.adapterService.getUptoken({ appId, objId, prefix, bucket, extName });
+    return await this.adapterService.getUptoken({
+      objid, prefix, bucket, rtype, extName
+    }, params);
+  }
+
+  async checkPersistent (params) {
+    let { id } = params.query;
+
+    let rescModel = await this.adapterService.checkPersistent(id, params);
+
+    return rescModel;
+  }
+
+  async rePersistent (params) {
+    let { rid } = params.query;
+
+    let rescModel = await this.adapterService.rePersistent(rid, params);
+
+    return rescModel;
   }
 }

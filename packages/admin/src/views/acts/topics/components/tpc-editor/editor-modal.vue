@@ -2,7 +2,7 @@
   <Modal ref="editorModal" v-model="showModal"
     class-name="tpc-editor-modal"
     :title="modalTitle" :width="modalWidth"
-    :loading="loading" footer-hide
+    :loading="loading" footer-hide :mask-closable="false"
     @on-visible-change="onVisibleChange">
     <new-tpc-editor v-if="editMode === 'create'" ref="editor"
       @cancel="onCancel" @create="onCreate" />

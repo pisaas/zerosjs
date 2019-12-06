@@ -1,5 +1,5 @@
 <template>
-  <div class="image-list page-list">
+  <div class="audio-list page-list">
     <div class="list-header">
       <div class="flex-main">
         <Input v-model="tableQuery.search" icon="ios-search" placeholder="名称/描述/ID"
@@ -24,8 +24,15 @@
         <div class="detail">
           <div class="col-title image-name">{{ row.name }}</div>
           <div class="col-subtitle">
-            <span v-if="row.fsize">原图大小：{{ $util.filesize(row.fsize) }}</span>
+            <span v-if="row.extra && row.extra.duration">时长：{{ row.extra.duration }}</span>
+            <span v-if="row.fsize">大小：{{ $util.filesize(row.fsize) }}</span>
           </div>
+        
+          <list-item-actions @trigger="onItemActionTrigger" :data="row">
+            <list-item-action icon="md-open" label="编辑话题" action="edit" />
+            <list-item-action v-if="row.status === 'transcoding'" 
+              icon="md-sync" label="检查转码" action="check_transcoding" />
+          </list-item-actions>
         </div>
       </div>
       <div slot-scope="{ row }" slot="ts" class="table-col">
@@ -40,16 +47,12 @@
       <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
         show-total @on-change="onPageChange"></Page>
     </div>
-
-    <image-previewer ref="imagePreviewer" :items="tableItems" />
   </div>
 </template>
 
 <script>
-import ImagePreviewer from '@resc-components/image/previewer'
 export default {
   components: {
-    ImagePreviewer
   },
 
   data () {
@@ -58,7 +61,7 @@ export default {
 
       tableColumns: [
         { type: 'selection', width: 40, align: 'center' },
-        { title: '图片', slot: 'content', minWidth: 200 },
+        { title: '音频', slot: 'content', minWidth: 200 },
         { title: '状态', key: 'statusName', width: 100 },
         { title: '更新时间', slot: 'ts', width: 150 }
       ],
@@ -105,6 +108,21 @@ export default {
       }
     },
 
+    onItemActionTrigger (name, data) {
+      if (!name || !data) {
+        return
+      }
+
+      switch (name) {
+        case 'edit':
+          this.onEdit(data)
+          break
+        case 'check_transcoding':
+          this.onCheckTranscoding(data)
+          break
+      }
+    },
+
     onEdit (row) {
       if (!row) {
         row = this.tableSelection[0]
@@ -117,18 +135,38 @@ export default {
       this.$emit('edit', row.id, row)
     },
 
+    onCheckTranscoding (row) {
+      if (!row) {
+        row = this.tableSelection[0]
+      }
+
+      if (!row || !row.id) {
+        return
+      }
+
+      this.$service('resc').get('check_transcoding', {
+        query: { id: row.id }
+      }).then((res) => {
+        if (res.status === row.status) {
+          return
+        }
+
+        this.loadData()
+      })
+    },
+
     onDelete () {
       let ids = this.tableSelection.map((it) => {
         return it.id
       })
 
       if (!ids || !ids.length) {
-        this.$app.alert('请选择要删除的图片。')
+        this.$app.alert('请选择要删除的音频。')
       }
 
       this.$app.confirm({
-        title: '删除图片',
-        content: '<p>图片删除后将无法恢复，确认删除选中的图片？</p>',
+        title: '删除音频',
+        content: '<p>音频删除后将无法恢复，确认删除选中的音频？</p>',
         onOk: () => {
           this.doDelete(ids).then(() => {
             this.$app.toast('删除成功！', { type: 'success' })
@@ -167,7 +205,7 @@ export default {
       let query = this.$service.getSearchQuery(this.tableQuery)
 
       query = Object.assign({
-        rtype: 'image'
+        rtype: 'audio'
       }, query)
 
       let result = await this.$service('rescs').find({ query })

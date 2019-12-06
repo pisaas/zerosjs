@@ -2,6 +2,8 @@
   <div v-show="visible" class="image-actions page-actions">
     <resc-uploader ref="uploader"
       modal-title="图片上传"
+      upload-text="上传图片"
+      upload-icon="md-image"
       store-key="app/material" resc-type="image"
       open-file close-when-completed multi
       @completed="onUploadCompleted" />
@@ -9,7 +11,7 @@
 </template>
 
 <script>
-import RescUploader from '../../components/uploader'
+import RescUploader from '@resc-components/uploader'
 
 export default {
   components: {

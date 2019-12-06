@@ -129,6 +129,14 @@ export function request (options) {
   })
 }
 
+export function delay (timeout) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, timeout);
+  })
+}
+
 /**
  * 处理请求错误
  * @param  {[type]} error [description]
@@ -236,6 +244,7 @@ export default {
   clearStorage,
   reload,
   request,
+  delay,
   isErrorPageMessage,
   getReqErrorMessage
 }

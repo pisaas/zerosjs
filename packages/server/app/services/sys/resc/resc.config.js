@@ -78,19 +78,10 @@ module.exports = function (app) {
         'storage': 'qiniu',
         'getKey': (options) => {
           let opts = options || {};
-          let { data, params } = opts;
-          let appid;
-
-          if (data && data.appid) {
-            appid = data.appid;
-          }
-
-          if (params && params.app) {
-            appid = params.app.id;
-          }
+          let { model } = opts;
 
           return {
-            key: `apps/${appid}/m/${data.id}`,
+            key: `apps/${model.appid}/m/${model.id}`,
             options: opts
           };
         }

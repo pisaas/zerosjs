@@ -12,7 +12,7 @@
         </FormItem>
       </Form>
       <div slot="footer" class="form-footer">
-        <div class="actions">
+        <div class="actions text-right">
           <Button @click="onCancel">取消</Button>
           <Button type="primary" class="q-ml-md" @click="onSubmit">继续</Button>
         </div>

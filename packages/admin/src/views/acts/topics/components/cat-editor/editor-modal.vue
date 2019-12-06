@@ -1,7 +1,7 @@
 <template>
   <Modal ref="editorModal" v-model="showModal"
-    class="cat-editor-modal" :title="modalTitle" 
-    :width="modalWidth" :loading="loading"
+    class="cat-editor-modal" :title="modalTitle"
+    :width="modalWidth" :loading="loading" :mask-closable="false"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
     <cat-editor v-if="editMode === 'create'" ref="editor"></cat-editor>
     <Tabs v-else ref="tabs" class="no-content" size="small" v-model="tabName">
@@ -109,21 +109,21 @@ export default {
       this.formModel = formModel
     },
 
-    create (id) {
+    openCreate (id) {
       this.editMode = 'create'
 
       this.$nextTick(() => {
-        this.$refs.editor.create(id).then(() => {
+        this.$refs.editor.openCreate(id).then(() => {
           this.showModal = true
         })
       })
     },
 
-    update (id, cb) {
+    openUpdate (id, cb) {
       this.editMode = 'update'
 
       this.$nextTick(() => {
-        this.$refs.editor.update(id).then((res) => {
+        this.$refs.editor.openUpdate(id).then((res) => {
           this.catid = res.id
           this.showModal = true
 

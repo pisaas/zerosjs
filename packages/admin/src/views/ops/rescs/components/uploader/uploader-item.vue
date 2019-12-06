@@ -1,8 +1,20 @@
 <template>
   <div v-if="uploadFile" class="uploader-item-wrap" :class="{ error: !!errorMsg }">
     <div class="uploader-item">
-      <div v-if="thumbnailUrl" class="head">
-        <div class="thumb" :style="{ 'backgroundImage': `url(${thumbnailUrl})` }" />
+      <div class="head">
+        <div v-if="data.fsizeExceeded" class="error fh flex-center">
+          <Icon type="md-warning" class="text-negative" size="24" />
+        </div>
+        <div v-else-if="data.loading" class="loading fh flex-center">
+          <Spin />
+        </div>
+        <div v-else-if="thumbnailUrl" class="thumb" :style="{ 'backgroundImage': `url(${thumbnailUrl})` }" />
+        <div v-else-if="isAudio" class="audio fh flex-center">
+          <Icon type="md-musical-notes" class="text-primary" size="24" />
+        </div>
+        <div v-else-if="isVideo" class="video fh flex-center">
+          <Icon type="md-videocam" class="text-primary" size="24" />
+        </div>
       </div>
       <div class="body">
         <div class="name">{{ fileName }}</div>
@@ -12,7 +24,7 @@
       </div>
       <div class="tail">
         <div v-if="errorMsg" class="error-message">
-          <span>{{ errorMsg }}</span>
+          <div class="message">{{ $util.format.truncate(errorMsg, 40) }}</div>
           <Button class="btn-action small q-ml-md"
             size="small" icon="md-remove" shape="circle" @click="onRemove" />
         </div>
@@ -45,6 +57,23 @@ export default {
   },
 
   computed: {
+    mimeType () {
+      let uploadFile = this.uploadFile
+
+      if (!uploadFile) {
+        return ''
+      }
+
+      return uploadFile.type || ''
+    },
+
+    isAudio () {
+      return this.mimeType.indexOf('audio/') === 0
+    },
+
+    isVideo () {
+      return this.mimeType.indexOf('video/') === 0
+    }
   },
 
   watch: {
@@ -122,6 +151,7 @@ export default {
 
     &.error .progress-mask {
       background: @negative;
+      width: 100% !important;
     }
   }
 
@@ -175,7 +205,13 @@ export default {
       }
 
       .error-message {
+        display: flex;
         color: @faded;
+
+        .message {
+          flex: 1;
+          max-width: 200px;
+        }
 
         .btn-action {
           color: @faded;

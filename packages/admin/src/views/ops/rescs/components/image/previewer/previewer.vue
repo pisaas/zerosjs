@@ -5,7 +5,13 @@
         :options="{}">
         <!-- slides -->
         <swiper-slide v-for="it in imageItems" :key="it.id" class="image-slide">
-          <img :src="it.thumb" />
+          <div>
+            <img :src="it.thumb" />
+            <div class="image-title">
+              <span>{{ it.name }}</span>
+              <span class="q-ml-lg">大小：{{ $util.filesize(it.fsize) }}</span>
+            </div>
+          </div>
         </swiper-slide>
 
         <!-- Optional controls -->
@@ -189,6 +195,11 @@ export default {
           max-width: 100%;
           max-height: 100%;
         }
+      }
+
+      .image-title {
+        opacity: 0.8;
+        padding: 5px 10px;
       }
     }
   }

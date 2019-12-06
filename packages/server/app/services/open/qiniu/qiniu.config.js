@@ -11,14 +11,25 @@ module.exports = function () {
     'SecretKey': 'eif4-lScxZStteETV4S-GwdJtuoT5Vz-MuSKFo9e',
     'clientUploadUrl': 'https://upload.qiniup.com',
 
-    'pipeline': 'pisaas-resc',
+    'pipelines': {
+      'default': 'pisaas-resc',
+      'media': 'pisaas-resc-media'
+    },
 
-    'processes': {
+    'fops': {
       'thumb': {
-        'fop': 'imageView2/0/w/600/h/600/format/jpg'
+        'cmd': 'imageView2/0/w/600/h/600/format/jpg'
       },
       'avatar': {
-        'fop': 'imageView2/0/w/600/h/600/format/jpg'
+        'cmd': 'imageView2/0/w/600/h/600/format/jpg'
+      },
+      'audio': {
+        'pipelineKey': 'media',
+        'cmd': 'imageView2/0/w/600/h/600/format/jpg'
+      },
+      'video': {
+        'pipelineKey': 'media',
+        'cmd': 'imageView2/0/w/600/h/600/format/jpg'
       }
     },
   
@@ -33,6 +44,9 @@ module.exports = function () {
             'hash': '$(etag)',
             'fsize': '$(fsize)',
             'bucket': '$(bucket)',
+            'persistentId': '$(persistentId)',
+            'w': '$(imageInfo.width)',
+            'h': '$(imageInfo.height)',
             'mime': '$(mimeType)'
           }
         }
@@ -47,6 +61,9 @@ module.exports = function () {
           'returnBody': {
             'key': '$(key)',
             'fsize': '$(fsize)',
+            'persistentId': '$(persistentId)',
+            'w': '$(imageInfo.width)',
+            'h': '$(imageInfo.height)',
             'mime': '$(mimeType)'
           }
         }

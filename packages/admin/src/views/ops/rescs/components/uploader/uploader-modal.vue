@@ -1,6 +1,6 @@
 <template>
   <Modal ref="editorModal" v-model="showModal"
-    class-name="image-uploader-modal"
+    class-name="image-uploader-modal fixed"
     :title="title" :width="500" footer-hide
     @on-visible-change="onVisibleChange">
     <uploader-panel ref="uploaderPanel" @all-completed="onUploadCompleted" />

@@ -15,7 +15,12 @@
       </div>
     </div>
     <div class="panel-footer flex">
-      <div class="actions flex-main">
+      <div class="status flex-center">
+        <span v-if="isAllCanceled">已取消</span>
+        <span v-else-if="isAllCompleted" class="text-positive">已完成</span>
+        <span v-else-if="isUploading" class="text-active">上传中</span>
+      </div>
+      <div class="actions flex-main text-right">
         <file-upload ref="fileUpload" :accept="accept" :multi="multi"
           @selected="onFilesSelected">
           <Button v-if="multi" icon="md-add">添加文件</Button>
@@ -24,11 +29,6 @@
         <Button class="q-ml-md" :disabled="noItems || isAllCompleted"
           type="primary" icon="md-cloud-upload"
           @click="onUploadClick">开始上传</Button>
-      </div>
-      <div class="status flex-center">
-        <span v-if="isAllCanceled">已取消</span>
-        <span v-else-if="isAllCompleted" class="text-positive">已完成</span>
-        <span v-else-if="isUploading" class="text-active">上传中</span>
       </div>
     </div>
   </div>
@@ -49,7 +49,10 @@ export default {
   data () {
     return {
       multi: false,
+      rescType: null,
       accept: '',
+      fsizeLimit: 5,  // 单位MB
+      countLimit: 20,
       autoUpload: false,
       onUploaded: null,
 
@@ -64,6 +67,14 @@ export default {
 
     noItems () {
       return !this.itemsArr.length
+    },
+
+    fsizeLimitByte () {
+      let fsizeLimit = this.fsizeLimit
+      if (!fsizeLimit) {
+        return 0
+      }
+      return (fsizeLimit * 1024 * 1024)
     },
 
     isAllCanceled () {
@@ -145,10 +156,13 @@ export default {
       this.addFiles(files)
     },
 
-    set ({ files, multi, accept, autoUpload, onUploaded }) {
+    set ({ files, multi, accept, rescType, fsizeLimit, countLimit, autoUpload, onUploaded }) {
       this.multi = (multi === true)
+      this.rescType = rescType
       this.accept = accept || null
       this.autoUpload = (autoUpload === true)
+      this.fsizeLimit = fsizeLimit || this.fsizeLimit
+      this.countLimit = countLimit || this.countLimit
 
       if (typeof onUploaded === 'function') {
         this.onUploaded = onUploaded
@@ -174,7 +188,14 @@ export default {
 
       let fileKey = +new Date()
 
-      _.each(files, (file) => {
+      const countLimit = this.countLimit
+
+      if (countLimit && files.length > countLimit) {
+        this.$app.toast(`一次只能添加${countLimit}个文件。`)
+        files = _.slice(files, 0, 20)
+      }
+
+      _.each(files, (file, index) => {
         fileKey++
         addFileOps.push(this.addFile(items, file, fileKey, uploadParams))
       })
@@ -201,8 +222,24 @@ export default {
         return
       }
 
-      let thumbnail = await getFileThumbnail(file)
-      items[key] = { key, file, thumbnail }
+      let item = { key, file, loading: true }
+      items[key] = item
+
+      this.resetItem(item)
+
+      if (this.fsizeLimitByte && file.size > this.fsizeLimitByte) {
+        item.fsizeExceeded = true
+        item.canceled = true
+        item.loading = false
+        item.errorMsg = `文件大小超过最大限制${this.fsizeLimit}M`
+      } else {
+        let thumbnail = await getFileThumbnail(file)
+        item.loading = false
+        item.thumbnail = thumbnail
+      }
+
+      items[key] = item
+      this.resetItem(item)
     },
 
     async startUpload () {
@@ -228,7 +265,8 @@ export default {
 
       let result = await rescUpload(item.file, {
         onProgress: this.onUploadProgress(item).bind(this),
-        onUpload: this.onUploadStart(item).bind(this)
+        onUpload: this.onUploadStart(item).bind(this),
+        tokenOptions: { rtype: this.rescType }
       }).then((result) => {
         item.progress = 100
         item.uploading = false
@@ -328,6 +366,14 @@ export default {
 <style lang="less" scoped>
 .uploader-panel {
   padding: 10px;
+}
+
+.panel-body {
+  min-height: 200px;
+
+  .no-data {
+    height: 180px;
+  }
 }
 
 .panel-footer {

@@ -61,11 +61,34 @@ function initialize () {
     })
   }
 
+  function getAudioMetadata (file) {
+    return new Promise((resolve, reject) => {
+      let fileurl = URL.createObjectURL(file)
+      let audioElement = new Audio(fileurl)
+      
+      audioElement.addEventListener("loadedmetadata", function (e) {
+        let duration = audioElement.duration
+        resolve({
+          fname: file.name,
+          duration,
+          fsize: file.size,
+          mimeType: file.type,
+          src: file
+        })
+      })
+
+      audioElement.addEventListener("error", function (err) {
+        reject(err)
+      })
+    })
+  }
+
   return {
     scalePhoto,
     dataURItoBlob,
     isImageDataUrl,
-    readFileAsDataUrl
+    readFileAsDataUrl,
+    getAudioMetadata
   }
 }
 

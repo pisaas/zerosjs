@@ -77,7 +77,7 @@ export default {
         return
       }
 
-      this.$refs.editorModal.create(pid)
+      this.$refs.editorModal.openCreate(pid)
     },
 
     onEdit (item) {
@@ -85,7 +85,7 @@ export default {
         return
       }
 
-      this.$refs.editorModal.update(item.id)
+      this.$refs.editorModal.openUpdate(item.id)
     },
 
     onRemove (item) {

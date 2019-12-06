@@ -6,6 +6,9 @@
           <div slot="extra" class="q-mx-md">
             <image-actions ref="imgActions" :visible="tabName === 'image'"
               @submit="onActionSubmit" />
+
+            <audio-actions ref="audioActions" :visible="tabName === 'audio'"
+              @submit="onActionSubmit" />
           </div>
 
           <TabPane label="图片" name="image" />
@@ -16,6 +19,7 @@
 
       <div>
         <image-list v-if="tabName === 'image'" ref="list" />
+        <audio-list v-if="tabName === 'audio'" ref="list" />
       </div>
     </page-section>
   </page>
@@ -25,10 +29,15 @@
 import ImageList from './image-list'
 import ImageActions from './image-actions'
 
+import AudioList from './audio-list'
+import AudioActions from './audio-actions'
+
 export default {
   components: {
     ImageList,
-    ImageActions
+    ImageActions,
+    AudioList,
+    AudioActions
   },
 
   props: {

@@ -18,6 +18,7 @@ module.exports = function () {
       
       store: { type: 'string', required: true, protected: true, maxlength: 100 },  // 存储名，如usr/avatar, app/logo, app/material等
       storage: { type: 'string', required: true, protected: true, maxlength: 100 },  // 存储方式
+      pfopid: { type: 'string' }, // 数据处理队列id
       md5: { type: 'string', protected: true }, // 用于文件去重
       path: { type: 'string' }, // 文件路径
       thumb: { type: 'string' }, // 缩略图路径
@@ -40,32 +41,44 @@ module.exports = function () {
         }
 
         if (doc.thumb) {
-          ret.thumb = zeros.$resc.thumbUrl(doc.thumb, doc.path, doc.createdAt, 'thumb');
+          ret.thumb = rescThumbUrl(doc.thumb, doc.path, doc.createdAt, 'thumb');
         }
 
         if (doc.avatar) {
-          ret.avatar = zeros.$resc.thumbUrl(doc.avatar, doc.path, doc.createdAt, 'avatar');
+          ret.avatar = rescThumbUrl(doc.avatar, doc.path, doc.createdAt, 'avatar');
         }
         
-        let status = this.status;
-        let statusName = '';
+        let status = doc.status;
 
-        if (doc.frzn) {
-          status = 'frozen';
-          statusName = '已冻结';
-        } else if (doc.pubed) {
-          status = 'published';
-          statusName = '已发布';
-        } else {
-          status = 'unpublished';
-          statusName = '未发布';
+        if (!status) {
+          if (doc.frzn) {
+            status = 'frozen';
+          } else if (doc.pubed) {
+            status = 'published';
+          } else {
+            status = 'unpublished';
+          }
         }
 
         ret.status = status;
-        ret.statusName = statusName;
+        ret.statusName = zeros.$model.statusName(status);
         
         return ret;
       }
     }
   };
 };
+
+function rescThumbUrl (thumb, path, ts, fopName) {
+  if (!ts || !path) {
+    return zeros.$resc.fullUrl(thumb);
+  }
+
+  // 5分钟后生效，（七牛处理缩略图预留5分钟时间）
+  let activeDate = ts.addMinutes(5);
+  if (Date.compare(new Date(), activeDate) > 0) {
+    return zeros.$resc.fullUrl(thumb);
+  }
+
+  return zeros.$resc.thumbUrl(path, fopName);
+}
