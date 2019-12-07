@@ -29,7 +29,7 @@ module.exports = function () {
       },
       'video': {
         'pipelineKey': 'media',
-        'cmd': 'imageView2/0/w/600/h/600/format/jpg'
+        'cmd': 'avthumb/mp4/ab/160k/ar/44100/acodec/libfaac/r/30/vb/2200k/vcodec/libx264/s/1280x720/autoscale/1/stripmeta/0'
       }
     },
   

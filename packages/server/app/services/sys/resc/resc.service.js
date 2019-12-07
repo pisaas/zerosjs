@@ -80,11 +80,7 @@ class RescService extends SysService {
       policyOptions.fsizeLimit = cfg.maxUploadSize;
     }
 
-    let fopKey = null;
-
-    if (rtype === 'audio') {
-      fopKey = 'audio';
-    }
+    let fopKey = this.getFopKeyByRtype(rtype);
     
     let uptoken = await qiniuService.getUptoken({
       bucketKey: bucket,
@@ -126,7 +122,7 @@ class RescService extends SysService {
     
     let modelData = _.pick(data, [
       'id', 'appid', 'uid', 'uname', 'rtype', 'pfopid',
-      'name', 'fname', 'desc', 'extra'
+      'name', 'fname', 'thumb', 'desc', 'extra'
     ]);
 
     modelData = Object.assign({
@@ -225,27 +221,31 @@ class RescService extends SysService {
       md5: statInfo.md5
     });
 
-    // 图片文件，保存缩略图
-    if (modelData.rtype === 'image') {
-      modelUpdates.thumb = `${destRescKey}_thumb`;
-    }
-
-    // 用户头像
-    if (store.avatar && destRescKeyData.avatarKey) {
-      modelUpdates.avatar = `avatars/${destRescKeyData.avatarKey}`;
-    }
-
     // 资源持久化处理队列
     let fops = [];
 
     // 图片文件，保存缩略图
-    if (modelUpdates.thumb) {
+    if (modelData.rtype === 'image') {
+      modelUpdates.thumb = `${destRescKey}_thumb`;
       fops.push({ fopKey: 'thumb', descKey: modelUpdates.thumb });
-    }
 
-    // 用户头像
-    if (modelUpdates.avatar) {
-      fops.push({ fopKey: 'avatar', key: modelUpdates.avatar });
+      // 用户头像
+      if (store.avatar && destRescKeyData.avatarKey) {
+        modelUpdates.avatar = `avatars/${destRescKeyData.avatarKey}`;
+        fops.push({ fopKey: 'avatar', key: modelUpdates.avatar });
+      }
+    }
+    
+    if (modelData.rtype === 'video') {
+      if (modelData && modelData.extra && modelData.extra.thumbOffset) {
+        // 修正缩略图url
+        let thumbOffset = modelData.extra.thumbOffset;
+        modelUpdates.thumb = this.getVideoThumbByOffset(modelData.path, thumbOffset);
+
+        // 删除临时资源key
+        delete modelData.extra.tmpKey;
+        modelUpdates.extra = modelData.extra;
+      }
     }
 
     if (fops.length) {
@@ -314,20 +314,22 @@ class RescService extends SysService {
 
     // 目前只支持七牛存储
     if (rescModel.storage === 'qiniu') {
-      if (rescModel.thumb) {
+      if (rescModel.thumb && !zeros.util.isUrl(rescModel.thumb)) {
         delOps.push(qiniuService.remove({ key: rescModel.thumb }));
       }
 
-      if (rescModel.avatar) {
+      if (rescModel.avatar && !zeros.util.isUrl(rescModel.avatar)) {
         delOps.push(qiniuService.remove({ key: rescModel.avatar }));
       }
 
-      if (rescModel.path) {
+      if (rescModel.path && !zeros.util.isUrl(rescModel.path)) {
         delOps.push(qiniuService.remove({ key: rescModel.path }));
       }
     }
 
-    await Promise.all(delOps);
+    if (delOps.length) {
+      await Promise.all(delOps);
+    }
 
     rescModel = await dataService.remove(id);
 
@@ -398,7 +400,7 @@ class RescService extends SysService {
     return rescModel;
   }
 
-  // 执行转码，正在转码的资源无法执行转码
+  // 重新转码，正在转码的资源无法执行转码
   async rePersistent (id, params) {
     const dataService = zeros.service('data/rescs');
     const qiniuService = zeros.service('open/qiniu');
@@ -430,5 +432,57 @@ class RescService extends SysService {
     });
 
     return rescModel;
+  }
+
+  // 提交转码
+  async postPersistent (key, rtype) {
+    const qiniuService = zeros.service('open/qiniu');
+
+    if (!key) {
+      throw new errors.BadRequest('请提供资源信息。');
+    }
+
+    let fopKey = this.getFopKeyByRtype(rtype);
+
+    if (!fopKey) {
+      return new errors.BadRequest('不支持当前对当前资源进行转码。');
+    }
+
+    let pfopResult = await qiniuService.pfop({
+      bucket: 'tmp',
+      key: key,
+      fops: [{ fopKey: fopKey }],
+      options: { force: true }
+    });
+
+    return {
+      persistentId: pfopResult.persistentId
+    };
+  }
+
+  // 根据rtype获取Pfopkey
+  getFopKeyByRtype (rtype) {
+    switch (rtype) {
+    case 'audio':
+    case 'video':
+      return rtype;
+    default:
+      return null;
+    }
+  }
+
+  getVideoThumbByOffset (path, offset) {
+    let videoPath = path;
+    offset = offset || 0;
+
+    if (!videoPath) {
+      return null;
+    }
+
+    if (!zeros.util.isUrl(videoPath)) {
+      videoPath = zeros.$resc.fullUrl(videoPath)
+    }
+
+    return `${videoPath}?vframe/jpg/offset/${offset}`;
   }
 }

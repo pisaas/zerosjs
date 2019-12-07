@@ -39,10 +39,14 @@ module.exports = function () {
       transform (doc, ret) {
         if (doc.path) {
           ret.path = zeros.$resc.fullUrl(`${doc.path}`);
+        } else if (doc.extra && doc.extra.tmpRescKey) {
+          ret.path = zeros.$resc.fullUrl(`${doc.extra.tmpRescKey}`, 'tmp');
         }
 
         if (doc.thumb) {
           ret.thumb = rescThumbUrl(doc.thumb, doc.path, doc.createdAt, 'thumb');
+        } else if (doc.rtype === 'video') {
+          ret.thumb = rescVideoThumbUrl(doc.path);
         }
 
         if (doc.avatar) {
@@ -71,6 +75,10 @@ module.exports = function () {
 };
 
 function rescThumbUrl (thumb, path, ts, fopName) {
+  if (zeros.util.isUrl(thumb)) {
+    return thumb;
+  }
+
   if (!ts || !path) {
     return zeros.$resc.fullUrl(thumb);
   }
@@ -82,4 +90,12 @@ function rescThumbUrl (thumb, path, ts, fopName) {
   }
 
   return zeros.$resc.thumbUrl(path, fopName);
+}
+
+function rescVideoThumbUrl (path) {
+  if (!path) {
+    return null;
+  }
+
+  return zeros.$resc.fullUrl(path) + '?vframe/jpg/offset/0';
 }

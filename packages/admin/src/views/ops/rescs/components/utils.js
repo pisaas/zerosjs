@@ -90,6 +90,18 @@ export function checkPersistent (rescId) {
   })
 }
 
+export function postPersistent (tmpKey, rtype) {
+  if (!tmpKey) {
+    return Promise.resolve()
+  }
+
+  const vmService = zerosApp.vm.prototype.$service
+
+  return vmService('resc').get('post_transcoding', {
+    query: { rtype, key: tmpKey }
+  })
+}
+
 export default {
   RescMimeTypes,
   isSameFile,
@@ -97,5 +109,6 @@ export default {
   getFileThumbnail,
   getRescUptoken,
   rescUpload,
-  checkPersistent
+  checkPersistent,
+  postPersistent
 }

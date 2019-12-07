@@ -21,13 +21,15 @@ function loadRescGlobals (zeros) {
   zeros.$resc = {
     QiniuFops,
 
-    fullUrl (path) {
+    fullUrl (path, domainKey) {
       if (!path) {
         return path;
       }
 
+      domainKey = domainKey || 'default';
+
       let rescCfg = zeros.get('sys.resc');
-      let rescDomain = rescCfg.domains.default;
+      let rescDomain = rescCfg.domains[domainKey];
 
       if (path.indexOf(rescDomain) === 0) {
         return path;

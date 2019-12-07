@@ -24,6 +24,9 @@ class Service extends ApiService {
     case 'check_transcoding':
       result = await this.checkPersistent(params);
       break;
+    case 'post_transcoding':
+      result = await this.postPersistent(params);
+      break;
     }
 
     return result;
@@ -31,7 +34,7 @@ class Service extends ApiService {
 
   async create (data, params) {
     let { user, app } = params;
-    let { store, key, pfopid, rtype, name, fname, desc, extra } = data;
+    let { store, key, pfopid, rtype, name, fname, thumb, desc, extra } = data;
 
     if (!key) {
       throw new errors.BadRequest('请提供需要转存的资源。');
@@ -41,15 +44,7 @@ class Service extends ApiService {
       throw new errors.BadRequest('请提供资源存储方式。');
     }
 
-    let rescData = {
-      rtype,
-      tmpKey: key,
-      pfopid,
-      name,
-      fname,
-      desc,
-      extra
-    };
+    let rescData = { rtype, tmpKey: key, pfopid, name, fname, thumb, desc, extra };
 
     let result = await this.adapterService.store(store, rescData, { app, user });
 
@@ -72,9 +67,16 @@ class Service extends ApiService {
     return rescModel;
   }
 
+  async postPersistent (params) {
+    let { key, rtype } = params.query;
+
+    let result = await this.adapterService.postPersistent(key, rtype, params);
+
+    return result;
+  }
+
   async rePersistent (params) {
     let { rid } = params.query;
-
     let rescModel = await this.adapterService.rePersistent(rid, params);
 
     return rescModel;

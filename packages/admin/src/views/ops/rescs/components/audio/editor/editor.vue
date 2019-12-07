@@ -1,7 +1,7 @@
 <template>
   <Form v-if="formModel" class="audio-editor padding" ref="form"
     :model="formModel" :rules="formRules" :label-width="60">
-    <FormItem label="名称" required prop="name">
+    <FormItem label="标题" required prop="name">
       <Input v-model="formModel.name" :maxlength="50" placeholder="请输入名称 (100字以内)" />
     </FormItem>
     <FormItem v-show="modelData && modelData.id" label="音频" required prop="fname">

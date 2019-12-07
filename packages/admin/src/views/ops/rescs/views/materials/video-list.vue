@@ -1,13 +1,9 @@
 <template>
-  <div class="audio-list page-list">
+  <div class="video-list page-list">
     <div class="list-header">
       <div class="flex-main">
         <Input v-model="tableQuery.search" icon="ios-search" placeholder="名称/描述/ID"
           @on-enter="onQuery" style="width: 180px" />
-        
-        <list-actions @trigger="onActionTrigger">
-          <list-action action="delete" :disabled="!isSelected">删除</list-action>
-        </list-actions>
       </div>
       <div class="tail">
         <list-nav :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
@@ -19,12 +15,12 @@
       :columns="tableColumns" :data="tableItems"
       @on-selection-change="onSelectionChange">
       <div slot-scope="{ row }" slot="content" class="table-col col-content">
-        <div class="audio-play flex-center" :class="{ disabled: !row.pubed }">
-          <Icon type="md-arrow-dropright-circle" size="30" class="text-primary"
-            @click="openPlay(row)" />
+        <div class="video-play" :class="{ disabled: !row.pubed }"
+          :style="{ 'backgroundImage': `url(${row.thumb})` }">
+          <Icon type="md-play" size="20" class="play-button" @click="openPlay(row)" />
         </div>
         <div class="col-detail">
-          <div class="col-title audio-name">{{ row.name }}</div>
+          <div class="col-title video-name">{{ row.name }}</div>
           <div class="col-subtitle">
             <span v-if="row.extra && row.extra.duration">
               时长：{{ $util.format.prettySeconds(row.extra.duration) }}
@@ -36,8 +32,7 @@
             <list-item-action icon="md-open" label="编辑" action="edit" />
             <list-item-action v-if="row.status === 'transcoding'" 
               icon="md-sync" label="检查转码" action="check_transcoding" />
-            <list-item-action v-if="row.pubed" 
-              icon="md-download" label="下载" action="download" />
+            <list-item-action icon="md-trash" label="删除" action="delete" />
           </list-item-actions>
         </div>
       </div>
@@ -54,19 +49,19 @@
         show-total @on-change="onPageChange"></Page>
     </div>
 
-    <audio-player-modal ref="playerModal" />
-    <audio-editor-modal ref='editorModal' @submit="onEditSubmit" />
+    <video-player-modal ref="playerModal" />
+    <video-editor-modal ref='editorModal' @submit="onEditSubmit" />
   </div>
 </template>
 
 <script>
-import { AudioPlayerModal } from '@resc-components/audio/player'
-import { AudioEditorModal } from '@resc-components/audio/editor'
+import { VideoPlayerModal } from '@resc-components/video/player'
+import { VideoEditorModal } from '@resc-components/video/editor'
 
 export default {
   components: {
-    AudioPlayerModal,
-    AudioEditorModal
+    VideoPlayerModal,
+    VideoEditorModal
   },
 
   data () {
@@ -74,8 +69,8 @@ export default {
       tableSelection: [],
 
       tableColumns: [
-        { type: 'selection', width: 40, align: 'center' },
-        { title: '音频', slot: 'content', minWidth: 200 },
+        // { type: 'selection', width: 40, align: 'center' },
+        { title: '视频', slot: 'content', minWidth: 200 },
         { title: '状态', key: 'statusName', width: 100 },
         { title: '更新时间', slot: 'ts', width: 150 }
       ],
@@ -142,8 +137,8 @@ export default {
         case 'check_transcoding':
           this.onCheckTranscoding(data)
           break
-        case 'download':
-          this.onDownload(data)
+        case 'delete':
+          this.onDelete(data)
           break
       }
     },
@@ -191,29 +186,25 @@ export default {
         }
 
         if (res.pubed) {
-          this.$app.toast('音频已发布。', { type: 'success' })
+          this.$app.toast('视频已发布。', { type: 'success' })
         } else {
-          this.$app.toast(`音频 ${res.statusName}`)
+          this.$app.toast(`视频 ${res.statusName}`)
         }
 
         this.loadData()
       })
     },
 
-    onDelete () {
-      let ids = this.tableSelection.map((it) => {
-        return it.id
-      })
-
-      if (!ids || !ids.length) {
-        this.$app.alert('请选择要删除的音频。')
+    onDelete (row) {
+      if (!row || !row.id) {
+        this.$app.alert('请选择要删除的视频。')
       }
 
       this.$app.confirm({
-        title: '删除音频',
-        content: '<p>音频删除后将无法恢复，确认删除选中的音频？</p>',
+        title: '删除视频',
+        content: '<p>视频删除后将无法恢复，所有使用该视频的网页中对应的视频都会被删除。确认删除视频？</p>',
         onOk: () => {
-          this.doDelete(ids).then(() => {
+          this.doDelete([row.id]).then(() => {
             this.$app.toast('删除成功！', { type: 'success' })
             this.loadData()
           })
@@ -250,7 +241,7 @@ export default {
       let query = this.$service.getSearchQuery(this.tableQuery)
 
       query = Object.assign({
-        rtype: 'audio'
+        rtype: 'video'
       }, query)
 
       let result = await this.$service('rescs').find({ query })
@@ -264,8 +255,21 @@ export default {
 <style lang="less" scoped>
 .list-table {
   .col-content {
-    .audio-play {
+    .video-play {
+      width: 100px;
+      height: 60px;
       cursor: pointer;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+
+      .play-button {
+        opacity: 0.8;
+      }
 
       &.disabled {
         opacity: 0.5;
