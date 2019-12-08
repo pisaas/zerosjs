@@ -60,7 +60,9 @@ class Service extends ApiService {
         extra.thumbOffset = data.thumbOffset;
         updates.extra = extra;
       }
-    }
+    } else if (rescModel.rtype === 'image') {
+      updates = _.pick(data, ['name']);
+    } 
 
     rescModel = await this.adapterService.patch(id, updates);
 

@@ -232,6 +232,10 @@ export default {
       if (this.isRecmdCover && !this.modelData) {
         this.videoThumbOffset = 0
       }
+    },
+
+    videoThumbType () {
+      this.reloadFormModelThumb()
     }
   },
 

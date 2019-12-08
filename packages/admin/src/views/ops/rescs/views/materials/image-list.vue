@@ -27,6 +27,10 @@
             <span v-if="row.fsize">原图大小：{{ $util.filesize(row.fsize) }}</span>
           </div>
         </div>
+
+        <list-item-actions @trigger="onItemActionTrigger" :data="row">
+          <list-item-action icon="ios-more" label="重命名" action="rename" />
+        </list-item-actions>
       </div>
       <div slot-scope="{ row }" slot="ts" class="table-col">
         <div class="col-text">{{ $util.date.format(row.updatedAt) }}</div>
@@ -105,6 +109,31 @@ export default {
       }
     },
 
+    onItemActionTrigger (action, row) {
+      switch (action) {
+        case 'rename':
+          this.onRename(row)
+          break
+      }
+    },
+
+    onRename (row) {
+      let imgName = row.name
+
+      this.$app.confirm({
+        title: '重命名',
+        render: (h) => {
+          return h('Input', {
+            props: { value: imgName, autofocus: true, placeholder: '请输入图片名称' },
+            on: { input (val) { imgName = val } }
+          })
+        },
+        onOk: () => {
+          this.doRename(row.id, imgName)
+        }
+      })
+    },
+
     onDelete () {
       let ids = this.tableSelection.map((it) => {
         return it.id
@@ -143,6 +172,11 @@ export default {
     // 供外部调用
     async reload () {
       this.loadData()
+    },
+
+    async doRename (id, name) {
+      await this.$service('rescs').patch(id, { name })
+      await this.loadData()
     },
 
     async doDelete (ids) {
