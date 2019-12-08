@@ -2,7 +2,7 @@
   <div class="topic-list-pending page-list">
     <div class="list-header">
       <div class="flex-main">
-        <Input v-model="tableQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
+        <Input v-model="listQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
           @on-enter="onQuery" style="width: 180px" />
       </div>
 
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <Table ref="pgTable" class="list-table" border stripe :columns="tableColumns" :data="tableItems">
+    <Table ref="pgTable" class="list-table" border stripe :columns="listColumns" :data="listItems">
       <!-- 不能操作自己 -->
       <div v-if="row.code !== user.code" slot-scope="{ row }" slot="ops" >
         <Button v-if="user.isSuperAdmin" class="text-negative" ghost size="small"
@@ -38,7 +38,7 @@
     </Table>
 
     <div class="list-footer">
-      <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+      <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
         show-total @on-change="onPageChange"></Page>
     </div>
   </div>
@@ -62,16 +62,16 @@ export default {
       catId: null,
       tabName: 'pubed',
 
-      tableColumns: [
+      listColumns: [
         { title: '作者', key: 'author', width: 100, align: 'center' },
         { title: '标题', slot: 'topic', minWidth: 200 },
         { title: '提交时间', key: 'updatedAt', width: 100, align: 'center' },
         { title: '操作', slot: 'ops', width: 120, align: 'center' },
       ],
 
-      tableItems: [],
-      tableTotal: 0,
-      tableQuery: {
+      listItems: [],
+      listTotal: 0,
+      listQuery: {
         name: null,
         page: 1,
         size: 10,
@@ -85,7 +85,7 @@ export default {
 
   methods: {
     onQuery () {
-      this.tableQuery.page = 1
+      this.listQuery.page = 1
       this.loadData()
     },
 

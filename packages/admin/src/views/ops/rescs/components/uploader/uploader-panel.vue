@@ -156,7 +156,10 @@ export default {
       this.addFiles(files)
     },
 
-    set ({ files, multi, accept, rescType, fsizeLimit, countLimit, autoUpload, onUploaded }) {
+    load ({
+      files, multi, accept, rescType, fsizeLimit,
+      countLimit, autoUpload, onUploaded
+    }) {
       this.multi = (multi === true)
       this.rescType = rescType
       this.accept = accept || null

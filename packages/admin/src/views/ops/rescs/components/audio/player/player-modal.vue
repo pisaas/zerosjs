@@ -1,5 +1,5 @@
 <template>
-  <Modal ref="playerModal" v-model="showModal"
+  <Modal v-model="showModal"
     class-name="audio-player-modal fixed"
     :title="title" :width="500" footer-hide
     @on-visible-change="onVisibleChange">
@@ -35,7 +35,7 @@ export default {
     },
 
     open (params) {
-      this.$refs.player.play(params)
+      this.$refs.player.load(params)
       if (params.title) {
         this.title = params.title
       }

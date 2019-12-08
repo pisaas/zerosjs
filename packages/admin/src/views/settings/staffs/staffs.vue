@@ -12,12 +12,12 @@
         &nbsp;
       </div>
       <div class="text-right">
-        <Input v-model="tableQuery.name" icon="search" placeholder="用户名/手机号/编号"
+        <Input v-model="listQuery.name" icon="search" placeholder="用户名/手机号/编号"
           @on-enter="onQuery" style="width: 180px" />
       </div>
     </div>
     <Row class="q-mt-md">
-      <Table ref="pgTable" border size="small" :columns="tableColumns" :data="tableItems">
+      <Table ref="pgTable" border size="small" :columns="listColumns" :data="listItems">
         <!-- 不能操作自己 -->
         <div v-if="row.code !== user.code" slot-scope="{ row }" slot="ops" >
           <Button v-if="user.isSuperAdmin" class="text-negative" ghost size="small"
@@ -45,7 +45,7 @@
       </Table>
     </Row>
     <Row class="q-mt-md">
-      <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+      <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
         show-total @on-change="onPageChange"></Page>
     </Row>
   </div>
@@ -65,7 +65,7 @@ export default {
   data () {
     return {
       showPoptip: false,
-      tableColumns: [
+      listColumns: [
         { title: '操作', slot: 'ops', width: 100, align: 'center' },
         { title: '头像', slot: 'avatar', width: 100, align: 'center' },
         { title: '基本信息', slot: 'basic', minWidth: 200 },
@@ -73,9 +73,9 @@ export default {
         { title: '联系信息', slot: 'contact', minWidth: 200 },
         { title: '更新时间', slot: 'timestamp', width: 170 }
       ],
-      tableItems: [],
-      tableTotal: 0,
-      tableQuery: {
+      listItems: [],
+      listTotal: 0,
+      listQuery: {
         name: null,
         page: 1,
         size: 10,
@@ -155,24 +155,24 @@ export default {
     },
 
     onQuery () {
-      this.tableQuery.page = 1
+      this.listQuery.page = 1
       this.getList()
     },
 
     onPageChange (val) {
-      this.tableQuery.page = val
+      this.listQuery.page = val
       this.getList()
     },
 
     getList () {
-      let qry = this.tableQuery || {}
+      let qry = this.listQuery || {}
 
       this.$apis.adm.getStaffs(qry).then((res) => {
-        this.tableItems = res.items.map((it) => {
+        this.listItems = res.items.map((it) => {
           it.roleNames = this.userRoleNames(it)
           return it
         })
-        this.tableTotal = res.total
+        this.listTotal = res.total
       })
     },
 

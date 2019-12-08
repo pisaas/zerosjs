@@ -1,5 +1,5 @@
 <template>
-  <Modal ref="editorModal" v-model="showModal"
+  <Modal v-model="showModal"
     class="audio-editor-modal" :title="modalTitle"
     :width="700" :loading="loading" :mask-closable="false"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
@@ -89,7 +89,7 @@ export default {
       this.editMode = 'create'
 
       this.$nextTick(() => {
-        this.$refs.editor.openCreate().then(() => {
+        this.$refs.editor.loadCreate().then(() => {
           this.showModal = true
         })
       })
@@ -99,7 +99,7 @@ export default {
       this.editMode = 'update'
 
       this.$nextTick(() => {
-        this.$refs.editor.openUpdate(id).then((res) => {
+        this.$refs.editor.loadUpdate(id).then((res) => {
           this.showModal = true
 
           if (cb) {

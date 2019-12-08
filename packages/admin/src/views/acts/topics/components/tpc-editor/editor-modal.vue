@@ -119,7 +119,7 @@ export default {
 
       if (editor) {
         this.$nextTick(() => {
-          editor.open(catid).then(() => {
+          editor.load(catid).then(() => {
             this.showModal = true
           })
         })
@@ -130,7 +130,7 @@ export default {
       this.editMode = 'update'
 
       this.$nextTick(() => {
-        this.$refs.editor.open(id).then((res) => {
+        this.$refs.editor.load(id).then((res) => {
           this.tpcid = res.id
           this.catid = res.catid
           this.showModal = true

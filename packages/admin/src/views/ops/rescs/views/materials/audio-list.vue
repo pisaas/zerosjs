@@ -2,7 +2,7 @@
   <div class="audio-list page-list">
     <div class="list-header">
       <div class="flex-main">
-        <Input v-model="tableQuery.search" icon="ios-search" placeholder="名称/描述/ID"
+        <Input v-model="listQuery.search" icon="ios-search" placeholder="名称/描述/ID"
           @on-enter="onQuery" style="width: 180px" />
         
         <list-actions @trigger="onActionTrigger">
@@ -10,13 +10,13 @@
         </list-actions>
       </div>
       <div class="tail">
-        <list-nav :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+        <list-nav :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
           @on-change="onPageChange" />
       </div>
     </div>
 
     <Table ref="pgTable" class="list-table" border stripe
-      :columns="tableColumns" :data="tableItems"
+      :columns="listColumns" :data="listItems"
       @on-selection-change="onSelectionChange">
       <div slot-scope="{ row }" slot="content" class="table-col col-content">
         <div class="audio-play flex-center" :class="{ disabled: !row.pubed }">
@@ -50,7 +50,7 @@
     </Table>
 
     <div class="list-footer">
-      <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+      <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
         show-total @on-change="onPageChange"></Page>
     </div>
 
@@ -71,18 +71,18 @@ export default {
 
   data () {
     return {
-      tableSelection: [],
+      listSelection: [],
 
-      tableColumns: [
+      listColumns: [
         { type: 'selection', width: 40, align: 'center' },
         { title: '音频', slot: 'content', minWidth: 200 },
         { title: '状态', key: 'statusName', width: 100 },
         { title: '更新时间', slot: 'ts', width: 150 }
       ],
 
-      tableItems: [],
-      tableTotal: 0,
-      tableQuery: {
+      listItems: [],
+      listTotal: 0,
+      listQuery: {
         search: null,
         page: 1,
         size: 10,
@@ -95,7 +95,7 @@ export default {
 
   computed: {
     isSelected () {
-      let sels = this.tableSelection
+      let sels = this.listSelection
 
       if (!sels || !sels.length) {
         return false
@@ -150,7 +150,7 @@ export default {
 
     onEdit (row) {
       if (!row) {
-        row = this.tableSelection[0]
+        row = this.listSelection[0]
       }
 
       if (!row || !row.id) {
@@ -172,7 +172,7 @@ export default {
 
     onCheckTranscoding (row) {
       if (!row) {
-        row = this.tableSelection[0]
+        row = this.listSelection[0]
       }
 
       if (!row || !row.id) {
@@ -201,7 +201,7 @@ export default {
     },
 
     onDelete () {
-      let ids = this.tableSelection.map((it) => {
+      let ids = this.listSelection.map((it) => {
         return it.id
       })
 
@@ -222,16 +222,16 @@ export default {
     },
 
     onQuery () {
-      this.tableQuery.page = 1
+      this.listQuery.page = 1
       this.loadData()
     },
 
     onSelectionChange (selection) {
-      this.tableSelection = selection
+      this.listSelection = selection
     },
 
     onPageChange (val) {
-      this.tableQuery.page = val
+      this.listQuery.page = val
       this.loadData()
     },
 
@@ -247,15 +247,15 @@ export default {
     },
 
     async loadData () {
-      let query = this.$service.getSearchQuery(this.tableQuery)
+      let query = this.$service.getSearchQuery(this.listQuery)
 
       query = Object.assign({
         rtype: 'audio'
       }, query)
 
       let result = await this.$service('rescs').find({ query })
-      this.tableItems = result.data
-      this.tableTotal = result.total
+      this.listItems = result.data
+      this.listTotal = result.total
     }
   }
 }

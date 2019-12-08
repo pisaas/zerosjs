@@ -93,11 +93,11 @@ export default {
     onCatChange (val, data) {
     },
 
-    open (tpcid) {
-      return this.openUpdate(tpcid)
+    load (tpcid) {
+      return this.loadUpdate(tpcid)
     },
 
-    openCreate (catid) {
+    loadCreate (catid) {
       this.reset()
       this.editMode = 'create'
 
@@ -108,7 +108,7 @@ export default {
       return Promise.resolve()
     },
 
-    openUpdate (tpcid) {
+    loadUpdate (tpcid) {
       this.reset()
       this.editMode = 'update'
       this.tpcid = tpcid

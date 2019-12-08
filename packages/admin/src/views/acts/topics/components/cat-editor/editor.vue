@@ -63,7 +63,7 @@ export default {
   },
 
   methods: {
-    openCreate (pid) {
+    loadCreate (pid) {
       this.reset()
       this.editMode = 'create'
       this.pid = pid
@@ -71,7 +71,7 @@ export default {
       return Promise.resolve()
     },
 
-    openUpdate (catId) {
+    loadUpdate (catId) {
       this.reset()
       this.editMode = 'update'
       this.catId = catId

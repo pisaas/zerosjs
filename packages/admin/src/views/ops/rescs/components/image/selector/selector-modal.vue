@@ -1,24 +1,24 @@
 <template>
   <Modal v-model="showModal"
-    class-name="image-uploader-modal fixed"
-    :title="title" :width="500" footer-hide
+    class-name="image-selector-modal fixed"
+    :title="title" :width="800" footer-hide
     @on-visible-change="onVisibleChange">
-    <uploader-panel ref="uploaderPanel" @all-completed="onUploadCompleted" />
+    <image-selector ref="imgSelector" />
   </Modal>
 </template>
 
 <script>
-import UploaderPanel from './uploader-panel'
+import ImageSelector from './selector'
 
 export default {
   components: {
-    UploaderPanel
+    ImageSelector
   },
 
   props: {
     title: {
       type: String,
-      default: '上传'
+      default: '选择图片'
     }
   },
 
@@ -45,7 +45,7 @@ export default {
     },
 
     open (params) {
-      this.$refs.uploaderPanel.load(params)
+      this.$refs.imgSelector.load(params)
       this.showModal = true
     },
 
@@ -55,7 +55,7 @@ export default {
 
     reset () {
       this.showModal = false
-      this.$refs.uploaderPanel.reset()
+      this.$refs.imgSelector.reset()
     }
   },
 

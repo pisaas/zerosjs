@@ -1,7 +1,7 @@
 <template>
-  <Modal ref="editorModal" v-model="showModal"
+  <Modal v-model="showModal"
     class="video-editor-modal" :title="modalTitle"
-    :width="900" :loading="loading" :mask-closable="false"
+    :width="800" :loading="loading" :mask-closable="false"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
     <video-editor ref="editor" @trans-checked="onTransChecked"></video-editor>
   </Modal>
@@ -83,7 +83,7 @@ export default {
       this.editMode = 'create'
 
       this.$nextTick(() => {
-        this.$refs.editor.openCreate().then(() => {
+        this.$refs.editor.loadCreate().then(() => {
           this.showModal = true
         })
       })
@@ -93,7 +93,7 @@ export default {
       this.editMode = 'update'
 
       this.$nextTick(() => {
-        this.$refs.editor.openUpdate(id).then((res) => {
+        this.$refs.editor.loadUpdate(id).then((res) => {
           this.showModal = true
 
           if (cb) {

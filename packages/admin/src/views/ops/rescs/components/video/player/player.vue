@@ -26,7 +26,7 @@ export default {
   },
 
   methods: {
-    play ({ src, autoPlay }) {
+    load ({ src, autoPlay }) {
       this.src = src
       this.autoPlay = autoPlay || false
     },

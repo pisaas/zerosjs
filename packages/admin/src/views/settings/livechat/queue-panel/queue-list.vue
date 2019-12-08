@@ -1,7 +1,7 @@
 <template>
   <div class="queue-list">
     <Row class="q-mt-md">
-      <Table ref="pgTable" border size="small" :columns="tableColumns" :data="tableItems">
+      <Table ref="pgTable" border size="small" :columns="listColumns" :data="listItems">
         <!-- 不能操作自己 -->
         <div slot-scope="{ row }" slot="ops" >
           <Button class="text-negative" ghost size="small"
@@ -24,7 +24,7 @@
       </Table>
     </Row>
     <Row class="q-mt-md">
-      <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+      <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
         show-total @on-change="onPageChange"></Page>
     </Row>
   </div>
@@ -38,15 +38,15 @@ export default {
 
   data () {
     return {
-      tableColumns: [
+      listColumns: [
         { title: '操作', slot: 'ops', width: 100, align: 'center' },
         { title: '客户信息', slot: 'basic', minWidth: 200 },
         { title: '消息时间', slot: 'timestamp', width: 170 },
         { title: '上次接待', slot: 'roles', minWidth: 180 }
       ],
-      tableItems: [],
-      tableTotal: 0,
-      tableQuery: {
+      listItems: [],
+      listTotal: 0,
+      listQuery: {
         name: null,
         page: 1,
         size: 10,
@@ -64,24 +64,24 @@ export default {
     },
 
     onQuery () {
-      this.tableQuery.page = 1
+      this.listQuery.page = 1
       this.getList()
     },
 
     onPageChange (val) {
-      this.tableQuery.page = val
+      this.listQuery.page = val
       this.getList()
     },
 
     getList () {
-      let qry = this.tableQuery || {}
+      let qry = this.listQuery || {}
       
       // this.$apis.livechat.getQueues(qry).then((res) => {
-      //   this.tableItems = res.items.map((it) => {
+      //   this.listItems = res.items.map((it) => {
       //     it.roleNames = this.userRoleNames(it)
       //     return it
       //   })
-      //   this.tableTotal = res.total
+      //   this.listTotal = res.total
       // })
     }
   },

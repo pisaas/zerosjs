@@ -2,7 +2,7 @@
   <div class="topic-list-pubed page-list">
     <div class="list-header">
       <div class="flex-main">
-        <Input v-model="tableQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
+        <Input v-model="listQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
           @on-enter="onQuery" style="width: 180px" />
         
         <list-actions ref="pgActionButtons" @trigger="onActionTrigger">
@@ -11,13 +11,13 @@
         </list-actions>
       </div>
       <div class="tail">
-        <list-nav :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+        <list-nav :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
           @on-change="onPageChange" />
       </div>
     </div>
 
     <Table ref="pgTable" class="list-table" border stripe
-      :columns="tableColumns" :data="tableItems"
+      :columns="listColumns" :data="listItems"
       @on-selection-change="onSelectionChange">
       <div slot-scope="{ row }" slot="topic" class="table-col">
         <div class="col-title">
@@ -41,7 +41,7 @@
     </Table>
 
     <div class="list-footer">
-      <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+      <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
         show-total @on-change="onPageChange"></Page>
     </div>
   </div>
@@ -65,17 +65,17 @@ export default {
       
       getTopicCatPathNamesStr,
 
-      tableSelection: [],
+      listSelection: [],
 
-      tableColumns: [
+      listColumns: [
         { type: 'selection', width: 40, align: 'center' },
         { title: '话题', slot: 'topic', minWidth: 200 },
         { title: '更新时间', slot: 'ts', width: 150 },
       ],
 
-      tableItems: [],
-      tableTotal: 0,
-      tableQuery: {
+      listItems: [],
+      listTotal: 0,
+      listQuery: {
         search: null,
         page: 1,
         size: 10,
@@ -88,7 +88,7 @@ export default {
 
   computed: {
     selectedItems () {
-      let sels = this.tableSelection || []
+      let sels = this.listSelection || []
       return sels
     },
 
@@ -141,7 +141,7 @@ export default {
 
     onEdit (row) {
       if (!row) {
-        row = this.tableSelection[0]
+        row = this.listSelection[0]
       }
 
       if (!row || !row.id) {
@@ -152,7 +152,7 @@ export default {
     },
 
     onDelete () {
-      let ids = this.tableSelection.map((it) => {
+      let ids = this.listSelection.map((it) => {
         return it.id
       })
 
@@ -173,16 +173,16 @@ export default {
     },
 
     onQuery () {
-      this.tableQuery.page = 1
+      this.listQuery.page = 1
       this.loadData()
     },
 
     onSelectionChange (selection) {
-      this.tableSelection = selection
+      this.listSelection = selection
     },
 
     onPageChange (val) {
-      this.tableQuery.page = val
+      this.listQuery.page = val
       this.loadData()
     },
 
@@ -208,15 +208,15 @@ export default {
     },
 
     async loadData () {
-      let query = this.$service.getSearchQuery(this.tableQuery)
+      let query = this.$service.getSearchQuery(this.listQuery)
 
       query = Object.assign({
         status: 'new'
       }, query)
 
       let result = await this.$service('tpcs').find({ query })
-      this.tableItems = result.data
-      this.tableTotal = result.total
+      this.listItems = result.data
+      this.listTotal = result.total
     }
   }
 }

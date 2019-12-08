@@ -43,14 +43,15 @@
       <div class="tip q-mb-sm">视频上传完成后可设置封面图</div>
 
       <div v-if="videoPath" class="cover-type-checker q-px-lg">
-        <RadioGroup v-model="videoThumbType" class="cover-type-radio-group">
+        <RadioGroup v-model="videoThumbType" class="cover-type-radio-group"
+          @on-change="onThumbTypeChange">
           <Radio label="recmd" class="cover-type-radio">推荐封面</Radio>
           <Radio label="custom" class="cover-type-radio">自定义封面</Radio>
         </RadioGroup>
       </div>
 
       <div v-if="videoPath" class="covers-content">
-        <div v-if="isRecmdCover" class="recmd-cover-box">
+        <div v-if="isRecmdThumb" class="recmd-cover-box">
           <RadioGroup v-model="videoThumbOffset" class="recmd-covers">
             <Radio v-for="(it, idx) in videoThumbOffsets" :key="idx" :label="it" class="cover-radio">
               <img :src="videoThumbByOffset(it)" />
@@ -58,13 +59,13 @@
           </RadioGroup>
         </div>
         <div v-else class="custom-cover-box">
-          <div v-if="customVideoCover" class="custom-cover">
+          <div v-if="customVideoThumb" class="custom-cover">
           </div>
           <div v-else class="custom-cover-holder" />
           <div class="custom-cover-actions">
             <ButtonGroup vertical>
-              <Button icon="md-crop" @click="onCustomCoverCrop"></Button>
-              <Button icon="md-swap" @click="onCustomCoverSwap"></Button>
+              <Button icon="md-crop" @click="onCustomThumbCrop"></Button>
+              <Button icon="md-swap" @click="onCustomThumbSwap"></Button>
             </ButtonGroup>
           </div>
         </div>
@@ -82,6 +83,8 @@
     <FormItem v-if="submitErrorMsg">
       <div class="text-error">{{ submitErrorMsg }}</div>
     </FormItem>
+
+    <image-selector-modal ref="imgSelectorModal" />
   </Form>
 </template>
 
@@ -89,6 +92,7 @@
 import { rescUpload, checkPersistent, postPersistent } from '@resc-components/utils'
 import RescUploader from '@resc-components/uploader'
 import { VideoPlayer } from '@resc-components/video/player'
+import { ImageSelectorModal } from '@resc-components/image/selector'
 
 const FsizeLimit = 600  // 大小限制：600 MB
 const DurationLimit = 30  // 时长限制：30分钟
@@ -108,7 +112,8 @@ const UploadSpec = {
 export default {
   components: {
     RescUploader,
-    VideoPlayer
+    VideoPlayer,
+    ImageSelectorModal
   },
 
   data () {
@@ -123,7 +128,7 @@ export default {
       modelData: null,
       videoThumbType: 'recmd',  // 默认使用推荐封面
       videoThumbOffset: 0,
-      customVideoCover: null,
+      customVideoThumb: null,
       isCheckingTranscoding: false,
       submitErrorMsg: null,
       formModel: {},
@@ -214,7 +219,7 @@ export default {
       return offsets
     },
 
-    isRecmdCover () {
+    isRecmdThumb () {
       return this.videoThumbType === 'recmd' && this.videoThumbOffsets.length
     }
   },
@@ -229,7 +234,7 @@ export default {
     },
 
     videoThumbOffsets () {
-      if (this.isRecmdCover && !this.modelData) {
+      if (this.isRecmdThumb && !this.modelData) {
         this.videoThumbOffset = 0
       }
     },
@@ -243,10 +248,19 @@ export default {
   },
 
   methods: {
-    onCustomCoverCrop () {
+    onCustomThumbCrop () {
     },
 
-    onCustomCoverSwap () {
+    onCustomThumbSwap () {
+      this.$refs.imgSelectorModal.open()
+    },
+
+    onThumbTypeChange (name) {
+      if (name !== 'custom' || this.customVideoThumb) {
+        return
+      }
+
+      this.onCustomThumbSwap()
     },
 
     onUploadSelected (file) {
@@ -305,14 +319,14 @@ export default {
       this.uploadData = Object.assign({}, this.uploadData, data)
     },
 
-    openCreate () {
+    loadCreate () {
       this.reset()
       this.editMode = 'create'
 
       return Promise.resolve()
     },
 
-    openUpdate (rescId) {
+    loadUpdate (rescId) {
       this.reset()
       this.editMode = 'update'
       this.rescId = rescId
@@ -354,7 +368,7 @@ export default {
     async update () {
       let formModel = this.formModel
       
-      if (this.isRecmdCover) {
+      if (this.isRecmdThumb) {
         formModel.thumbOffset = this.videoThumbOffset || 0
       }
 
@@ -389,7 +403,7 @@ export default {
           tmpRescKey: uploadData.tmpKey
         }
 
-        if (this.isRecmdCover) {
+        if (this.isRecmdThumb) {
           extra.thumbOffset = this.videoThumbOffset || 0
         }
         
@@ -433,7 +447,7 @@ export default {
       this.modelData = null
       this.videoThumbType = 'recmd'
       this.videoThumbOffset = 0
-      this.customVideoCover = null
+      this.customVideoThumb = null
       this.isCheckingTranscoding = false
 
       if (this.$refs.form) {
@@ -451,11 +465,11 @@ export default {
 
     reloadFormModelThumb () {
       let thumb = this.formModel.thumb
-      if (this.isRecmdCover) {
+      if (this.isRecmdThumb) {
         let thumbOffset = this.videoThumbOffset || 0
         thumb = this.videoThumbByOffset(thumbOffset)
       } else {
-        thumb = this.customVideoCover
+        thumb = this.customVideoThumb
       }
 
       this.$set(this.formModel, 'thumb', thumb)

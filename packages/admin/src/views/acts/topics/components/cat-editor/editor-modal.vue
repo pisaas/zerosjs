@@ -113,7 +113,7 @@ export default {
       this.editMode = 'create'
 
       this.$nextTick(() => {
-        this.$refs.editor.openCreate(id).then(() => {
+        this.$refs.editor.loadCreate(id).then(() => {
           this.showModal = true
         })
       })
@@ -123,7 +123,7 @@ export default {
       this.editMode = 'update'
 
       this.$nextTick(() => {
-        this.$refs.editor.openUpdate(id).then((res) => {
+        this.$refs.editor.loadUpdate(id).then((res) => {
           this.catid = res.id
           this.showModal = true
 

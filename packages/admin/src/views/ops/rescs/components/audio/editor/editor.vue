@@ -195,14 +195,14 @@ export default {
       this.uploadData = Object.assign({}, this.uploadData, data)
     },
 
-    openCreate () {
+    loadCreate () {
       this.reset()
       this.editMode = 'create'
 
       return Promise.resolve()
     },
 
-    openUpdate (rescId) {
+    loadUpdate (rescId) {
       this.reset()
       this.editMode = 'update'
       this.rescId = rescId

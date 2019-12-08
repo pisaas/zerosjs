@@ -55,7 +55,7 @@ export default {
       this.submit()
     },
 
-    open (catid) {
+    load (catid) {
       this.reset(catid)
 
       return Promise.resolve()

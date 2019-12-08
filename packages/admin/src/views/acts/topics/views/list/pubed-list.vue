@@ -4,18 +4,18 @@
       <div class="flex-main">
         <cat-selector v-model="catid" @change="onCatChange" inline />
 
-        <Input v-model="tableQuery.search" icon="ios-search"
+        <Input v-model="listQuery.search" icon="ios-search"
           class="q-ml-md" placeholder="主题名称/作者/ID"
           @on-enter="onQuery" style="width: 180px" />
       </div>
 
       <div>
-        <list-nav :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+        <list-nav :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
           @on-change="onPageChange" />
       </div>
     </div>
 
-    <Table ref="pgTable" class="list-table" border stripe :columns="tableColumns" :data="tableItems">
+    <Table ref="pgTable" class="list-table" border stripe :columns="listColumns" :data="listItems">
       <!-- 不能操作自己 -->
       <div v-if="row.code !== user.code" slot-scope="{ row }" slot="ops" >
         <Button v-if="user.isSuperAdmin" class="text-negative" ghost size="small"
@@ -43,7 +43,7 @@
     </Table>
 
     <div class="list-footer">
-      <Page :total="tableTotal" :current="tableQuery.page" :page-size="tableQuery.size"
+      <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
         show-total @on-change="onPageChange"></Page>
     </div>
   </div>
@@ -61,7 +61,7 @@ export default {
     return {
       catid: null,
 
-      tableColumns: [
+      listColumns: [
         { title: '作者', key: 'author', width: 100, align: 'center' },
         { title: '话题', slot: 'topic', minWidth: 200 },
         { title: '回复', key: 'replies', width: 100, align: 'center' },
@@ -70,9 +70,9 @@ export default {
         { title: '操作', slot: 'ops', width: 120, align: 'center' },
       ],
 
-      tableItems: [],
-      tableTotal: 0,
-      tableQuery: {
+      listItems: [],
+      listTotal: 0,
+      listQuery: {
         search: null,
         page: 1,
         size: 10,
@@ -99,17 +99,17 @@ export default {
     },
 
     onQuery () {
-      this.tableQuery.page = 1
+      this.listQuery.page = 1
       this.loadData()
     },
 
     onPageChange (val) {
-      this.tableQuery.page = val
+      this.listQuery.page = val
       this.loadData()
     },
 
     async loadData () {
-      let query = this.$service.getSearchQuery(this.tableQuery)
+      let query = this.$service.getSearchQuery(this.listQuery)
 
       query = Object.assign({
         pubed: true,
@@ -119,8 +119,8 @@ export default {
       })
 
       let result = await this.$service('tpcs').find({ query })
-      this.tableItems = result.items
-      this.tableTotal = result.total
+      this.listItems = result.items
+      this.listTotal = result.total
     }
   }
 }
