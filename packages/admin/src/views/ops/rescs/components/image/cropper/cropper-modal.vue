@@ -1,28 +1,26 @@
 <template>
   <Modal v-model="showModal"
-    class-name="image-selector-modal"
+    class-name="image-cropper-modal"
     :title="title" :width="800" footer-hide
     @on-visible-change="onVisibleChange">
-    <image-selector ref="imgSelector" :single="single"
-      @cancel="onClose" @selected="onSelected" />
+    <image-cropper ref="imgCropper"
+      @cancel="onClose" @cropped="onCropped" />
   </Modal>
 </template>
 
 <script>
-import ImageSelector from './selector'
+import ImageCropper from './cropper'
 
 export default {
   components: {
-    ImageSelector
+    ImageCropper
   },
 
   props: {
     title: {
       type: String,
       default: '选择图片'
-    },
-
-    single: Boolean
+    }
   },
 
   data () {
@@ -37,8 +35,8 @@ export default {
       this.close()
     },
 
-    onSelected (e) {
-      this.$emit('selected', e)
+    onCropped (e) {
+      this.$emit('cropped', e)
       this.close()
     },
 
@@ -53,12 +51,8 @@ export default {
       this.$emit('close')
     },
 
-    onUploadCompleted (items) {
-      this.$emit('completed', items)
-    },
-
     open (params) {
-      this.$refs.imgSelector.load(params)
+      this.$refs.imgCropper.load(params)
       this.showModal = true
     },
 
@@ -68,7 +62,7 @@ export default {
 
     reset () {
       this.showModal = false
-      this.$refs.imgSelector.reset()
+      this.$refs.imgCropper.reset()
     }
   },
 

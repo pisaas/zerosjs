@@ -51,6 +51,11 @@ class Service extends ApiService {
     return result;
   }
 
+  async patch (id, data, params) {
+    let result = await this.adapterService.store(id, data, params);
+    return result;
+  }
+
   async getUptoken (params) {
     let { objid, prefix, bucket, rtype, extName } = params.query;
   

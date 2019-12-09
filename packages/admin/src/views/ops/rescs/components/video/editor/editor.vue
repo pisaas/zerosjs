@@ -42,27 +42,28 @@
     <FormItem label="封面" required prop="thumb">
       <div class="tip q-mb-sm">视频上传完成后可设置封面图</div>
 
-      <div v-if="videoPath" class="cover-type-checker q-px-lg">
-        <RadioGroup v-model="videoThumbType" class="cover-type-radio-group"
+      <div v-if="videoPath" class="thumb-type-checker q-px-lg">
+        <RadioGroup v-model="videoThumbType" class="thumb-type-radio-group"
           @on-change="onThumbTypeChange">
-          <Radio label="recmd" class="cover-type-radio">推荐封面</Radio>
-          <Radio label="custom" class="cover-type-radio">自定义封面</Radio>
+          <Radio label="recmd" class="thumb-type-radio">推荐封面</Radio>
+          <Radio label="custom" class="thumb-type-radio">自定义封面</Radio>
         </RadioGroup>
       </div>
 
-      <div v-if="videoPath" class="covers-content">
-        <div v-if="isRecmdThumb" class="recmd-cover-box">
-          <RadioGroup v-model="videoThumbOffset" class="recmd-covers">
-            <Radio v-for="(it, idx) in videoThumbOffsets" :key="idx" :label="it" class="cover-radio">
+      <div v-if="videoPath" class="thumbs-content">
+        <div v-if="isRecmdThumb" class="recmd-thumb-box">
+          <RadioGroup v-model="videoThumbOffset" class="recmd-thumbs"
+            @on-change="onThumbOffsetChange">
+            <Radio v-for="(it, idx) in videoThumbOffsets" :key="idx" :label="it" class="thumb-radio">
               <img :src="videoThumbByOffset(it)" />
             </Radio>
           </RadioGroup>
         </div>
-        <div v-else class="custom-cover-box">
-          <div v-if="customVideoThumb" class="custom-cover">
-          </div>
-          <div v-else class="custom-cover-holder" />
-          <div class="custom-cover-actions">
+        <div v-else class="custom-thumb-box">
+          <div v-if="customVideoThumb" class="custom-thumb" 
+            :style="{ 'backgroundImage': `url(${customVideoThumb})` }" />
+          <div v-else class="custom-thumb-holder" />
+          <div class="custom-thumb-actions">
             <ButtonGroup vertical>
               <Button icon="md-crop" @click="onCustomThumbCrop"></Button>
               <Button icon="md-swap" @click="onCustomThumbSwap"></Button>
@@ -70,7 +71,7 @@
           </div>
         </div>
       </div>
-      <div v-else class="covers-holder tip">请先完成视频上传</div>
+      <div v-else class="thumbs-holder tip">请先完成视频上传</div>
     </FormItem>
     <FormItem label="标题" required prop="name">
       <Input v-model="formModel.name" :maxlength="50" placeholder="请输入名称 (100字以内)" />
@@ -84,7 +85,7 @@
       <div class="text-error">{{ submitErrorMsg }}</div>
     </FormItem>
 
-    <image-selector-modal ref="imgSelectorModal" />
+    <image-selector-modal ref="imgSelectorModal" single @selected="onThumbSelected" />
   </Form>
 </template>
 
@@ -220,7 +221,7 @@ export default {
     },
 
     isRecmdThumb () {
-      return this.videoThumbType === 'recmd' && this.videoThumbOffsets.length
+      return this.videoThumbType === 'recmd'
     }
   },
 
@@ -237,10 +238,6 @@ export default {
       if (this.isRecmdThumb && !this.modelData) {
         this.videoThumbOffset = 0
       }
-    },
-
-    videoThumbType () {
-      this.reloadFormModelThumb()
     }
   },
 
@@ -255,12 +252,25 @@ export default {
       this.$refs.imgSelectorModal.open()
     },
 
+    onThumbSelected (item) {
+      if (!item || !item.path) {
+        return
+      }
+
+      this.customVideoThumb = item.path
+      this.reloadFormModelThumb()
+    },
+
     onThumbTypeChange (name) {
       if (name !== 'custom' || this.customVideoThumb) {
         return
       }
 
       this.onCustomThumbSwap()
+    },
+
+    onThumbOffsetChange () {
+      this.reloadFormModelThumb()
     },
 
     onUploadSelected (file) {
@@ -365,18 +375,6 @@ export default {
       return result
     },
 
-    async update () {
-      let formModel = this.formModel
-      
-      if (this.isRecmdThumb) {
-        formModel.thumbOffset = this.videoThumbOffset || 0
-      }
-
-      let result = await this.$service('rescs').patch(this.rescId, this.formModel)
-      this.$emit('update', result)
-      return result
-    },
-
     async create () {
       if (this.modelData && this.modelData.id) {
         return false
@@ -400,6 +398,7 @@ export default {
 
         let extra = {
           duration: parseInt(duration),
+          thumbType: this.videoThumbType,
           tmpRescKey: uploadData.tmpKey
         }
 
@@ -433,6 +432,21 @@ export default {
 
         return false
       })
+    },
+
+    async update () {
+      let formModel = this.formModel
+      
+      if (this.isRecmdThumb) {
+        formModel.thumbOffset = this.videoThumbOffset || 0
+        formModel.thumb = this.videoThumbByOffset(formModel.thumbOffset)
+      }
+
+      formModel.thumbType = this.videoThumbType
+
+      let result = await this.$service('rescs').patch(this.rescId, this.formModel)
+      this.$emit('update', result)
+      return result
     },
 
     reset () {
@@ -476,6 +490,8 @@ export default {
     },
 
     validateForm () {
+      this.reloadFormModelThumb()
+      
       return new Promise ((resolve) => {
         this.$nextTick(() => {
           if (!this.formModel) {
@@ -529,9 +545,6 @@ export default {
 
     onTranscodingChecked () {
       this.isCheckingTranscoding = false
-
-      this.loadPlayer()
-
       this.$emit('trans-checked', this.modelData)
     },
 
@@ -607,20 +620,6 @@ export default {
       return { valid: true, filemeta }
     },
 
-    loadPlayer () {
-      let videoPath = this.modelData.path;
-      let videoPlayer = this.$refs.player
-
-      if (!this.isPubed || !videoPath) {
-        return
-      }
-
-      videoPlayer.play({
-        src: videoPath,
-        autoPlay: false
-      })
-    },
-
     videoThumbByOffset (offset) {
       offset = offset || 0
       let videoPath = this.videoPath
@@ -629,7 +628,7 @@ export default {
         return null
       }
 
-      return `${videoPath}?vframe/jpg/offset/${offset}`
+      return `${videoPath}?vframe/jpg/offset/${offset}/w/600`
     },
 
     loadData () {
@@ -643,13 +642,17 @@ export default {
       return this.$service('rescs').get(this.rescId).then((res) => {
         this.modelData = res
         this.formModel = _.pick(res, ['name', 'fname', 'thumb', 'desc'])
-
-        if (res.extra && res.extra.thumbOffset) {
-          this.videoThumbType = 'recmd'
-          this.videoThumbOffset = res.extra.thumbOffset
-        } else if (!res.thumb) {
+        
+        if (!res.thumb) {
           this.videoThumbType = 'recmd'
           this.videoThumbOffset = 0
+        } else if (res.extra) {
+          this.videoThumbType = res.extra.thumbType
+          this.videoThumbOffset = res.extra.thumbOffset
+
+          if (this.videoThumbType === 'custom') {
+            this.customVideoThumb = res.thumb
+          }
         }
 
         this.$nextTick(() => {
@@ -667,7 +670,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.covers-holder {
+.thumbs-holder {
   height: 100px;
   width: 100%;
   background: @bg-color;
@@ -676,20 +679,31 @@ export default {
   align-items: center;
 }
 
-.covers-content {
+.thumbs-content {
   background: @bg-color;
 
-  .cover-radio {
+  .thumb-radio {
     width: 150px;
     padding: 10px;
 
     img {
       max-width: 100%;
       max-height: 100%;
+
+      &:hover {
+        box-shadow: @select-shadow;
+      }
     }
   }
 
-  .custom-cover {
+  .custom-thumb {
+    width: 120px;
+    height: 90px;
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
     &-box {
       padding: 10px;
       display: flex;
@@ -712,11 +726,19 @@ export default {
 
 <style lang="less">
 .video-editor {
-  .covers-content {
-    .cover-radio .ivu-radio {
-      position: absolute;
-      top: 20px;
-      left: 20px;
+  .thumbs-content {
+    .thumb-radio {
+      .ivu-radio {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+      }
+
+      &.ivu-radio-wrapper-checked {
+        img {
+          box-shadow: @selected-shadow;
+        }
+      }
     }
   }
 }

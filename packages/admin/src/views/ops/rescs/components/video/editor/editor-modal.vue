@@ -1,7 +1,7 @@
 <template>
   <Modal v-model="showModal"
-    class="video-editor-modal" :title="modalTitle"
-    :width="800" :loading="loading" :mask-closable="false"
+    class-name="video-editor-modal" :title="modalTitle"
+    :width="800" :loading="loading"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
     <video-editor ref="editor" @trans-checked="onTransChecked"></video-editor>
   </Modal>

@@ -122,7 +122,7 @@ class RescService extends SysService {
     
     let modelData = _.pick(data, [
       'id', 'appid', 'uid', 'uname', 'rtype', 'pfopid',
-      'name', 'fname', 'thumb', 'desc', 'extra'
+      'name', 'fname', 'desc', 'extra'
     ]);
 
     modelData = Object.assign({
@@ -170,7 +170,7 @@ class RescService extends SysService {
 
     let modelChanges = {};
     
-    modelData = await Promise.resolve().then(() => {
+    let rescModel = await Promise.resolve().then(() => {
       return store.getKey({ model: modelData, params });
     }).then((res) => {
       destRescKeyData = res;
@@ -221,46 +221,14 @@ class RescService extends SysService {
       md5: statInfo.md5
     });
 
-    // 资源持久化处理队列
-    let fops = [];
-
-    // 图片文件，保存缩略图
-    if (modelData.rtype === 'image') {
-      modelUpdates.thumb = `${destRescKey}_thumb`;
-      fops.push({ fopKey: 'thumb', descKey: modelUpdates.thumb });
-
-      // 用户头像
-      if (store.avatar && destRescKeyData.avatarKey) {
-        modelUpdates.avatar = `avatars/${destRescKeyData.avatarKey}`;
-        fops.push({ fopKey: 'avatar', key: modelUpdates.avatar });
-      }
-    }
-    
-    if (modelData.rtype === 'video') {
-      if (modelData && modelData.extra && modelData.extra.thumbOffset) {
-        // 修正缩略图url
-        let thumbOffset = modelData.extra.thumbOffset;
-        modelUpdates.thumb = this.getVideoThumbByOffset(modelData.path, thumbOffset);
-
-        // 删除临时资源key
-        delete modelData.extra.tmpKey;
-        modelUpdates.extra = modelData.extra;
-      }
-    }
-
-    if (fops.length) {
-      await qiniuService.pfop({
-        bucket: destBucket,
-        key: destRescKey,
-        fops,
-        options: { force: true }
-      });
-    }
+    // 保存缩略图
+    let thumbUpdates = await this.storeRescThumb(store, rescModel, data, {}, params);
+    modelUpdates = Object.assign(modelUpdates, thumbUpdates);
 
     modelUpdates.status = 'pubed';
     modelUpdates.pubed = true;
 
-    let modelResult = await dataService.patch(modelData.id, modelUpdates);
+    let modelResult = await dataService.patch(rescModel.id, modelUpdates);
 
     return modelResult;
   }
@@ -272,9 +240,45 @@ class RescService extends SysService {
 
     let rescModel = await dataService.create(modelData);
 
+    // 保存缩略图
+    let thumbUpdates = await this.storeRescThumb(store, rescModel, data, {}, params);
+    rescModel = await dataService.patch(rescModel.id, thumbUpdates);
+
     let modelResult = await this.checkPersistent(rescModel, params);
 
     return modelResult;
+  }
+
+  async patch (id, data, params) {
+    if (!id) {
+      throw new errors.InnerError('请提供资源id。');
+    }
+
+    const dataService = zeros.service('data/rescs');
+
+    let rescModel = await dataService.get(id);
+
+    if (!rescModel) {
+      throw new errors.InnerError('资源不存在或已删除。');
+    }
+
+    if (rescModel.frzn) {
+      throw new errors.InnerError('资源已冻结。');
+    }
+
+    return await Promise.resolve().then(() => {
+      if (rescModel.rtype === 'image' || !data.thumb) {
+        return;
+      }
+
+      const rescStore = this.getStore(rescModel.store);
+
+      this.storeRescThumb(rescStore, rescModel, data, {}, params).then((thumbUpdates) => {
+        data = Object.assign(data, thumbUpdates);
+      });
+    }).then(() => {
+      return dataService.remove(id, data);
+    });
   }
 
   /**
@@ -334,6 +338,93 @@ class RescService extends SysService {
     rescModel = await dataService.remove(id);
 
     return rescModel;
+  }
+
+  async storeRescThumb (rescStore, rescModel, data, options, params) {
+    options = Object.assign({}, options);
+
+    let { destRescKey, thumbKey, avatarKey } = options;
+    let thumbUrl = null;
+    let avatarUrl = null;
+
+    let destRescKeyData = await Promise.resolve().then(() => {
+      return rescStore.getKey({ model: rescModel, params });
+    });
+
+    if (!destRescKey) {
+      if (rescModel.path) {
+        destRescKey = rescModel.path;
+      } else {
+        destRescKey = destRescKeyData.key;
+      }
+    }
+
+    if (!thumbKey) {
+      thumbKey = `${destRescKey}_thumb`;
+    }
+
+    if (!avatarKey) {
+      // 用户头像
+      if (rescStore.avatar && destRescKeyData.avatarKey) {
+        avatarKey = `avatars/${destRescKeyData.avatarKey}`;
+      }
+    }
+
+    if (rescModel.rtype === 'image') {
+      thumbUrl = zeros.$resc.thumbUrl(destRescKey);
+      avatarUrl = zeros.$resc.thumbUrl(destRescKey, 'avatar');
+    } else {
+      thumbUrl = data.thumb;
+      avatarUrl = data.avatar;
+    }
+
+    let thumbUpdates = await this.storeThumb(rescModel, {
+      thumbUrl, avatarUrl
+    }, { thumbKey, avatarKey });
+
+    return thumbUpdates;
+  }
+
+  async storeThumb (rescModel, data, options) {
+    options = Object.assign({}, options);
+
+    // 缩略图必须在模型存储后执行存储
+    if (!rescModel || !rescModel._id) {
+      return;
+    }
+
+    const destBucket = 'resc';
+    const qiniuService = zeros.service('open/qiniu');
+
+    let { thumbUrl, avatarUrl } = data;
+    let { thumbKey, avatarKey } = options;
+
+    let updates = {};
+
+    if (thumbUrl && thumbKey) {
+      await qiniuService.fetch({
+        url: thumbUrl,
+        bucket: destBucket,
+        key: thumbKey,
+        options: { force: true }
+      }).then(() => {
+        updates.thumb = thumbKey;
+      });
+    }
+
+    // 保存avatar
+    if (avatarUrl && avatarKey) {
+      await qiniuService.fetch({
+        url: avatarUrl,
+        bucket: destBucket,
+        key: thumbKey,
+        options: { force: true }
+      }).then(() => {
+        updates.thumb = thumbKey;
+      });
+    }
+
+    return updates;
   }
 
   // 检查转码状态
@@ -469,20 +560,5 @@ class RescService extends SysService {
     default:
       return null;
     }
-  }
-
-  getVideoThumbByOffset (path, offset) {
-    let videoPath = path;
-    offset = offset || 0;
-
-    if (!videoPath) {
-      return null;
-    }
-
-    if (!zeros.util.isUrl(videoPath)) {
-      videoPath = zeros.$resc.fullUrl(videoPath)
-    }
-
-    return `${videoPath}?vframe/jpg/offset/${offset}`;
   }
 }

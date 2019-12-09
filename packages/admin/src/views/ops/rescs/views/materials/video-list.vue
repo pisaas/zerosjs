@@ -16,8 +16,11 @@
       @on-selection-change="onSelectionChange">
       <div slot-scope="{ row }" slot="content" class="table-col col-content">
         <div class="video-play" :class="{ disabled: !row.pubed }"
-          :style="{ 'backgroundImage': `url(${row.thumb})` }">
-          <Icon type="md-play" size="20" class="play-button" @click="openPlay(row)" />
+          :style="{ 'backgroundImage': `url(${row.thumb})` }"
+          @click="openPlay(row)">
+          <div class="play-button">
+            <Icon class="icon" type="md-play" color="white" size="15" />
+          </div>
         </div>
         <div class="col-detail">
           <div class="col-title video-name">{{ row.name }}</div>
@@ -266,13 +269,31 @@ export default {
       justify-content: center;
       align-items: center;
       color: white;
-
-      .play-button {
-        opacity: 0.8;
-      }
+      border-radius: @border-radius;
 
       &.disabled {
         opacity: 0.5;
+      }
+
+      &:not(.disabled) {
+        &:hover {
+          box-shadow: @select-shadow;
+        }
+      }
+
+      .play-button {
+        opacity: 0.9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        background: @primary;
+        width: 25px;
+        height: 25px;
+
+        .icon {
+          margin-left: 3px;
+        }
       }
     }
   }

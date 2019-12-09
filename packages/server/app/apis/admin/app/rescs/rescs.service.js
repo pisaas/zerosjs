@@ -51,18 +51,23 @@ class Service extends ApiService {
     let updates = {};
 
     if (rescModel.rtype === 'audio') {
-      updates = _.pick(data, ['name', 'desc']);
+      updates = _.pick(data, ['name', 'thumb', 'desc']);
     } else if (rescModel.rtype === 'video') {
       updates = _.pick(data, ['name', 'thumb', 'desc']);
       let extra = Object.assign({}, rescModel.extra);
 
-      if (data.thumbOffset) {
-        extra.thumbOffset = data.thumbOffset;
-        updates.extra = extra;
+      if (data.thumbType) {
+        extra.thumbType = data.thumbType;
       }
+
+      if (!isNaN(data.thumbOffset)) {
+        extra.thumbOffset = data.thumbOffset;
+      }
+
+      updates.extra = extra;
     } else if (rescModel.rtype === 'image') {
       updates = _.pick(data, ['name']);
-    } 
+    }
 
     rescModel = await this.adapterService.patch(id, updates);
 

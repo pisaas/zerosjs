@@ -30,6 +30,7 @@
 
         <list-item-actions @trigger="onItemActionTrigger" :data="row">
           <list-item-action icon="ios-more" label="重命名" action="rename" />
+          <list-item-action icon="ios-trash" label="删除" action="delete" />
         </list-item-actions>
       </div>
       <div slot-scope="{ row }" slot="ts" class="table-col">
@@ -114,6 +115,9 @@ export default {
         case 'rename':
           this.onRename(row)
           break
+        case 'delete':
+          this.onDelete([row.id])
+          break
       }
     },
 
@@ -134,10 +138,12 @@ export default {
       })
     },
 
-    onDelete () {
-      let ids = this.listSelection.map((it) => {
-        return it.id
-      })
+    onDelete (ids) {
+      if (!ids) {
+        ids = this.listSelection.map((it) => {
+          return it.id
+        })
+      }
 
       if (!ids || !ids.length) {
         this.$app.alert('请选择要删除的图片。')
@@ -210,6 +216,10 @@ export default {
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+
+      &:hover {
+        box-shadow: @select-shadow;
+      }
     }
   }
 }

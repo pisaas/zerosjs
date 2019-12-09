@@ -44,13 +44,11 @@ module.exports = function () {
         }
 
         if (doc.thumb) {
-          ret.thumb = rescThumbUrl(doc.thumb, doc.path, doc.createdAt, 'thumb');
-        } else if (doc.rtype === 'video') {
-          ret.thumb = rescVideoThumbUrl(doc.path);
+          ret.thumb = rescThumbUrl(doc.thumb);
         }
 
         if (doc.avatar) {
-          ret.avatar = rescThumbUrl(doc.avatar, doc.path, doc.createdAt, 'avatar');
+          ret.avatar = rescThumbUrl(doc.avatar);
         }
         
         let status = doc.status;
@@ -74,28 +72,9 @@ module.exports = function () {
   };
 };
 
-function rescThumbUrl (thumb, path, ts, fopName) {
+function rescThumbUrl (thumb) {
   if (zeros.util.isUrl(thumb)) {
     return thumb;
   }
-
-  if (!ts || !path) {
-    return zeros.$resc.fullUrl(thumb);
-  }
-
-  // 5分钟后生效，（七牛处理缩略图预留5分钟时间）
-  let activeDate = ts.addMinutes(5);
-  if (Date.compare(new Date(), activeDate) > 0) {
-    return zeros.$resc.fullUrl(thumb);
-  }
-
-  return zeros.$resc.thumbUrl(path, fopName);
-}
-
-function rescVideoThumbUrl (path) {
-  if (!path) {
-    return null;
-  }
-
-  return zeros.$resc.fullUrl(path) + '?vframe/jpg/offset/0';
+  return zeros.$resc.fullUrl(thumb); 
 }

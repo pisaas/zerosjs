@@ -19,10 +19,14 @@
       :columns="listColumns" :data="listItems"
       @on-selection-change="onSelectionChange">
       <div slot-scope="{ row }" slot="content" class="table-col col-content">
-        <div class="audio-play flex-center" :class="{ disabled: !row.pubed }">
-          <Icon type="md-arrow-dropright-circle" size="30" class="text-primary"
-            @click="openPlay(row)" />
+        <div class="audio-play" :class="{ disabled: !row.pubed }"
+          :style="{ 'backgroundImage': `url(${row.thumb})` }"
+          @click="openPlay(row)">
+          <div class="play-button">
+            <Icon class="icon" type="md-play" color="white" size="15" />
+          </div>
         </div>
+
         <div class="col-detail">
           <div class="col-title audio-name">{{ row.name }}</div>
           <div class="col-subtitle">
@@ -38,6 +42,7 @@
               icon="md-sync" label="检查转码" action="check_transcoding" />
             <list-item-action v-if="row.pubed" 
               icon="md-download" label="下载" action="download" />
+            <list-item-action icon="ios-trash" label="删除" action="delete" />
           </list-item-actions>
         </div>
       </div>
@@ -130,20 +135,23 @@ export default {
       }
     },
 
-    onItemActionTrigger (name, data) {
-      if (!name || !data) {
+    onItemActionTrigger (name, row) {
+      if (!name || !row) {
         return
       }
 
       switch (name) {
         case 'edit':
-          this.onEdit(data)
+          this.onEdit(row)
           break
         case 'check_transcoding':
-          this.onCheckTranscoding(data)
+          this.onCheckTranscoding(row)
           break
         case 'download':
-          this.onDownload(data)
+          this.onDownload(row)
+          break
+        case 'delete':
+          this.onDelete([row.id])
           break
       }
     },
@@ -200,10 +208,12 @@ export default {
       })
     },
 
-    onDelete () {
-      let ids = this.listSelection.map((it) => {
-        return it.id
-      })
+    onDelete (ids) {
+      if (!ids) {
+        ids = this.listSelection.map((it) => {
+          return it.id
+        })
+      }
 
       if (!ids || !ids.length) {
         this.$app.alert('请选择要删除的音频。')
@@ -265,10 +275,43 @@ export default {
 .list-table {
   .col-content {
     .audio-play {
+      width: 100px;
+      height: 60px;
       cursor: pointer;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      border-radius: @border-radius;
+
+      .border-shadow();
 
       &.disabled {
         opacity: 0.5;
+      }
+
+      &:not(.disabled) {
+        &:hover {
+          box-shadow: @select-shadow;
+        }
+      }
+
+      .play-button {
+        opacity: 0.9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        background: @primary;
+        width: 25px;
+        height: 25px;
+
+        .icon {
+          margin-left: 3px;
+        }
       }
     }
   }

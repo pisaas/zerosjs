@@ -38,10 +38,27 @@
         {{ uploadData.errorMsg }}
       </div>
     </FormItem>
+    <FormItem label="封面" prop="thumb">
+      <div class="thumbs-content">
+        <div class="custom-thumb-box">
+          <div v-if="formModel.thumb" class="custom-thumb" 
+            :style="{ 'backgroundImage': `url(${formModel.thumb})` }" />
+          <div v-else class="custom-thumb-holder" />
+          <div class="custom-thumb-actions">
+            <ButtonGroup vertical>
+              <Button icon="md-crop" @click="onCustomThumbCrop"></Button>
+              <Button icon="md-swap" @click="onCustomThumbSwap"></Button>
+            </ButtonGroup>
+          </div>
+        </div>
+      </div>
+    </FormItem>
     <FormItem label="描述" prop="desc">
       <Input v-model="formModel.desc" type="textarea" :maxlength="200"
         :autosize="{minRows: 2, maxRows: 5}" placeholder="请输入描述 (200字以内)" />
     </FormItem>
+
+    <image-selector-modal ref="imgSelectorModal" single @selected="onThumbSelected" />
   </Form>
 </template>
 
@@ -49,6 +66,7 @@
 import { rescUpload, checkPersistent } from '@resc-components/utils'
 import RescUploader from '@resc-components/uploader'
 import { AudioPlayer } from '@resc-components/audio/player'
+import { ImageSelectorModal } from '@resc-components/image/selector'
 
 const FsizeLimit = 200  // 大小限制：200 MB
 const DurationLimit = 60  // 时长限制：60分钟
@@ -68,7 +86,8 @@ const UploadSpec = {
 export default {
   components: {
     RescUploader,
-    AudioPlayer
+    AudioPlayer,
+    ImageSelectorModal
   },
 
   data () {
@@ -141,6 +160,21 @@ export default {
   },
 
   methods: {
+    onCustomThumbCrop () {
+    },
+
+    onCustomThumbSwap () {
+      this.$refs.imgSelectorModal.open()
+    },
+
+    onThumbSelected (item) {
+      if (!item || !item.path) {
+        return
+      }
+
+      this.$set(this.formModel, 'thumb', item.path)
+    },
+
     onUploadSelected (file) {
       this.audioErrorMsg = null
       this.audioFile = file
@@ -253,12 +287,6 @@ export default {
       return result
     },
 
-    async update () {
-      let result = this.$service('rescs').patch(this.rescId, this.formModel)
-      this.$emit('update', result)
-      return result
-    },
-
     async create () {
       if (this.modelData && this.modelData.id) {
         return false
@@ -307,6 +335,12 @@ export default {
 
         return false
       })
+    },
+
+    async update () {
+      let result = this.$service('rescs').patch(this.rescId, this.formModel)
+      this.$emit('update', result)
+      return result
     },
 
     validateForm () {
@@ -427,6 +461,10 @@ export default {
     },
 
     loadPlayer () {
+      if (!this.modelData) {
+        return
+      }
+      
       let audioPath = this.modelData.path;
       let audioPlayer = this.$refs.player
 
@@ -434,7 +472,7 @@ export default {
         return
       }
 
-      audioPlayer.play({
+      audioPlayer.load({
         src: audioPath,
         autoPlay: false
       })
@@ -450,7 +488,7 @@ export default {
 
       return this.$service('rescs').get(this.rescId).then((res) => {
         this.modelData = res
-        this.formModel = _.pick(res, ['name', 'fname', 'desc'])
+        this.formModel = _.pick(res, ['name', 'fname', 'thumb', 'desc'])
 
         this.$nextTick(() => {
           this.loadPlayer()
@@ -465,3 +503,36 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+
+.thumbs-content {
+  background: @bg-color;
+
+  .custom-thumb {
+    width: 120px;
+    height: 90px;
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    &-box {
+      padding: 10px;
+      display: flex;
+    }
+
+    &-holder {
+      background: darken(@bg-color, 10%);
+      width: 120px;
+      height: 90px;
+    }
+
+    &-actions {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+</style>
