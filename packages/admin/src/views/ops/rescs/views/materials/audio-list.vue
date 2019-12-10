@@ -318,5 +318,9 @@ export default {
       }
     }
   }
+
+  .col-detail {
+    max-width: calc(100% - 180px);
+  }
 }
 </style>
