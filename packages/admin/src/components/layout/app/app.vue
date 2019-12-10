@@ -189,14 +189,3 @@ export default {
   }
 }
 </style>
-
-<style lang="less">
-// .ivu-layout {
-//   overflow-x: visible;
-
-//   &.ivu-layout-has-sider > &,
-//   &.ivu-layout-has-sider > &-content {
-//     overflow-x: visible;
-//   }
-// }
-</style>
