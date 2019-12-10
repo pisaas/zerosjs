@@ -177,18 +177,26 @@ export default {
     height: 100%;
 
     .content-body {
-      overflow: scroll;
+      // overflow: scroll;
       height: 100%;
     }
   }
 }
 
-</style>
-
-<style lang="less" scoped>
 @media screen and (max-width: 600px){
   .layout-content {
     min-width: 300px;
   }
 }
+</style>
+
+<style lang="less">
+// .ivu-layout {
+//   overflow-x: visible;
+
+//   &.ivu-layout-has-sider > &,
+//   &.ivu-layout-has-sider > &-content {
+//     overflow-x: visible;
+//   }
+// }
 </style>

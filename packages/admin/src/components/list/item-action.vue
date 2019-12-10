@@ -1,5 +1,15 @@
 <template>
-  <DropdownItem v-if="isCollapsedAction" class="list-item-action dropdown"
+  <div v-if="type === 'custom'" class="list-item-action"
+    :class="{ 'hidden': isHidden }">
+    <slot></slot>
+  </div>
+  <Poptip v-else-if="type === 'poptip'" class="list-item-action"
+    :class="{ 'hidden': isHidden }"
+    transfer :placement="placement">
+    <slot></slot>
+    <slot name="content" slot="content"></slot>
+  </Poptip>
+  <DropdownItem v-else-if="isCollapsedAction" class="list-item-action dropdown"
     :class="{ 'hidden': isHidden }"
     :name="action" :disabled="disabled" :divided="divided">
     <slot>
@@ -22,6 +32,7 @@ export default {
   inject: ['itemActions'],
 
   props: {
+    type: String,
     disabled: Boolean,
     showDisabled: Boolean,
     icon: String,

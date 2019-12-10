@@ -113,7 +113,7 @@ export default {
   right: 0;
   top: 0;
   height: 100%;
-  display: none;
+  // display: none;
 
   &.disabled {
     display: none;

@@ -29,7 +29,20 @@
         </div>
 
         <list-item-actions @trigger="onItemActionTrigger" :data="row">
-          <list-item-action icon="ios-more" label="重命名" action="rename" />
+          <!-- <list-item-action type="poptip" placement="bottom-end">
+            <Tooltip transfer placement="top" content="重命名">
+              <Button class="btn-action" icon="ios-more" />
+            </Tooltip>
+            <div slot="content">
+              <Input style="width:200px" />
+              <Button type="primary" class="q-ml-sm">确定</Button>
+              <Button class="q-ml-sm">取消</Button>
+            </div>
+          </list-item-action> -->
+          <!-- <list-item-action icon="ios-more" label="重命名" action="rename" /> -->
+          <list-item-action type="custom">
+            <image-rename-poptip :row="row" @rename="onItemRename" />
+          </list-item-action>
           <list-item-action icon="ios-trash" label="删除" action="delete" />
         </list-item-actions>
       </div>
@@ -52,9 +65,80 @@
 
 <script>
 import ImagePreviewer from '@resc-components/image/previewer'
+
+const ImageRenamePoptip = {
+  props: ['row'],
+  render(h) {
+    return h('Poptip', {
+      ref: 'poptip',
+      props: { transfer: true, 'placement': 'bottom-end' },
+      on: { 'on-popper-show': this.onPopperShow }
+    }, [
+      h('Tooltip', {
+        props: { transfer: true, 'placement': 'top', 'content': '重命名' }
+      }, [
+        h('Button', {
+          'props': { 'icon': 'ios-more' },
+          'class': { 'btn-action': true }
+        })
+      ]),
+      h('div', {
+        'slot': 'content'
+      }, [
+        h('Input', {
+          'ref': 'iptName',
+          'style': { 'width': '200px' }
+        }),
+        h('Button', {
+          'props': { 'type': 'primary' },
+          'class': { 'q-ml-sm': true },
+          'on': {
+            'click': this.onConfirm
+          }
+        }, ['确定']),
+        h('Button', {
+          'class': { 'q-ml-sm': true },
+          'on': {
+            'click': this.onCancel
+          }
+        }, ['取消'])
+      ])
+    ])
+  },
+
+  methods: {
+    onPopperShow () {
+      let iptName = this.$refs.iptName
+      iptName.currentValue = this.row.name
+
+      this.$nextTick(() => {
+        iptName.focus()
+      })
+    },
+    
+    onConfirm () {
+      this.doRename()
+    },
+
+    onCancel () {
+      this.$refs.poptip.cancel();
+    },
+
+    async doRename () {
+      let id = this.row.id
+      let name = this.$refs.iptName.currentValue
+      await this.$service('rescs').patch(id, { name })
+      this.$emit('rename', this.row, name)
+
+      this.$refs.poptip.ok();
+    }
+  }
+}
+
 export default {
   components: {
-    ImagePreviewer
+    ImagePreviewer,
+    ImageRenamePoptip
   },
 
   data () {
@@ -119,6 +203,10 @@ export default {
           this.onDelete([row.id])
           break
       }
+    },
+
+    onItemRename (row, name) {
+      this.loadData()
     },
 
     onRename (row) {
