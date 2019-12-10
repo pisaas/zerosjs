@@ -44,11 +44,11 @@ module.exports = function () {
         }
 
         if (doc.thumb) {
-          ret.thumb = rescThumbUrl(doc.thumb);
+          ret.thumb = rescThumbUrl(doc.thumb, doc.updatedAt);
         }
 
         if (doc.avatar) {
-          ret.avatar = rescThumbUrl(doc.avatar);
+          ret.avatar = rescThumbUrl(doc.avatar, doc.updatedAt);
         }
         
         let status = doc.status;
@@ -72,9 +72,18 @@ module.exports = function () {
   };
 };
 
-function rescThumbUrl (thumb) {
+function rescThumbUrl (thumb, ts) {
   if (zeros.util.isUrl(thumb)) {
     return thumb;
   }
-  return zeros.$resc.fullUrl(thumb); 
+  let thumbUrl = zeros.$resc.fullUrl(thumb);
+
+  if (ts) {
+    if (ts.getTime) {
+      ts = ts.getTime();
+    }
+    thumbUrl = `${thumbUrl}?ts=${ts}`;
+  }
+
+  return thumbUrl;
 }

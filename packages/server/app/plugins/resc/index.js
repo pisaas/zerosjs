@@ -38,15 +38,15 @@ function loadRescGlobals (zeros) {
       return `${rescDomain}/${path}`;
     },
 
-    thumbUrl (path, fopName) {
+    thumbUrl (path, fopName, domainKey) {
       fopName = fopName || 'thumb';
       let fop = QiniuFops[fopName];
 
       if (!path || !fop) {
-        return this.fullUrl(path);
+        return this.fullUrl(path, domainKey);
       }
 
-      return this.fullUrl(path) + '?' + fop;
+      return this.fullUrl(path, domainKey) + '?' + fop;
     }
   };
 }

@@ -41,13 +41,13 @@
     <FormItem label="封面" prop="thumb">
       <div class="thumbs-content">
         <div class="custom-thumb-box">
-          <div v-if="formModel.thumb" class="custom-thumb" 
-            :style="{ 'backgroundImage': `url(${formModel.thumb})` }" />
+          <div v-if="previewThumbUrl" class="custom-thumb" 
+            :style="{ 'backgroundImage': `url(${previewThumbUrl})` }" />
           <div v-else class="custom-thumb-holder" />
           <div class="custom-thumb-actions">
             <ButtonGroup vertical>
-              <Button icon="md-crop" @click="onCustomThumbCrop"></Button>
               <Button icon="md-swap" @click="onCustomThumbSwap"></Button>
+              <Button icon="md-crop" @click="onCustomThumbCrop"></Button>
             </ButtonGroup>
           </div>
         </div>
@@ -59,6 +59,7 @@
     </FormItem>
 
     <image-selector-modal ref="imgSelectorModal" single @selected="onThumbSelected" />
+    <image-cropper-modal ref="imgCropperModal" :aspect-ratio="1.5" @cropped="onThumbCropped" />
   </Form>
 </template>
 
@@ -67,6 +68,7 @@ import { rescUpload, checkPersistent } from '@resc-components/utils'
 import RescUploader from '@resc-components/uploader'
 import { AudioPlayer } from '@resc-components/audio/player'
 import { ImageSelectorModal } from '@resc-components/image/selector'
+import { ImageCropperModal } from '@resc-components/image/cropper'
 
 const FsizeLimit = 200  // 大小限制：200 MB
 const DurationLimit = 60  // 时长限制：60分钟
@@ -87,7 +89,8 @@ export default {
   components: {
     RescUploader,
     AudioPlayer,
-    ImageSelectorModal
+    ImageSelectorModal,
+    ImageCropperModal
   },
 
   data () {
@@ -101,6 +104,8 @@ export default {
       uploadData: {},
       modelData: null,
       isCheckingTranscoding: false,
+      croppedThumbUrl: null,
+      thumbOrigin: null,
       formModel: {},
       formRules: {
         name: [ { required: true, message: '请输入名称', trigger: 'blur' } ],
@@ -146,6 +151,16 @@ export default {
       }
 
       return modelData.pubed === true
+    },
+
+    previewThumbUrl () {
+      let formModel = this.formModel
+
+      if (!formModel) {
+        return null
+      }
+
+      return this.croppedThumbUrl || formModel.thumb
     }
   },
 
@@ -160,9 +175,6 @@ export default {
   },
 
   methods: {
-    onCustomThumbCrop () {
-    },
-
     onCustomThumbSwap () {
       this.$refs.imgSelectorModal.open()
     },
@@ -172,7 +184,30 @@ export default {
         return
       }
 
-      this.$set(this.formModel, 'thumb', item.path)
+      this.$refs.imgCropperModal.open({
+        url: item.path
+      })
+    },
+
+    onCustomThumbCrop () {
+      if (!this.thumbOrigin) {
+        this.$app.toast('请先选择图片。')
+        return
+      }
+
+      this.$refs.imgCropperModal.open({
+        url: this.thumbOrigin
+      })
+    },
+
+    onThumbCropped (data) {
+      if (!data || !data.croppedUrl) {
+        return
+      }
+
+      this.thumbOrigin = data.url
+      this.croppedThumbUrl = data.croppedUrl
+      this.$refs.imgCropperModal.close()
     },
 
     onUploadSelected (file) {
@@ -253,6 +288,8 @@ export default {
       this.audioFileMeta = null
       this.audioErrorMsg = null
       this.modelData = null
+      this.croppedThumbUrl = null
+      this.thumbOrigin = null
       this.isCheckingTranscoding = false
 
       if (this.$refs.form) {
@@ -262,10 +299,14 @@ export default {
 
     async save () {
       let editMode = this.editMode
-      let formModel = this.formModel
 
       if (this.audioErrorMsg) {
         return false
+      }
+
+      if (this.previewThumbUrl) {
+        this.formModel.thumb = this.previewThumbUrl
+        this.formModel.thumbOrigin = this.thumbOrigin
       }
 
       let valid = await this.validateForm()
@@ -301,6 +342,10 @@ export default {
 
         let extra = {
           duration: parseInt(duration)
+        }
+
+        if (this.previewThumbUrl) {
+          extra.thumbOrigin = this.thumbOrigin
         }
         
         let formModel = Object.assign({
@@ -338,7 +383,10 @@ export default {
     },
 
     async update () {
-      let result = this.$service('rescs').patch(this.rescId, this.formModel)
+      let formModel = Object.assign({}, this.formModel)
+      let modelData = this.modelData
+
+      let result = this.$service('rescs').patch(this.rescId, formModel)
       this.$emit('update', result)
       return result
     },
@@ -489,6 +537,10 @@ export default {
       return this.$service('rescs').get(this.rescId).then((res) => {
         this.modelData = res
         this.formModel = _.pick(res, ['name', 'fname', 'thumb', 'desc'])
+
+        if (res.extra && res.extra.thumbOrigin) {
+          this.thumbOrigin = res.extra.thumbOrigin
+        }
 
         this.$nextTick(() => {
           this.loadPlayer()

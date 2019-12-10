@@ -273,11 +273,11 @@ class RescService extends SysService {
 
       const rescStore = this.getStore(rescModel.store);
 
-      this.storeRescThumb(rescStore, rescModel, data, {}, params).then((thumbUpdates) => {
-        data = Object.assign(data, thumbUpdates);
+      return this.storeRescThumb(rescStore, rescModel, data, {}, params).then((thumbUpdates) => {
+        data = Object.assign({}, data, thumbUpdates);
       });
     }).then(() => {
-      return dataService.remove(id, data);
+      return dataService.patch(id, data);
     });
   }
 
@@ -393,38 +393,62 @@ class RescService extends SysService {
       return;
     }
 
-    const destBucket = 'resc';
-    const qiniuService = zeros.service('open/qiniu');
-
     let { thumbUrl, avatarUrl } = data;
     let { thumbKey, avatarKey } = options;
 
     let updates = {};
 
-    if (thumbUrl && thumbKey) {
-      await qiniuService.fetch({
-        url: thumbUrl,
-        bucket: destBucket,
-        key: thumbKey,
-        options: { force: true }
-      }).then(() => {
+    if (thumbUrl && thumbKey
+      && !this.isSameThumbPath(thumbUrl, rescModel.thumb)) {
+      await this.storeThumbByUrl(thumbUrl, thumbKey).then(() => {
         updates.thumb = thumbKey;
       });
     }
 
     // 保存avatar
-    if (avatarUrl && avatarKey) {
-      await qiniuService.fetch({
-        url: avatarUrl,
-        bucket: destBucket,
-        key: thumbKey,
-        options: { force: true }
-      }).then(() => {
-        updates.thumb = thumbKey;
+    if (avatarUrl && avatarKey
+      && !this.isSameThumbPath(avatarUrl, rescModel.avatar)) {
+      await this.storeThumbByUrl(avatarUrl, avatarKey).then(() => {
+        updates.thumb = avatarKey;
       });
     }
 
     return updates;
+  }
+
+  isSameThumbPath (thumbUrl, thumbPath) {
+    if (!thumbUrl || !thumbPath) {
+      return false;
+    }
+
+    // 判断缩略图的path是否相同
+    let pathFullUrl = zeros.$resc.fullUrl(thumbPath);
+    let flag = thumbUrl.indexOf(pathFullUrl) === 0;
+
+    return flag;
+  }
+
+  async storeThumbByUrl (thumbUrl, thumbKey, fopName) {
+    let tmpThumbKey = `TMP_EXP_1/${thumbKey}_` + new Date();
+    let tmpThumbUrl = zeros.$resc.thumbUrl(tmpThumbKey, fopName, 'tmp');
+
+    const qiniuService = zeros.service('open/qiniu');
+
+    await qiniuService.fetch({
+      url: thumbUrl,
+      bucket: 'tmp',
+      key: tmpThumbKey,
+      options: { force: true }
+    });
+
+    await qiniuService.fetch({
+      url: tmpThumbUrl,
+      bucket: 'resc',
+      key: thumbKey,
+      options: { force: true }
+    });
+
+    return thumbKey;
   }
 
   // 检查转码状态

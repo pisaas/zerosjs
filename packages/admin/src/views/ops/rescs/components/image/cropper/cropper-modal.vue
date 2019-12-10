@@ -1,10 +1,10 @@
 <template>
   <Modal v-model="showModal"
     class-name="image-cropper-modal"
-    :title="title" :width="800" footer-hide
-    @on-visible-change="onVisibleChange">
-    <image-cropper ref="imgCropper"
-      @cancel="onClose" @cropped="onCropped" />
+    :title="title" :width="width"
+    :loading="loading" :mask-closable="false"
+    @on-ok="onOk" @on-visible-change="onVisibleChange">
+    <image-cropper ref="cropper" />
   </Modal>
 </template>
 
@@ -19,25 +19,39 @@ export default {
   props: {
     title: {
       type: String,
-      default: '选择图片'
-    }
+      default: '图片剪切'
+    },
+    width: {
+      type: Number,
+      default: 650
+    },
+    aspectRatio: Number
   },
 
   data () {
     return {
+      loading: true,
       showModal: false
     }
   },
 
   methods: {
-    onCancel (e) {
-      this.$emit('cancel', e)
-      this.close()
-    },
+    onOk () {
+      let editMode = this.editMode
 
-    onCropped (e) {
-      this.$emit('cropped', e)
-      this.close()
+      this.$refs.cropper.crop().then((res) => {
+        this.resetLoading()
+        
+        if (!res) {
+          return
+        }
+
+        this.$emit('cropped', res)
+        
+        return res
+      }).catch(() => {
+        this.resetLoading()
+      })
     },
 
     onVisibleChange (visible) {
@@ -52,7 +66,11 @@ export default {
     },
 
     open (params) {
-      this.$refs.imgCropper.load(params)
+      params = Object.assign({
+        aspectRatio: this.aspectRatio
+      }, params)
+
+      this.$refs.cropper.load(params)
       this.showModal = true
     },
 
@@ -62,7 +80,15 @@ export default {
 
     reset () {
       this.showModal = false
-      this.$refs.imgCropper.reset()
+      this.$refs.cropper.reset()
+    },
+
+    resetLoading () {
+      this.loading = false
+
+      this.$nextTick(() => {
+        this.loading = true
+      })
     }
   },
 

@@ -49,27 +49,37 @@ class Service extends ApiService {
     }
 
     let updates = {};
-
-    if (rescModel.rtype === 'audio') {
-      updates = _.pick(data, ['name', 'thumb', 'desc']);
-    } else if (rescModel.rtype === 'video') {
-      updates = _.pick(data, ['name', 'thumb', 'desc']);
+    
+    if (rescModel.rtype === 'image') {
+      updates = _.pick(data, ['name']);
+    } else {
       let extra = Object.assign({}, rescModel.extra);
 
-      if (data.thumbType) {
-        extra.thumbType = data.thumbType;
+      if (rescModel.rtype === 'audio') {
+        updates = _.pick(data, ['name', 'thumb', 'desc']);
+      } else if (rescModel.rtype === 'video') {
+        updates = _.pick(data, ['name', 'thumb', 'desc']);
+
+        if (data.thumbType) {
+          extra.thumbType = data.thumbType;
+        }
+
+        if (!isNaN(data.thumbOffset)) {
+          extra.thumbOffset = data.thumbOffset;
+        }
+
+        updates.extra = extra;
       }
 
-      if (!isNaN(data.thumbOffset)) {
-        extra.thumbOffset = data.thumbOffset;
+      if (data.thumbOrigin) {
+        extra.thumbOrigin = data.thumbOrigin;
+        updates.extra = extra;
       }
-
-      updates.extra = extra;
-    } else if (rescModel.rtype === 'image') {
-      updates = _.pick(data, ['name']);
     }
 
-    rescModel = await this.adapterService.patch(id, updates);
+    const rescService = zeros.service('sys/resc');
+
+    rescModel = await rescService.patch(id, updates);
 
     return rescModel;
   }

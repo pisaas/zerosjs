@@ -60,13 +60,13 @@
           </RadioGroup>
         </div>
         <div v-else class="custom-thumb-box">
-          <div v-if="customVideoThumb" class="custom-thumb" 
-            :style="{ 'backgroundImage': `url(${customVideoThumb})` }" />
+          <div v-if="customPreviewVideoThumb" class="custom-thumb" 
+            :style="{ 'backgroundImage': `url(${customPreviewVideoThumb})` }" />
           <div v-else class="custom-thumb-holder" />
           <div class="custom-thumb-actions">
             <ButtonGroup vertical>
-              <Button icon="md-crop" @click="onCustomThumbCrop"></Button>
               <Button icon="md-swap" @click="onCustomThumbSwap"></Button>
+              <Button icon="md-crop" @click="onCustomThumbCrop"></Button>
             </ButtonGroup>
           </div>
         </div>
@@ -86,6 +86,7 @@
     </FormItem>
 
     <image-selector-modal ref="imgSelectorModal" single @selected="onThumbSelected" />
+    <image-cropper-modal ref="imgCropperModal" :aspect-ratio="1.5" @cropped="onThumbCropped" />
   </Form>
 </template>
 
@@ -94,6 +95,7 @@ import { rescUpload, checkPersistent, postPersistent } from '@resc-components/ut
 import RescUploader from '@resc-components/uploader'
 import { VideoPlayer } from '@resc-components/video/player'
 import { ImageSelectorModal } from '@resc-components/image/selector'
+import { ImageCropperModal } from '@resc-components/image/cropper'
 
 const FsizeLimit = 600  // 大小限制：600 MB
 const DurationLimit = 30  // 时长限制：30分钟
@@ -114,7 +116,8 @@ export default {
   components: {
     RescUploader,
     VideoPlayer,
-    ImageSelectorModal
+    ImageSelectorModal,
+    ImageCropperModal
   },
 
   data () {
@@ -129,7 +132,8 @@ export default {
       modelData: null,
       videoThumbType: 'recmd',  // 默认使用推荐封面
       videoThumbOffset: 0,
-      customVideoThumb: null,
+      croppedThumbUrl: null,
+      customThumbOrigin: null,
       isCheckingTranscoding: false,
       submitErrorMsg: null,
       formModel: {},
@@ -222,6 +226,16 @@ export default {
 
     isRecmdThumb () {
       return this.videoThumbType === 'recmd'
+    },
+    
+    customPreviewVideoThumb () {
+      let formModel = this.formModel
+
+      if (!formModel) {
+        return null
+      }
+
+      return this.croppedThumbUrl || formModel.thumb
     }
   },
 
@@ -245,9 +259,6 @@ export default {
   },
 
   methods: {
-    onCustomThumbCrop () {
-    },
-
     onCustomThumbSwap () {
       this.$refs.imgSelectorModal.open()
     },
@@ -257,12 +268,37 @@ export default {
         return
       }
 
-      this.customVideoThumb = item.path
+      this.$refs.imgCropperModal.open({
+        url: item.path
+      })
+    },
+
+    onCustomThumbCrop () {
+      if (!this.customThumbOrigin) {
+        this.$app.toast('请先选择图片。')
+        return
+      }
+
+      this.$refs.imgCropperModal.open({
+        url: this.customThumbOrigin
+      })
+    },
+
+    onThumbCropped (data) {
+      if (!data || !data.croppedUrl) {
+        return
+      }
+
+      this.customThumbOrigin = data.url
+      this.croppedThumbUrl = data.croppedUrl
+
       this.reloadFormModelThumb()
+
+      this.$refs.imgCropperModal.close()
     },
 
     onThumbTypeChange (name) {
-      if (name !== 'custom' || this.customVideoThumb) {
+      if (name !== 'custom' || this.customPreviewVideoThumb) {
         return
       }
 
@@ -404,6 +440,8 @@ export default {
 
         if (this.isRecmdThumb) {
           extra.thumbOffset = this.videoThumbOffset || 0
+        } else if (this.customThumbOrigin) {
+          extra.thumbOrigin = this.customThumbOrigin
         }
         
         let formModel = Object.assign({
@@ -440,6 +478,8 @@ export default {
       if (this.isRecmdThumb) {
         formModel.thumbOffset = this.videoThumbOffset || 0
         formModel.thumb = this.videoThumbByOffset(formModel.thumbOffset)
+      } else if (this.customThumbOrigin) {
+        formModel.thumbOrigin = this.customThumbOrigin
       }
 
       formModel.thumbType = this.videoThumbType
@@ -461,7 +501,8 @@ export default {
       this.modelData = null
       this.videoThumbType = 'recmd'
       this.videoThumbOffset = 0
-      this.customVideoThumb = null
+      this.croppedThumbUrl = null
+      this.customThumbOrigin = null
       this.isCheckingTranscoding = false
 
       if (this.$refs.form) {
@@ -479,11 +520,12 @@ export default {
 
     reloadFormModelThumb () {
       let thumb = this.formModel.thumb
+
       if (this.isRecmdThumb) {
         let thumbOffset = this.videoThumbOffset || 0
         thumb = this.videoThumbByOffset(thumbOffset)
-      } else {
-        thumb = this.customVideoThumb
+      } else if (this.customPreviewVideoThumb) {
+        thumb = this.customPreviewVideoThumb
       }
 
       this.$set(this.formModel, 'thumb', thumb)
@@ -651,7 +693,9 @@ export default {
           this.videoThumbOffset = res.extra.thumbOffset
 
           if (this.videoThumbType === 'custom') {
-            this.customVideoThumb = res.thumb
+            if (res.extra.thumbOrigin) {
+              this.customThumbOrigin = res.extra.thumbOrigin
+            }
           }
         }
 

@@ -9,6 +9,9 @@ import QuillWordCounter from '@/libs/quill/quill-word-counter-module'
 import 'swiper/dist/css/swiper.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 
+import 'cropperjs/dist/cropper.css'
+import VueCropper from 'vue-cropperjs'
+
 import { Page, PageSection, PageResult } from '@components/page'
 import { ListNav, ListActions, ListAction, ListItemActions, ListItemAction } from '@components/list'
 import { UserAvatar } from '@components/user'
@@ -37,6 +40,8 @@ export default ({ zeros, router, Vue }) => {
   Vue.use(Vue2Editor)
 
   Vue.use(VueAwesomeSwiper, {})
+
+  Vue.component('vue-cropper', VueCropper)
 
   // 注册全局自定义组件
   Vue.component(Page.name, Page)

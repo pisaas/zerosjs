@@ -8,23 +8,15 @@
       store-key="app/material" resc-type="image"
       open-file close-when-completed multi
       @completed="onUploadCompleted" />
-
-    <span class="q-ml-md">
-      <Button type="primary" icon="md-film" @click="$refs.imgSelectorModal.open()">选择图片</Button>
-    </span>
-
-    <image-selector-modal ref="imgSelectorModal" />
   </div>
 </template>
 
 <script>
 import RescUploader from '@resc-components/uploader'
-import { ImageSelectorModal } from '@resc-components/image/selector'
 
 export default {
   components: {
-    RescUploader,
-    ImageSelectorModal
+    RescUploader
   },
 
   props: {

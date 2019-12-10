@@ -30,14 +30,14 @@
             </span>
             <span v-if="row.fsize" class="q-ml-md">大小：{{ $util.filesize(row.fsize) }}</span>
           </div>
-        
-          <list-item-actions @trigger="onItemActionTrigger" :data="row">
-            <list-item-action icon="md-open" label="编辑" action="edit" />
-            <list-item-action v-if="row.status === 'transcoding'" 
-              icon="md-sync" label="检查转码" action="check_transcoding" />
-            <list-item-action icon="md-trash" label="删除" action="delete" />
-          </list-item-actions>
         </div>
+
+        <list-item-actions @trigger="onItemActionTrigger" :data="row">
+          <list-item-action icon="md-open" label="编辑" action="edit" />
+          <list-item-action v-if="row.status === 'transcoding'" 
+            icon="md-sync" label="检查转码" action="check_transcoding" />
+          <list-item-action icon="md-trash" label="删除" action="delete" />
+        </list-item-actions>
       </div>
       <div slot-scope="{ row }" slot="ts" class="table-col">
         <div class="col-text">{{ $util.date.format(row.updatedAt) }}</div>
@@ -259,8 +259,10 @@ export default {
 .list-table {
   .col-content {
     .video-play {
-      width: 100px;
-      height: 60px;
+      min-width: 100px;
+      min-height: 60px;
+      max-width: 100px;
+      max-height: 60px;
       cursor: pointer;
       background-size: cover;
       background-position: center;
