@@ -429,7 +429,7 @@ class RescService extends SysService {
   }
 
   async storeThumbByUrl (thumbUrl, thumbKey, fopName) {
-    let tmpThumbKey = `TMP_EXP_1/${thumbKey}_` + new Date();
+    let tmpThumbKey = `TMP_EXP_1/${thumbKey}_` + new Date().getTime();
     let tmpThumbUrl = zeros.$resc.thumbUrl(tmpThumbKey, fopName, 'tmp');
 
     const qiniuService = zeros.service('open/qiniu');

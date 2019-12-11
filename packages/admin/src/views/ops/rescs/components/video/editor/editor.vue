@@ -134,6 +134,7 @@ export default {
       videoThumbOffset: 0,
       croppedThumbUrl: null,
       customThumbOrigin: null,
+      customThumbUrl: null,
       isCheckingTranscoding: false,
       submitErrorMsg: null,
       formModel: {},
@@ -229,13 +230,7 @@ export default {
     },
     
     customPreviewVideoThumb () {
-      let formModel = this.formModel
-
-      if (!formModel) {
-        return null
-      }
-
-      return this.croppedThumbUrl || formModel.thumb
+      return this.croppedThumbUrl || this.customThumbUrl
     }
   },
 
@@ -292,8 +287,6 @@ export default {
       this.customThumbOrigin = data.url
       this.croppedThumbUrl = data.croppedUrl
 
-      this.reloadFormModelThumb()
-
       this.$refs.imgCropperModal.close()
     },
 
@@ -306,7 +299,6 @@ export default {
     },
 
     onThumbOffsetChange () {
-      this.reloadFormModelThumb()
     },
 
     onUploadSelected (file) {
@@ -394,6 +386,8 @@ export default {
 
       let valid = await this.validateForm()
 
+      debugger
+
       if (!valid) {
         return false
       }
@@ -429,6 +423,13 @@ export default {
         if (!res.persistentId) {
           return Promise.reject(new Error('提交文件错误，请重试。'))
         }
+        
+        let formModel = Object.assign({
+          store: 'app/material',
+          rtype: 'video',
+          key: uploadData.tmpKey,
+          pfopid: res.persistentId
+        }, this.formModel)
 
         let { duration } = this.videoFileMeta || {}
 
@@ -440,17 +441,12 @@ export default {
 
         if (this.isRecmdThumb) {
           extra.thumbOffset = this.videoThumbOffset || 0
+          formModel.thumb = this.videoThumbByOffset(formModel.thumbOffset)
         } else if (this.customThumbOrigin) {
           extra.thumbOrigin = this.customThumbOrigin
         }
-        
-        let formModel = Object.assign({
-          store: 'app/material',
-          rtype: 'video',
-          key: uploadData.tmpKey,
-          pfopid: res.persistentId,
-          extra
-        }, this.formModel)
+
+        formModel.extra = extra
 
         return this.$service('resc').create(formModel).then((res) => {
           this.rescId = res.id
@@ -477,7 +473,6 @@ export default {
       
       if (this.isRecmdThumb) {
         formModel.thumbOffset = this.videoThumbOffset || 0
-        formModel.thumb = this.videoThumbByOffset(formModel.thumbOffset)
       } else if (this.customThumbOrigin) {
         formModel.thumbOrigin = this.customThumbOrigin
       }
@@ -501,6 +496,7 @@ export default {
       this.modelData = null
       this.videoThumbType = 'recmd'
       this.videoThumbOffset = 0
+      this.customThumbUrl = null
       this.croppedThumbUrl = null
       this.customThumbOrigin = null
       this.isCheckingTranscoding = false
@@ -518,19 +514,6 @@ export default {
       }
     },
 
-    reloadFormModelThumb () {
-      let thumb = this.formModel.thumb
-
-      if (this.isRecmdThumb) {
-        let thumbOffset = this.videoThumbOffset || 0
-        thumb = this.videoThumbByOffset(thumbOffset)
-      } else if (this.customPreviewVideoThumb) {
-        thumb = this.customPreviewVideoThumb
-      }
-
-      this.$set(this.formModel, 'thumb', thumb)
-    },
-
     validateForm () {
       this.reloadFormModelThumb()
       
@@ -545,6 +528,19 @@ export default {
           })
         })
       })
+    },
+
+    reloadFormModelThumb () {
+      let thumb = null
+
+      if (this.isRecmdThumb) {
+        let thumbOffset = this.videoThumbOffset || 0
+        thumb = this.videoThumbByOffset(thumbOffset)
+      } else if (this.customPreviewVideoThumb) {
+        thumb = this.customPreviewVideoThumb
+      }
+
+      this.$set(this.formModel, 'thumb', thumb)
     },
     
     checkTranscoding () {
@@ -607,8 +603,6 @@ export default {
           tmpKey: result.key,
           uploading: false
         })
-
-        this.reloadFormModelThumb()
 
         // 重新验证表单
         this.validateForm()
@@ -683,7 +677,7 @@ export default {
 
       return this.$service('rescs').get(this.rescId).then((res) => {
         this.modelData = res
-        this.formModel = _.pick(res, ['name', 'fname', 'thumb', 'desc'])
+        this.formModel = _.pick(res, ['name', 'fname', 'desc'])
         
         if (!res.thumb) {
           this.videoThumbType = 'recmd'
@@ -693,6 +687,8 @@ export default {
           this.videoThumbOffset = res.extra.thumbOffset
 
           if (this.videoThumbType === 'custom') {
+            this.customThumbUrl = res.thumb
+            
             if (res.extra.thumbOrigin) {
               this.customThumbOrigin = res.extra.thumbOrigin
             }
@@ -700,7 +696,6 @@ export default {
         }
 
         this.$nextTick(() => {
-          this.reloadFormModelThumb()
           this.checkTranscoding()
         })
 

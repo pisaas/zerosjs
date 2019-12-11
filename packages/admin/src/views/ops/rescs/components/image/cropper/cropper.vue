@@ -3,10 +3,16 @@
     <div class="cropper-section" title="裁剪封面">
       <div class="section-title">图片裁剪</div>
       <div class="section-body">
-        <vue-cropper v-show="url" ref="imgCropper" alt="请先选择要裁剪的图片" :src="url"
-          preview=".preview-image" :ready="onCropperReady">
-        </vue-cropper>
-        <div v-if="!url" class="no-data">
+        <div class="cropper-box">
+          <vue-cropper v-show="url" ref="cropper" alt="请先选择要裁剪的图片"
+            :src="url" :viewMode="0" :zoomable="false"
+            preview=".preview-image" :ready="onCropperReady">
+          </vue-cropper>
+        </div>
+        <div v-if="loading" class="loading-data">
+          <Spin />
+        </div>
+        <div v-else-if="!url" class="no-data">
           请先选择要裁剪的图片
         </div>
       </div>
@@ -39,6 +45,7 @@ export default {
       url: '',
       previewUrl: '',
       croppedUrl: '',
+      loading: true
     }
   },
 
@@ -49,7 +56,7 @@ export default {
     },
 
     cropper () {
-      return this.$refs.imgCropper
+      return this.$refs.cropper
     }
   },
 
@@ -57,7 +64,9 @@ export default {
   },
 
   methods: {
-    onCropperReady () {},
+    onCropperReady () {
+      this.loading = false
+    },
 
     async crop () {
       let croppedData = this.cropper.getData()
@@ -88,7 +97,8 @@ export default {
       this.url = ''
       this.previewUrl = ''
       this.croppedUrl = ''
-      this.cropper.clear()
+      this.cropper.replace('')
+      this.loading = true
     },
 
     reloadCrop () {
@@ -114,12 +124,18 @@ export default {
 
   .section-body {
     padding: 0 20px;
+    height: calc(100% - 50px);
   }
 }
 
 .cropper-section {
   width: 280px;
   border-right: 1px solid @border-color;
+
+  .cropper-box {
+    overflow: scroll;
+    max-height: 100%;
+  }
 }
 
 .preview-section {

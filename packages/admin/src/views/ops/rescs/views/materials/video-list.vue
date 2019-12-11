@@ -73,7 +73,7 @@ export default {
 
       listColumns: [
         // { type: 'selection', width: 40, align: 'center' },
-        { title: '视频', slot: 'content', minWidth: 200 },
+        { title: '视频', slot: 'content', minWidth: 300 },
         { title: '状态', key: 'statusName', width: 100 },
         { title: '更新时间', slot: 'ts', width: 150 }
       ],
