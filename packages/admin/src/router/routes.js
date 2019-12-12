@@ -116,10 +116,6 @@ const routes = [
             component: load('ops/rescs/views/materials'),
             meta: { title: '素材列表' },
           },
-          { path: 'materials-wx', name: 'app:ops:resc:materials-wx',
-            component: load('ops/rescs/views/materials-wx'),
-            meta: { title: '微信素材' },
-          },
         ]
       },
     ]

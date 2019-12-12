@@ -283,7 +283,8 @@ export default {
       let query = this.$service.getSearchQuery(this.listQuery)
 
       query = Object.assign({
-        rtype: 'image'
+        rtype: 'image',
+        store: 'app/material'
       }, query)
 
       let result = await this.$service('rescs').find({ query })

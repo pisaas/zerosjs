@@ -1,7 +1,5 @@
 import * as qiniu from 'qiniu-js'
-import uni from '@/utils/uni'
 import { getUptoken } from '@/apis/zeros'
-import { delay } from '../../../../utils/uni'
 
 export const RescMimeTypes = {
   'image': "image/*",

@@ -31,6 +31,7 @@ module.exports = function () {
 
       status: { type: 'string', default: 'new' },
   
+      saved: { type: 'boolean' },
       pubed: { type: 'boolean' },
       frzn: { type: 'boolean' }
     },
