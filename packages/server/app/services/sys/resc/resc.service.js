@@ -409,7 +409,7 @@ class RescService extends SysService {
     if (avatarUrl && avatarKey
       && !this.isSameThumbPath(avatarUrl, rescModel.avatar)) {
       await this.storeThumbByUrl(avatarUrl, avatarKey).then(() => {
-        updates.thumb = avatarKey;
+        updates.avatar = avatarKey;
       });
     }
 

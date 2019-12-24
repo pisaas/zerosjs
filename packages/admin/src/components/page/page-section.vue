@@ -83,22 +83,10 @@ export default {
 .page-section {
   position: relative;
   padding: 10px 20px;
-  background: white;
+  background: @panel-color;
   border-radius: @border-radius;
   box-shadow: 0 0 3px 0 @border-color;
   margin-bottom: 10px;
-
-  &.no-padding {
-    padding: 0;
-
-    &-top {
-      padding-top: 0;
-    }
-  }
-
-  &.list-section {
-    padding: 0;
-  }
 
   &-head {
     display: flex;
@@ -124,14 +112,11 @@ export default {
     padding: 10px 0;
   }
 
-  &.fixed {
-    .page-section {
-      &-footer {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-      }
+  &.no-padding {
+    padding: 0;
+
+    &-top {
+      padding-top: 0;
     }
   }
 
@@ -143,6 +128,97 @@ export default {
 
       &-footer {
         border-top: 1px solid @border-color;
+      }
+    }
+  }
+
+  &.fixed {
+    .page-section {
+      &-footer {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    }
+  }
+
+  &.list-section {
+    @listHeaderHeight: 45px;
+    @listFooterHeight: 55px;
+
+    padding: 0;
+    margin-bottom: 0;
+    padding-bottom: 10px;
+    position: relative;
+
+    .list-header {
+      display: flex;
+      padding: 8px 12px;
+    }
+
+    .list-footer {
+      padding: 16px;
+      border-top: 1px solid @light-border-color;
+    }
+
+    &.fixed {
+      height: 100%;
+      padding-bottom: 0px;
+
+      .page-section-body {
+        height: 100%;
+        padding: 0;
+        padding-top: @listHeaderHeight;
+        padding-bottom: @listFooterHeight;
+      }
+
+      .list-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: @listHeaderHeight;
+      }
+
+      .list-body {
+        overflow: scroll;
+        height: 100%;
+      }
+
+      .list-table {
+        height: 100%;
+
+        .ivu-table-header {
+          position: relative;
+          padding-top: 30px;
+
+          &>table {
+            position: absolute;
+            z-index: 100;
+            top: 0;
+            left: 0;
+          }
+        }
+
+        .ivu-table-body {
+          height: calc(100% - 30px + 1px);
+          overflow: scroll;
+        }
+
+        // .ivu-table-tbody {
+        //   .ivu-table-row:last-child > td {
+        //     border-bottom: 0;
+        //   }
+        // }
+      }
+
+      .list-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: @listFooterHeight;
       }
     }
   }

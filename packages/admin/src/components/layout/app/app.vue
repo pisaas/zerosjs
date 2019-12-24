@@ -7,30 +7,34 @@
     </Sider>
 
     <Layout>
-      <Header>
-        <div class="layout-header row">
-          <div class="flex-main">
-            <router-view name="header" />
-            <span v-if="!showSide" class="header-logo">
-              <img :src="`${admLogo}-avatar`" />
-              <!-- <div>{{ appName }}</div> -->
-            </span>
-            <span class="header-title">
-              {{ displayTitle }}
-            </span>
+      <transition name="slide-left">
+        <Sider v-show="isSubmenu && !collapsed" class="layout-sub-sider" :width="130">
+          <div class="sub-header">
+            {{ topRouteTitle }}
           </div>
-          <div class="q-pr-sm">
-            <user-dropdown />
-          </div>
-        </div>
-      </Header>
+          <sub-menu ref="subMenu" :routes="subVisibleRoutes" @on-change="turnToPage" />
+        </Sider>
+      </transition>
 
-      <Layout>
-        <transition name="slide-left">
-          <Sider v-show="isSubmenu && !collapsed" class="layout-sub-sider" :width="130">
-            <sub-menu ref="subMenu" :routes="subVisibleRoutes" @on-change="turnToPage" />
-          </Sider>
-        </transition>
+      <Layout class="layout-main">
+        <Header class="layout-header">
+          <div class="header-container row">
+            <div class="flex-main">
+              <router-view name="header" />
+              <span v-if="!showSide" class="header-logo">
+                <img :src="`${admLogo}-avatar`" />
+                <!-- <div>{{ appName }}</div> -->
+              </span>
+              <span class="header-title">
+                {{ displayTitle }}
+              </span>
+            </div>
+            <div class="q-pr-sm">
+              <user-dropdown />
+            </div>
+          </div>
+        </Header>
+
         <Content class="layout-content">
           <div class="content-container">
             <div class="content-body">
@@ -96,6 +100,16 @@ export default {
       return this.$router.topRoute(routeName, 1)
     },
 
+    topRouteTitle () {
+      let topRoute = this.topRoute
+
+      if (!topRoute) {
+        return ''
+      }
+
+      return menuTitle(topRoute)
+    },
+
     isSubmenu () {
       return this.subVisibleRoutes.length
     },
@@ -146,31 +160,67 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.layout-header {
-  height: 100%;
-  padding: 0 15px;
-  border-bottom: 1px solid @border-color;
-
-  .header-logo {
-    float: left;
-    padding: 10px;
-    img {
-      height: 30px;
-    }
-  }
-
-  .header-title {
-    font-size: 16px;
-  }
-}
+@headerHeight: 50px;
 
 .layout-sub-sider {
   background: @bg-color;
+  position: relative;
+  padding-top:  @headerHeight;
+
+  .sub-header {
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: @headerHeight;
+    border: 1px solid @border-color;
+    border-top: 0;
+    border-left: 0;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+}
+
+.layout-main {
+  position: relative;
+  padding-top: @headerHeight;
+}
+
+.layout-header {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: @headerHeight;
+
+  .header-container {
+    height: 100%;
+    padding: 0 15px;
+    border-bottom: 1px solid @border-color;
+
+    .header-logo {
+      float: left;
+      padding: 10px;
+      img {
+        height: 30px;
+      }
+    }
+
+    .header-title {
+      font-size: 14px;
+    }
+  }
 }
 
 .layout-content {
-  height: calc(100vh - 50px);
+  height: calc(100vh - @headerHeight);
   min-width: 600px;
+  overflow: scroll;
 
   .content-container {
     border-radius: 0;

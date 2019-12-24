@@ -25,8 +25,10 @@
                 style="display: inline-block;">
                 <Button type="primary" size="small">选择</Button>
               </image-upload>
+              <!-- <Button v-if="logoUrl" class="q-ml-sm" size="small"
+                @click="onLogoPreview">预览</Button> -->
               <Button v-if="logoUrl" class="q-ml-sm" size="small"
-                @click="onLogoPreview">预览</Button>
+                @click="onLogoCrop">剪切</Button>
               <Button v-if="isLogoChanged" class="q-ml-sm" size="small"
                 @click="onLogoReset">还原</Button>
             </div>
@@ -38,6 +40,8 @@
         </i-col>
       </Row>
     </FormItem>
+
+    
   </Form>
 </template>
 
@@ -116,6 +120,10 @@ export default {
         }
         this.logoUrl = url
       })
+    },
+
+    onLogoCrop () {
+
     },
 
     onLogoPreview () {

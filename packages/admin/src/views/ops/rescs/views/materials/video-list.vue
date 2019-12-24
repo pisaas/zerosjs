@@ -1,5 +1,5 @@
 <template>
-  <div class="video-list page-list">
+  <page-section list-section fixed>
     <div class="list-header">
       <div class="flex-main">
         <Input v-model="listQuery.search" icon="ios-search" placeholder="名称/描述/ID"
@@ -11,41 +11,43 @@
       </div>
     </div>
 
-    <Table ref="pgTable" class="list-table" border stripe
-      :columns="listColumns" :data="listItems"
-      @on-selection-change="onSelectionChange">
-      <div slot-scope="{ row }" slot="content" class="table-col col-content">
-        <div class="video-play" :class="{ disabled: !row.pubed }"
-          :style="{ 'backgroundImage': `url(${row.thumb})` }"
-          @click="openPlay(row)">
-          <div class="play-button">
-            <Icon class="icon" type="md-play" color="white" size="15" />
+    <div class="list-body">
+      <Table ref="pgTable" class="list-table" border stripe
+        :columns="listColumns" :data="listItems"
+        @on-selection-change="onSelectionChange">
+        <div slot-scope="{ row }" slot="content" class="table-col col-content">
+          <div class="video-play" :class="{ disabled: !row.pubed }"
+            :style="{ 'backgroundImage': `url(${row.thumb})` }"
+            @click="openPlay(row)">
+            <div class="play-button">
+              <Icon class="icon" type="md-play" color="white" size="15" />
+            </div>
           </div>
-        </div>
-        <div class="col-detail">
-          <div class="col-title video-name">{{ row.name }}</div>
-          <div class="col-subtitle">
-            <span v-if="row.extra && row.extra.duration">
-              时长：{{ $util.format.prettySeconds(row.extra.duration) }}
-            </span>
-            <span v-if="row.fsize" class="q-ml-md">大小：{{ $util.filesize(row.fsize) }}</span>
+          <div class="col-detail">
+            <div class="col-title video-name">{{ row.name }}</div>
+            <div class="col-subtitle">
+              <span v-if="row.extra && row.extra.duration">
+                时长：{{ $util.format.prettySeconds(row.extra.duration) }}
+              </span>
+              <span v-if="row.fsize" class="q-ml-md">大小：{{ $util.filesize(row.fsize) }}</span>
+            </div>
           </div>
-        </div>
 
-        <list-item-actions @trigger="onItemActionTrigger" :data="row">
-          <list-item-action icon="md-open" label="编辑" action="edit" />
-          <list-item-action v-if="row.status === 'transcoding'" 
-            icon="md-sync" label="检查转码" action="check_transcoding" />
-          <list-item-action icon="md-trash" label="删除" action="delete" />
-        </list-item-actions>
-      </div>
-      <div slot-scope="{ row }" slot="ts" class="table-col">
-        <div class="col-text">{{ $util.date.format(row.updatedAt) }}</div>
-        <div class="col-subtitle">
-          <span class="uname">{{ row.uname }}</span>
+          <list-item-actions @trigger="onItemActionTrigger" :data="row">
+            <list-item-action icon="md-open" label="编辑" action="edit" />
+            <list-item-action v-if="row.status === 'transcoding'" 
+              icon="md-sync" label="检查转码" action="check_transcoding" />
+            <list-item-action icon="md-trash" label="删除" action="delete" />
+          </list-item-actions>
         </div>
-      </div>
-    </Table>
+        <div slot-scope="{ row }" slot="ts" class="table-col">
+          <div class="col-text">{{ $util.date.format(row.updatedAt) }}</div>
+          <div class="col-subtitle">
+            <span class="uname">{{ row.uname }}</span>
+          </div>
+        </div>
+      </Table>
+    </div>
 
     <div class="list-footer">
       <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
@@ -54,7 +56,7 @@
 
     <video-player-modal ref="playerModal" />
     <video-editor-modal ref='editorModal' @submit="onEditSubmit" />
-  </div>
+  </page-section>
 </template>
 
 <script>

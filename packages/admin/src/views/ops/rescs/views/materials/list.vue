@@ -1,31 +1,28 @@
 <template>
-  <page>
-    <page-section list-section>
-      <div>
-        <Tabs class="no-content" :value="tabName" @on-click="onTabsClick">
-          <div slot="extra" class="q-mx-md">
-            <image-actions ref="imgActions" :visible="tabName === 'image'"
-              @submit="onActionSubmit" />
+  <page fixed>
+    <div slot="header">
+      <Tabs class="no-content" :value="tabName" @on-click="onTabsClick">
+        <div slot="extra" class="q-mx-md">
+          <image-actions ref="imgActions" :visible="tabName === 'image'"
+            @submit="onActionSubmit" />
 
-            <audio-actions ref="audioActions" :visible="tabName === 'audio'"
-              @submit="onActionSubmit" />
+          <audio-actions ref="audioActions" :visible="tabName === 'audio'"
+            @submit="onActionSubmit" />
 
-            <video-actions ref="videoActions" :visible="tabName === 'video'"
-              @submit="onActionSubmit" />
-          </div>
+          <video-actions ref="videoActions" :visible="tabName === 'video'"
+            @submit="onActionSubmit" />
+        </div>
 
-          <TabPane label="图片" name="image" />
-          <TabPane label="音频" name="audio" />
-          <TabPane label="视频" name="video" />
-        </Tabs>
-      </div>
+        <TabPane label="图片" name="image" />
+        <TabPane label="音频" name="audio" />
+        <TabPane label="视频" name="video" />
+      </Tabs>
+    </div>
 
-      <div>
-        <image-list v-if="tabName === 'image'" ref="list" />
-        <audio-list v-if="tabName === 'audio'" ref="list" />
-        <video-list v-if="tabName === 'video'" ref="list" />
-      </div>
-    </page-section>
+    <image-list v-if="tabName === 'image'" ref="list" />
+    <audio-list v-if="tabName === 'audio'" ref="list" />
+    <video-list v-if="tabName === 'video'" ref="list" />
+    <span />
   </page>
 </template>
 

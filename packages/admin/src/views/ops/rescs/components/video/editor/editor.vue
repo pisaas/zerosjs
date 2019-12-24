@@ -259,12 +259,12 @@ export default {
     },
 
     onThumbSelected (item) {
-      if (!item || !item.path) {
+      if (!item || !item.thumb) {
         return
       }
 
       this.$refs.imgCropperModal.open({
-        url: item.path
+        url: item.thumb
       })
     },
 
@@ -385,8 +385,6 @@ export default {
       this.formModel = Object.assign({}, formModel)
 
       let valid = await this.validateForm()
-
-      debugger
 
       if (!valid) {
         return false

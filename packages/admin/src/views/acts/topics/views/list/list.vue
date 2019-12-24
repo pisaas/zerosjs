@@ -1,26 +1,22 @@
 <template>
-  <page>
-    <page-section list-section>
-      <div>
-        <Tabs class="no-content" :value="tabName" @on-click="onTabsClick">
-          <div slot="extra" class="q-mx-md">
-            <list-actions ref="listActions" :name="tabName" visible
-              @submit="onActionSubmit" />
-          </div>
+  <page fixed>
+    <div slot="header">
+      <Tabs class="no-content" :value="tabName" @on-click="onTabsClick">
+        <div slot="extra" class="q-mx-md">
+          <list-actions ref="listActions" :name="tabName" visible
+            @submit="onActionSubmit" />
+        </div>
 
-          <TabPane label="已发布" name="pubed"></TabPane>
-          <TabPane label="待审核" name="pending"></TabPane>
-          <TabPane label="已冻结" name="fronzen"></TabPane>
-          <TabPane label="草稿" name="draft"></TabPane>
-        </Tabs>
-      </div>
+        <TabPane label="已发布" name="pubed"></TabPane>
+        <TabPane label="待审核" name="pending"></TabPane>
+        <TabPane label="已冻结" name="fronzen"></TabPane>
+        <TabPane label="草稿" name="draft"></TabPane>
+      </Tabs>
+    </div>
 
-      <div>
-        <pubed-list v-if="tabName === 'pubed'" ref="list" />
-        <pending-list v-if="tabName === 'pending'" ref="list" />
-        <draft-list v-if="tabName === 'draft'" ref="list" @edit="onEdit" />
-      </div>
-    </page-section>
+    <pubed-list v-if="tabName === 'pubed'" ref="list" />
+    <pending-list v-if="tabName === 'pending'" ref="list" />
+    <draft-list v-if="tabName === 'draft'" ref="list" @edit="onEdit" />
   </page>
 </template>
 

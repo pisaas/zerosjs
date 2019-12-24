@@ -1,5 +1,5 @@
 <template>
-  <div class="topic-list-pubed page-list">
+  <page-section list-section fixed>
     <div class="list-header">
       <div class="flex-main">
         <Input v-model="listQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
@@ -16,35 +16,37 @@
       </div>
     </div>
 
-    <Table ref="pgTable" class="list-table" border stripe
-      :columns="listColumns" :data="listItems"
-      @on-selection-change="onSelectionChange">
-      <div slot-scope="{ row }" slot="topic" class="table-col">
-        <div class="col-title">
-          <span>{{ row.name }}</span>
+    <div class="list-body">
+      <Table ref="pgTable" class="list-table" border stripe
+        :columns="listColumns" :data="listItems"
+        @on-selection-change="onSelectionChange">
+        <div slot-scope="{ row }" slot="topic" class="table-col">
+          <div class="col-title">
+            <span>{{ row.name }}</span>
+          </div>
+          <div class="col-subtitle">
+            <div class="catpath">分类：{{ getTopicCatPathNamesStr(row.catid) }}</div>
+          </div>
+          
+          <list-item-actions @trigger="onItemActionTrigger" :data="row">
+            <list-item-action icon="md-open" label="编辑话题" action="edit" />
+          </list-item-actions>
         </div>
-        <div class="col-subtitle">
-          <div class="catpath">分类：{{ getTopicCatPathNamesStr(row.catid) }}</div>
+        <div slot-scope="{ row }" slot="ts" class="table-col">
+          <div class="col-text">{{ $util.date.format(row.updatedAt) }}</div>
+          <div class="col-subtitle">
+            <!-- <user-avatar :id="row.uid" size="small" /> -->
+            <span class="uname">{{ row.uname }}</span>
+          </div>
         </div>
-        
-        <list-item-actions @trigger="onItemActionTrigger" :data="row">
-          <list-item-action icon="md-open" label="编辑话题" action="edit" />
-        </list-item-actions>
-      </div>
-      <div slot-scope="{ row }" slot="ts" class="table-col">
-        <div class="col-text">{{ $util.date.format(row.updatedAt) }}</div>
-        <div class="col-subtitle">
-          <!-- <user-avatar :id="row.uid" size="small" /> -->
-          <span class="uname">{{ row.uname }}</span>
-        </div>
-      </div>
-    </Table>
+      </Table>
+    </div>
 
     <div class="list-footer">
       <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
         show-total @on-change="onPageChange"></Page>
     </div>
-  </div>
+  </page-section>
 </template>
 
 <script>

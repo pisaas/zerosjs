@@ -21,39 +21,11 @@ module.exports = function (app) {
 
     'stores': {
       'avatar': {
-        'name': '用户头像',
-        'type': 'usr',
+        'name': '头像', // 用户/应用头像
+        'type': 'app',
         'storage': 'qiniu',
         'getKey': (options) => {
           return { key: `avatars/${options.key}`, options };
-        }
-      },
-
-      'usr/avatar': {
-        'name': '用户头像',
-        'type': 'usr',
-        'avatar': true,
-        'storage': 'qiniu',
-        'getKey': (options) => {
-          let opts = _.defaultsDeep(options, { ts: (+new Date()) });
-          return {
-            key: `users/${opts.uid}/avatar_${opts.ts}`,
-            avatarKey: `usr.${opts.uid}`,
-            options: opts
-          };
-        }
-      },
-
-      'usr/resc': {
-        'name': '用户资源',
-        'type': 'usr',
-        'storage': 'qiniu',
-        'getKey': (options) => {
-          let opts = options || {};
-          return {
-            key: `apps/${opts.appid}/users/${opts.uid}/${opts.key}`,
-            options: opts
-          };
         }
       },
 
@@ -82,6 +54,34 @@ module.exports = function (app) {
 
           return {
             key: `apps/${model.appid}/m/${model.id}`,
+            options: opts
+          };
+        }
+      },
+
+      'usr/avatar': {
+        'name': '用户头像',
+        'type': 'usr',
+        'avatar': true,
+        'storage': 'qiniu',
+        'getKey': (options) => {
+          let opts = _.defaultsDeep(options, { ts: (+new Date()) });
+          return {
+            key: `users/${opts.uid}/avatar_${opts.ts}`,
+            avatarKey: `usr.${opts.uid}`,
+            options: opts
+          };
+        }
+      },
+
+      'usr/resc': {
+        'name': '用户资源',
+        'type': 'usr',
+        'storage': 'qiniu',
+        'getKey': (options) => {
+          let opts = options || {};
+          return {
+            key: `apps/${opts.appid}/users/${opts.uid}/${opts.key}`,
             options: opts
           };
         }

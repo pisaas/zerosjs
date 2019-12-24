@@ -75,7 +75,13 @@ export default {
 
       let url = this.url
       let imageMogr2Str = `imageMogr2/crop/!${width}x${height}a${x}a${y}`
-      let croppedUrl = `${url}?${imageMogr2Str}`
+
+      let croppedUrl
+      if (url.indexOf('?') >0 ) {
+        croppedUrl = `${url}&${imageMogr2Str}`
+      } else {
+        croppedUrl = `${url}?${imageMogr2Str}`
+      }
 
       return {
         url,

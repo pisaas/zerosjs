@@ -1,5 +1,5 @@
 <template>
-  <div class="image-list page-list">
+  <page-section list-section fixed>
     <div class="list-header">
       <div class="flex-main">
         <Input v-model="listQuery.search" icon="ios-search" placeholder="名称/描述/ID"
@@ -15,44 +15,46 @@
       </div>
     </div>
 
-    <Table ref="pgTable" class="list-table" border stripe
-      :columns="listColumns" :data="listItems"
-      @on-selection-change="onSelectionChange">
-      <div slot-scope="{ row }" slot="content" class="table-col col-content">
-        <div class="thumb" :style="{ 'backgroundImage': `url(${row.thumb})` }"
-          @click="onImagePreview(row)" />
-        <div class="col-detail">
-          <div class="col-title image-name">{{ row.name }}</div>
+    <div class="list-body">
+      <Table ref="pgTable" class="list-table" border stripe
+        :columns="listColumns" :data="listItems"
+        @on-selection-change="onSelectionChange">
+        <div slot-scope="{ row }" slot="content" class="table-col col-content">
+          <div class="thumb" :style="{ 'backgroundImage': `url(${row.thumb})` }"
+            @click="onImagePreview(row)" />
+          <div class="col-detail">
+            <div class="col-title image-name">{{ row.name }}</div>
+            <div class="col-subtitle">
+              <span v-if="row.fsize">原图大小：{{ $util.filesize(row.fsize) }}</span>
+            </div>
+          </div>
+
+          <list-item-actions @trigger="onItemActionTrigger" :data="row">
+            <!-- <list-item-action type="poptip" placement="bottom-end">
+              <Tooltip transfer placement="top" content="重命名">
+                <Button class="btn-action" icon="ios-more" />
+              </Tooltip>
+              <div slot="content">
+                <Input style="width:200px" />
+                <Button type="primary" class="q-ml-sm">确定</Button>
+                <Button class="q-ml-sm">取消</Button>
+              </div>
+            </list-item-action> -->
+            <!-- <list-item-action icon="ios-more" label="重命名" action="rename" /> -->
+            <list-item-action type="custom">
+              <image-rename-poptip :row="row" @rename="onItemRename" />
+            </list-item-action>
+            <list-item-action icon="ios-trash" label="删除" action="delete" />
+          </list-item-actions>
+        </div>
+        <div slot-scope="{ row }" slot="ts" class="table-col">
+          <div class="col-text">{{ $util.date.format(row.updatedAt) }}</div>
           <div class="col-subtitle">
-            <span v-if="row.fsize">原图大小：{{ $util.filesize(row.fsize) }}</span>
+            <span class="uname">{{ row.uname }}</span>
           </div>
         </div>
-
-        <list-item-actions @trigger="onItemActionTrigger" :data="row">
-          <!-- <list-item-action type="poptip" placement="bottom-end">
-            <Tooltip transfer placement="top" content="重命名">
-              <Button class="btn-action" icon="ios-more" />
-            </Tooltip>
-            <div slot="content">
-              <Input style="width:200px" />
-              <Button type="primary" class="q-ml-sm">确定</Button>
-              <Button class="q-ml-sm">取消</Button>
-            </div>
-          </list-item-action> -->
-          <!-- <list-item-action icon="ios-more" label="重命名" action="rename" /> -->
-          <list-item-action type="custom">
-            <image-rename-poptip :row="row" @rename="onItemRename" />
-          </list-item-action>
-          <list-item-action icon="ios-trash" label="删除" action="delete" />
-        </list-item-actions>
-      </div>
-      <div slot-scope="{ row }" slot="ts" class="table-col">
-        <div class="col-text">{{ $util.date.format(row.updatedAt) }}</div>
-        <div class="col-subtitle">
-          <span class="uname">{{ row.uname }}</span>
-        </div>
-      </div>
-    </Table>
+      </Table>
+    </div>
 
     <div class="list-footer">
       <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
@@ -60,7 +62,7 @@
     </div>
 
     <image-previewer ref="imagePreviewer" :items="listItems" />
-  </div>
+  </page-section>
 </template>
 
 <script>

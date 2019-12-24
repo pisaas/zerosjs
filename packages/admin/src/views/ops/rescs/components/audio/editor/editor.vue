@@ -180,12 +180,12 @@ export default {
     },
 
     onThumbSelected (item) {
-      if (!item || !item.path) {
+      if (!item || !item.thumb) {
         return
       }
 
       this.$refs.imgCropperModal.open({
-        url: item.path
+        url: item.thumb
       })
     },
 
