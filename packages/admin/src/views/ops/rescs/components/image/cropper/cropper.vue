@@ -1,26 +1,31 @@
 <template>
   <div class="image-cropper">
-    <div class="cropper-section" title="裁剪封面">
+    <div class="cropper-section" title="裁剪封面"
+      :style="cropperSectionStyle">
       <div class="section-title">图片裁剪</div>
-      <div class="section-body">
+      <div class="section-body flex-center">
         <div class="cropper-box">
           <vue-cropper v-show="url" ref="cropper" alt="请先选择要裁剪的图片"
-            :src="url" :viewMode="0" :zoomable="false"
-            preview=".preview-image" :ready="onCropperReady">
+            :src="url" :viewMode="viewMode" :zoomable="false"
+            :preview="`#${preivewImageId}`" :ready="onCropperReady">
           </vue-cropper>
         </div>
-        <div v-if="loading" class="loading-data">
+        <!-- <div v-if="!url" class="no-data">
+          <slot v-if="!noSelection" name="selector">
+            <image-upload ref="imgUpload" @image-selected="onImageSelected">
+              <Button type="primary" size="small">选择图片</Button>
+            </image-upload>
+          </slot>
+        </div>
+        <div v-else-if="loading" class="loading-data">
           <Spin />
-        </div>
-        <div v-else-if="!url" class="no-data">
-          请先选择要裁剪的图片
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="preview-section">
       <div class="section-title">图片预览</div>
-      <div class="section-body">
-        <div class="preview-image" :style="{ height: previewHeight }" />
+      <div class="section-body flex-center">
+        <div class="preview-image" :id="preivewImageId" :style="previewImageStyle" />
       </div>
 
       <!-- <div class="section-title q-mt-md">已裁剪图片</div>
@@ -35,13 +40,43 @@
 
 
 <script>
+import ImageUpload from '@components/upload/image-upload'
+
 export default {
   components: {
+    ImageUpload
+  },
+
+  props: {
+    viewMode: {
+      type: Number,
+      default: 0
+    },
+    noSelection: Boolean,
+    aspectRatio: Number,
+
+    cropperHeight: {
+      type: Number,
+      default: 400
+    },
+
+    cropperWidth: {
+      type: Number,
+      default: 200
+    },
+
+    previewHeight: {
+      type: Number,
+      default: 300
+    }
   },
 
   data () {
+    let preivewImageId = `priviewImage${+new Date()}`
+
     return {
-      aspectRatio: undefined,
+      preivewImageId,
+      cropAspectRatio: this.aspectRatio,
       url: '',
       previewUrl: '',
       croppedUrl: '',
@@ -50,20 +85,30 @@ export default {
   },
 
   computed: {
-    previewHeight () {
-      let height = parseInt(300 / (this.aspectRatio || (16 / 9)));
-      return `${height}px`
-    },
-
     cropper () {
       return this.$refs.cropper
-    }
+    },
+
+    cropperSectionStyle () {
+      return `height: ${this.cropperHeight}px; width: ${this.cropperWidth}.px;`
+    },
+
+    previewImageStyle () {
+      let imageHeight = parseInt(this.previewHeight / (this.cropAspectRatio || (16 / 9)));
+      return `height:${imageHeight}px; max-height: 150px;`
+    },
   },
 
   mounted () {
   },
 
   methods: {
+    onImageSelected (file) {
+      this.$media.readFileAsDataUrl(file).then((url) => {
+        this.load({ url });
+      })
+    },
+
     onCropperReady () {
       this.loading = false
     },
@@ -92,14 +137,18 @@ export default {
 
     load ({ url, aspectRatio }) {
       this.reset()
-      this.aspectRatio = aspectRatio
+
+      if (aspectRatio) {
+        this.cropAspectRatio = aspectRatio
+      }
+      
       this.url = url
 
       this.reloadCrop()
     },
 
     reset () {
-      this.aspectRatio = undefined
+      this.cropAspectRatio = this.aspectRatio
       this.url = ''
       this.previewUrl = ''
       this.croppedUrl = ''
@@ -109,7 +158,7 @@ export default {
 
     reloadCrop () {
       this.cropper.replace(this.url)
-      this.cropper.setAspectRatio(this.aspectRatio)
+      this.cropper.setAspectRatio(this.cropAspectRatio)
     }
   }
 }
@@ -118,26 +167,21 @@ export default {
 <style lang="less" scoped>
 .image-cropper {
   display: flex;
-  height: 400px;
   padding: 5px;
 
   .section-title {
     font-size: 14px;
-    font-weight: bold;
     line-height: 30px;
     padding: 5px 20px;
   }
 
   .section-body {
-    padding: 0 20px;
-    height: calc(100% - 50px);
+    height: calc(100% - 40px);
+    background: @bg-color;
   }
 }
 
 .cropper-section {
-  width: 280px;
-  border-right: 1px solid @border-color;
-
   .cropper-box {
     overflow: scroll;
     max-height: 100%;
@@ -146,26 +190,15 @@ export default {
 
 .preview-section {
   flex: 1;
-  @preivewWidth: 240px;
+  padding-left: 20px;
 
   .preview-image {
-    width: @preivewWidth;
-    max-height: 150px;
     background: @bg-color;
     display: inline-block;
     overflow: hidden;
+    height: 100%;
+    width: 100%;
 
-    img {
-      width: 100%;
-    }
-  }
-
-  .cropped-image {
-    width: @preivewWidth;
-    max-height: 150px;
-    background: @bg-color;
-    display: inline-block;
-    
     img {
       width: 100%;
     }
@@ -174,5 +207,10 @@ export default {
   .section-body {
     text-align: center;
   }
+}
+
+.loading-data {
+  position: absolute;
+  z-index: 100;
 }
 </style>

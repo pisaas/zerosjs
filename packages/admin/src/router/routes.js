@@ -29,7 +29,7 @@ const routes = [
     redirect: '/app', 
     meta: { title: '应用列表', hideInMenu: true, icon: 'md-desktop' },
     children: [
-      { path: '/apps', name: 'main:apps', component: load('apps'),
+      { path: '/apps', name: 'main:apps', component: load('apps/views'),
         meta: { title: '应用列表', hideInMenu: true, hideSide: true }
       }
     ]

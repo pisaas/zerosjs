@@ -2,11 +2,15 @@
   <page-section list-section fixed>
     <div class="list-header">
       <div class="flex-main">
-        <Input v-model="listQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
-          @on-enter="onQuery" style="width: 180px" />
+        <Input class="list-search q-ml-md"
+          v-model="listQuery.search"
+          icon="ios-search" placeholder="主题名称/作者/ID"
+          @on-enter="onQuery" />
       </div>
 
-      <div>
+      <div class="tail">
+        <list-nav :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
+          @on-change="onPageChange" />
       </div>
     </div>
 

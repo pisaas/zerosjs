@@ -1,6 +1,6 @@
 <template>
-  <Form v-if="formModel" class="editor-form" ref="form"
-    :model="formModel" :rules="formRules" :label-width="120">
+  <Form v-if="formModel" class="editor-form padding" ref="form"
+    :model="formModel" :rules="formRules" :label-width="80">
     <FormItem label="应用名称" required prop="name">
       <Input v-model="formModel.name" :maxlength="50" placeholder="请输入应用名称 (50字以内)" />
     </FormItem>
@@ -12,7 +12,25 @@
       <Input v-model="formModel.desc" type="textarea" :maxlength="200"
         :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入应用简介 (200字以内)" />
     </FormItem>
-    <FormItem label="应用图标/Logo">
+    <FormItem label="应用头像">
+      <div class="tip">{{`图片大小不可大于${logoMaxSizeStr}；建议使用png格式图片，以保持最佳效果`}}</div>
+      <div class="logo-actions q-py-sm">
+        <image-upload ref="logoUploader" @image-selected="onLogoSelected"
+          style="display: inline-block;">
+          <Button type="primary" size="small">选择图片</Button>
+        </image-upload>
+        <Button v-if="isLogoChanged" class="q-ml-sm" size="small"
+          @click="onLogoReset">还原</Button>
+      </div>
+
+      <div class="cropper">
+        <image-cropper ref="logoCropper"
+          :aspectRatio="1" :viewMode="3"
+          :cropperHeight="240" :cropperWidth="200"
+          :previewHeight="220" no-selection />
+      </div>
+    </FormItem>
+    <!-- <FormItem label="应用头像">
       <Row>
         <i-col span="6" class="text-center">
           <div class="logo-upload">
@@ -21,12 +39,10 @@
               <Icon v-else type="md-image" size="120"></Icon>
             </div>
             <div class="logo-actions q-py-sm">
-              <image-upload ref="imgUpload" @image-selected="onLogoSelected"
+              <image-upload ref="logoUploader" @image-selected="onLogoSelected"
                 style="display: inline-block;">
                 <Button type="primary" size="small">选择</Button>
               </image-upload>
-              <!-- <Button v-if="logoUrl" class="q-ml-sm" size="small"
-                @click="onLogoPreview">预览</Button> -->
               <Button v-if="logoUrl" class="q-ml-sm" size="small"
                 @click="onLogoCrop">剪切</Button>
               <Button v-if="isLogoChanged" class="q-ml-sm" size="small"
@@ -39,14 +55,13 @@
           </Modal>
         </i-col>
       </Row>
-    </FormItem>
-
-    
+    </FormItem> -->
   </Form>
 </template>
 
 <script>
 import ImageUpload from '@components/upload/image-upload'
+import { ImageCropper } from '@resc-components/image/cropper'
 
 const LogoImageSpec = {
   MimeType: 'image/png', // 图片格式
@@ -58,7 +73,8 @@ const LogoImageSpec = {
 
 export default {
   components: {
-    ImageUpload
+    ImageUpload,
+    ImageCropper
   },
 
   data () {
@@ -87,6 +103,10 @@ export default {
         return true
       }
       return false
+    },
+
+    logoMaxSizeStr () {
+      return this.$util.filesize(LogoImageSpec.MaxSize)
     }
   },
 
@@ -114,12 +134,16 @@ export default {
         return
       }
 
-      this.$media.scalePhoto.call(this, file, LogoImageSpec).then((url) => {
-        if (!url) {
-          return
-        }
-        this.logoUrl = url
+      this.$media.readFileAsDataUrl(file).then((url) => {
+        this.$refs.logoCropper.load({ url })
       })
+
+      // this.$media.scalePhoto.call(this, file, LogoImageSpec).then((url) => {
+      //   if (!url) {
+      //     return
+      //   }
+      //   this.logoUrl = url
+      // })
     },
 
     onLogoCrop () {
@@ -133,8 +157,8 @@ export default {
     onLogoReset () {
       let formModel = this.formModel
 
-      if (this.$refs.imgUpload) {
-        this.$refs.imgUpload.reset()
+      if (this.$refs.logoUploader) {
+        this.$refs.logoUploader.reset()
       }
 
       if (!formModel) {
@@ -168,8 +192,12 @@ export default {
         this.$refs.form.resetFields()
       }
 
-      if (this.$refs.imgUpload) {
-        this.$refs.imgUpload.reset()
+      if (this.$refs.logoUploader) {
+        this.$refs.logoUploader.reset()
+      }
+
+      if (this.$refs.logoCropper) {
+        this.$refs.logoCropper.reset()
       }
     },
 
@@ -262,7 +290,7 @@ export default {
 @logoPhotoSize: 160px;
 
 .editor-form {
-  width: 500px;
+  width: 600px;
 }
 
 .logo-upload {

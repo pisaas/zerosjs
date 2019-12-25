@@ -229,7 +229,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 860px){
+@media screen and (max-width: @screen-size-sm){
   .login-panel {
     display: flex;
     justify-content: center;

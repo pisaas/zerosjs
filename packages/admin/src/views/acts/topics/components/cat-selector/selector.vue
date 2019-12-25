@@ -4,8 +4,9 @@
       <span>{{ pathNamesStr }}</span>
     </div>
     <template v-else>
-      <Cascader v-model="currentValue" :class="{ inline: inline }"
-        :data="optionData" filterable :transfer="transfer"
+      <Cascader :class="{ inline: inline }"
+        v-model="currentValue" :data="optionData"
+        filterable :transfer="transfer"
         :disabled="disabled"
         trigger="hover" placeholder="请选择话题分类"
         @on-change="onChange"></Cascader>

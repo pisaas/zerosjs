@@ -1,9 +1,11 @@
 <template>
   <page-section list-section fixed>
     <div class="list-header">
-      <div class="flex-main">
-        <Input v-model="listQuery.search" icon="ios-search" placeholder="名称/描述/ID"
-          @on-enter="onQuery" style="width: 180px" />
+      <div class="body">
+        <Input class="list-search"
+          v-model="listQuery.search"
+          icon="ios-search" placeholder="名称/描述/ID"
+          @on-enter="onQuery" />
         
         <list-actions @trigger="onActionTrigger">
           <list-action action="delete" :disabled="!isSelected">删除</list-action>

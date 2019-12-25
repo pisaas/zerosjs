@@ -1,15 +1,11 @@
 <template>
-  <div class="page margin">
-    <div class="page__bd">
-      <div class="list-container fs">
-        <app-list ref="appList"></app-list>
-      </div>
-    </div>
-  </div>
+  <page>
+    <app-list ref="appList"></app-list>
+  </page>
 </template>
 
 <script>
-import AppList from '../components/app-list'
+import AppList from './app-list'
 
 export default {
   components: {

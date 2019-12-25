@@ -4,7 +4,10 @@
     'border': border,
     'fixed': fixed,
     'no-padding': noPadding,
-    'no-padding-top': noPaddingTop
+    'no-padding-top': noPaddingTop,
+    'no-head': !showHead,
+    'transparent': transparent,
+    'flex': flex
   }">
     <div v-if="showHead" class="page-section-head">
       <div class="header">
@@ -36,6 +39,8 @@ export default {
     listSection: Boolean,
     noPadding: Boolean,
     noPaddingTop: Boolean,
+    transparent: Boolean,
+    flex: Boolean,
     title: String
   },
 
@@ -106,10 +111,20 @@ export default {
   &-body {
     overflow: scroll;
     padding: 10px 0;
+    width: 100%;
+    display: flex;
   }
 
   &-footer {
     padding: 10px 0;
+  }
+
+  &.no-head {
+    .page-section {
+      &-body {
+        padding-top: 0;
+      }
+    }
   }
 
   &.no-padding {
@@ -118,6 +133,11 @@ export default {
     &-top {
       padding-top: 0;
     }
+  }
+
+  &.transparent {
+    background: transparent;
+    box-shadow: none;
   }
 
   &.border {
@@ -155,6 +175,18 @@ export default {
     .list-header {
       display: flex;
       padding: 8px 12px;
+
+      .list-search {
+        max-width: 180px;
+      }
+
+      &>.body {
+        flex: 1;
+      }
+
+      &>.tail {
+        padding-left: 10px;
+      }
     }
 
     .list-footer {
@@ -177,13 +209,15 @@ export default {
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
         height: @listHeaderHeight;
+        overflow-x: scroll;
+        width: 100%;
       }
 
       .list-body {
-        overflow: scroll;
+        overflow-y: scroll;
         height: 100%;
+        width: 100%;
       }
 
       .list-table {
@@ -219,6 +253,16 @@ export default {
         left: 0;
         width: 100%;
         height: @listFooterHeight;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: @screen-size-xs){
+  .page-section.list-section {
+    .list-header {
+      .list-search {
+        width: 120px;
       }
     }
   }

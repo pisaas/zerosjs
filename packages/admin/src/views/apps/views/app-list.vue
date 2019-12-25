@@ -1,22 +1,31 @@
 <template>
-  <div class="cmpt-app-list">
-    <Row class="app-grid">
-      <i-col v-for="item in dataItems" :key="item.id"
-        class="app-item" span="8">
+  <page-section no-padding transparent>
+    <div class="flex">
+      <div v-for="item in dataItems" :key="item.id"
+        class="app-item">
         <app-card :app="item" @edit="onEdit" @click="onClick" />
-      </i-col>
-      <i-col class="app-item" span="8">
+      </div>
+      <div class="app-item">
         <app-new-card @create="onCreate" />
-      </i-col>
-    </Row>
+      </div>
+      <div class="app-item">
+        <app-new-card @create="onCreate" />
+      </div>
+      <div class="app-item">
+        <app-new-card @create="onCreate" />
+      </div>
+      <div class="app-item">
+        <app-new-card @create="onCreate" />
+      </div>
+    </div>
 
     <app-editor-modal ref="editorModal" @submit="onEditSubmit" />
-  </div>
+  </page-section>
 </template>
 
 <script>
-  import { AppCard, AppNewCard } from '../app-card'
-  import { AppEditorModal } from '../app-editor'
+  import { AppCard, AppNewCard } from '../components/app/card'
+  import { AppEditorModal } from '../components/app/editor'
 
   export default {
     components: {
@@ -118,8 +127,39 @@
   }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
+.app-item {
+  min-width: (@screen-size-sm / 3);
+  justify-content: space-between;
+
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
+
+@media (max-width: @screen-size-sm) {
   .app-item {
-    padding: 5px;
+    padding-right: 0px;
+    width: 100%;
   }
+}
+
+@media (min-width: @screen-size-sm) and (max-width: @screen-size-md){
+  .app-item {
+    width: 50%;
+
+    &:nth-child(2n) {
+      padding-right: 0px;
+    }
+  }
+}
+
+@media (min-width: @screen-size-md){
+  .app-item {
+    width: 33.33%;
+
+    &:nth-child(3n) {
+      padding-right: 0px;
+    }
+  }
+}
 </style>

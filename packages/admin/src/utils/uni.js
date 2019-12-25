@@ -231,14 +231,11 @@ export function isErrorPageMessage (message) {
 }
 
 export function downloadUrl (url, filename) {
-  debugger
   return http.request({
     method: 'GET',
     url,
     responseType: 'blob'
   }).then((res) => {
-    debugger
-
     let bolb = new Blob([res.data])
     let objectUrl = URL.createObjectURL(bolb)
 
@@ -252,7 +249,6 @@ export function downloadUrl (url, filename) {
 
     // document.body.removeChild(link)
   }).catch((err) => {
-    debugger
     showToast('下载错误，请重试。')
   })
 }

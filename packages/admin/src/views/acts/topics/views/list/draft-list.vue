@@ -1,15 +1,18 @@
 <template>
   <page-section list-section fixed>
     <div class="list-header">
-      <div class="flex-main">
-        <Input v-model="listQuery.search" icon="ios-search" placeholder="主题名称/作者/ID"
-          @on-enter="onQuery" style="width: 180px" />
+      <div class="body">
+        <Input class="list-search"
+          v-model="listQuery.search"
+          icon="ios-search" placeholder="主题名称/作者/ID"
+          @on-enter="onQuery" />
         
         <list-actions ref="pgActionButtons" @trigger="onActionTrigger">
           <list-action action="edit" :disabled="!isAllowedActive('edit')">编辑</list-action>
           <list-action action="delete" :disabled="!isAllowedActive('delete')">删除</list-action>
         </list-actions>
       </div>
+      
       <div class="tail">
         <list-nav :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
           @on-change="onPageChange" />
