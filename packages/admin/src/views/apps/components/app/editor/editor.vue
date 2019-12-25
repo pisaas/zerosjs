@@ -12,7 +12,7 @@
       <Input v-model="formModel.desc" type="textarea" :maxlength="200"
         :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入应用简介 (200字以内)" />
     </FormItem>
-    <FormItem label="应用头像">
+    <FormItem label="应用头像" required prop="logo">
       <div class="tip">{{`图片大小不可大于${logoMaxSizeStr}；建议使用png格式图片，以保持最佳效果`}}</div>
       <div class="logo-actions q-py-sm">
         <image-upload ref="logoUploader" @image-selected="onLogoSelected"
@@ -25,11 +25,12 @@
 
       <div class="cropper">
         <image-cropper ref="logoCropper"
-          :aspectRatio="1" :viewMode="3"
+          :aspectRatio="1" :viewMode="1"
           :cropperHeight="240" :cropperWidth="200"
           :previewHeight="220" no-selection />
       </div>
     </FormItem>
+    
     <!-- <FormItem label="应用头像">
       <Row>
         <i-col span="6" class="text-center">

@@ -213,4 +213,15 @@ export default {
   position: absolute;
   z-index: 100;
 }
+
+@media screen and (max-width: @screen-size-sm){
+  .image-cropper {
+    display: inline-block !important;
+
+    .preview-section {
+      padding-left: 0;
+      padding-top: 10px;
+    }
+  }
+}
 </style>

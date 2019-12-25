@@ -27,6 +27,7 @@ module.exports = {
       .set('@conf', resolve('config'))
       .set('@c', resolve('src/components'))
       .set('@components', resolve('src/components'))
+      .set('@app-components', resolve('src/views/apps/components'))
       .set('@resc-components', resolve('src/views/ops/rescs/components'))
 
     config.resolve.symlinks(false)

@@ -79,8 +79,8 @@ export default {
 .app-logo {
   .image {
     img {
-      width: 40px;
-      max-height: 40px;
+      width: 80px;
+      max-height: 80px;
     }
   }
 }

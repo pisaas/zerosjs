@@ -68,7 +68,7 @@ module.exports = function (app) {
           let opts = _.defaultsDeep(options, { ts: (+new Date()) });
           return {
             key: `users/${opts.uid}/avatar_${opts.ts}`,
-            avatarKey: `usr.${opts.uid}`,
+            avatarKey: `u_${opts.uid}`,
             options: opts
           };
         }

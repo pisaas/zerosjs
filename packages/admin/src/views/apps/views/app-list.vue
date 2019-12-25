@@ -24,8 +24,8 @@
 </template>
 
 <script>
-  import { AppCard, AppNewCard } from '../components/app/card'
-  import { AppEditorModal } from '../components/app/editor'
+  import { AppCard, AppNewCard } from '@app-components/app/card'
+  import { AppEditorModal } from '@app-components/app/editor'
 
   export default {
     components: {
