@@ -10,7 +10,7 @@ module.exports = function (zeros) {
 
 const QiniuFops = {
   thumb: 'imageView2/0/w/600/h/600/format/jpg',
-  avatar: 'imageView2/0/w/200/h/200/format/jpg'
+  avatar: 'imageView2/0/w/64/h/64/format/jpg'
 };
 
 function loadRescGlobals (zeros) {

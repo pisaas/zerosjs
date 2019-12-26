@@ -14,11 +14,11 @@ module.exports = function () {
       
       code: { type: 'string', required: true, unique: true, maxlength: 50 },
       name: { type: 'string', required: true, unique: true, maxlength: 100 },
+      logo: { type: 'string', required: true, maxlength: 200 },
   
       oid: { type: 'string', maxlength: 50 }, // 所属组织org id
       ocode: { type: 'string', maxlength: 50 }, // 所属组织编号org code
   
-      logo: { type: 'string', maxlength: 200 },
       desc: { type: 'string', maxlength: 500 },
       data: { type: 'json' },
       pubed: { type: 'boolean', default: false },
@@ -27,30 +27,16 @@ module.exports = function () {
 
     toJSON: {
       transform (doc, ret) {
-        if (ret.logo) {
-          ret.logo = zeros.$resc.fullUrl(`${ret.logo}`);
+        let ts = (+doc.updatedAt);
 
-          if (doc.updatedAt) {
-            ret.logo += `?ts=${+doc.updatedAt}`;
-          }
-        }
-        
-        let status = '';
-        let statusName = '';
-
-        if (doc.frzn) {
-          status = 'frozen';
-          statusName = '已冻结';
-        } else if (doc.pubed) {
-          status = 'published';
-          statusName = '已发布';
-        } else {
-          status = 'unpublished';
-          statusName = '未发布';
+        if (doc.logo) {
+          ret.logo = zeros.$resc.fullUrl(`${doc.logo}?ts=${ts}`);
+          ret.logo_thumb = zeros.$resc.fullUrl(`${doc.logo}_thumb?ts=${ts}`);
         }
 
-        ret.status = status;
-        ret.statusName = statusName;
+        ret.avatar = zeros.$resc.fullUrl(`avatars/a_${doc.id}?ts=${ts}`);
+        ret.status = zeros.$model.status(doc);
+        ret.statusName = zeros.$model.statusName(ret.status);
         
         return ret;
       }

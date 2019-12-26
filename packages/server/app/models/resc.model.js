@@ -52,21 +52,9 @@ module.exports = function () {
         if (doc.avatar) {
           ret.avatar = rescThumbUrl(doc.avatar, doc.updatedAt);
         }
-        
-        let status = doc.status;
 
-        if (!status) {
-          if (doc.frzn) {
-            status = 'frzn';
-          } else if (doc.pubed) {
-            status = 'pubed';
-          } else {
-            status = 'unpubed';
-          }
-        }
-
-        ret.status = status;
-        ret.statusName = zeros.$model.statusName(status);
+        ret.status = zeros.$model.status(doc);
+        ret.statusName = zeros.$model.statusName(ret.status);
         
         return ret;
       }

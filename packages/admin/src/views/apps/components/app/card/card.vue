@@ -9,8 +9,8 @@
     </div>
     <div class="card-body" @click="onBodyClick">
       <div class="app-logo">
-        <div v-if="app.logo" class="image">
-          <img :src="app.logo" />
+        <div v-if="app.avatar" class="image">
+          <img :src="app.avatar" />
         </div>
         <div v-else class="no-image">
           <Icon :size="40" type="md-image" />
@@ -79,8 +79,8 @@ export default {
 .app-logo {
   .image {
     img {
-      width: 80px;
-      max-height: 80px;
+      width: 64px;
+      max-height: 64px;
       border-radius: 5px;
     }
   }

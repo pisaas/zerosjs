@@ -46,6 +46,26 @@ function loadModelGlobals (zeros) {
   zeros.$model = {
     ModelStatusNames,
 
+    status (doc) {
+      if (!doc) {
+        return '';
+      }
+
+      let status = doc.status;
+
+      if (!status) {
+        if (doc.frzn) {
+          status = 'frzn';
+        } else if (doc.pubed) {
+          status = 'pubed';
+        } else {
+          status = 'unpubed';
+        }
+      }
+
+      return status;
+    },
+
     statusName (status) {
       return ModelStatusNames[status] || status;
     }

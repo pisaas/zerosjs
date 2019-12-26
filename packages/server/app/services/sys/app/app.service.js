@@ -74,6 +74,7 @@ class AppService extends SysService {
     }
 
     let logoResc = await rescService.store('app/logo', {
+      appid: appModel.id,
       name: `app_${appModel.id}_logo`,
       url: logoData.tmpUrl
     }, params);

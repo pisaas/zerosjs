@@ -27,8 +27,6 @@ function initializeScoketIo (zeros, config, cb) {
   //   });
   // }
 
-  // console.log('options -------->', options)
-
   // zeros.configure(socketio(options));
   
   zeros.configure(socketio());

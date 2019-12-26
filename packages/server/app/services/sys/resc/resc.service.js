@@ -401,9 +401,11 @@ class RescService extends SysService {
       avatarKey = `avatars/${avatarKey}`;
     }
 
+    let ts = new Date().getTime();
+    
     if (rescModel.rtype === 'image') {
-      thumbUrl = zeros.$resc.thumbUrl(destRescKey);
-      avatarUrl = zeros.$resc.thumbUrl(destRescKey, 'avatar');
+      thumbUrl = zeros.$resc.thumbUrl(destRescKey) + '&ts=' + ts;
+      avatarUrl = zeros.$resc.thumbUrl(destRescKey, 'avatar') + '&ts=' + ts;
     } else {
       thumbUrl = data.thumb;
       avatarUrl = data.avatar;
