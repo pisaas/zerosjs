@@ -8,15 +8,6 @@
       <div class="app-item">
         <app-new-card @create="onCreate" />
       </div>
-      <div class="app-item">
-        <app-new-card @create="onCreate" />
-      </div>
-      <div class="app-item">
-        <app-new-card @create="onCreate" />
-      </div>
-      <div class="app-item">
-        <app-new-card @create="onCreate" />
-      </div>
     </div>
 
     <app-editor-modal ref="editorModal" @submit="onEditSubmit" />
@@ -54,7 +45,7 @@
 
     methods: {
       onCreate () {
-        this.$refs.editorModal.open('create');
+        this.$refs.editorModal.openCreate();
       },
 
       onEdit (data) {
@@ -62,7 +53,7 @@
           return
         }
 
-        this.$refs.editorModal.open('edit', { id: data.id })
+        this.$refs.editorModal.openUpdate(data.id)
       },
 
       onClick (data) {

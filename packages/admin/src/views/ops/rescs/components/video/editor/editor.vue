@@ -86,7 +86,8 @@
     </FormItem>
 
     <image-selector-modal ref="imgSelectorModal" single @selected="onThumbSelected" />
-    <image-cropper-modal ref="imgCropperModal" :aspect-ratio="1.5" @cropped="onThumbCropped" />
+    <image-cropper-modal ref="imgCropperModal"
+      :aspect-ratio="1.5" :cropperWidth="300" @cropped="onThumbCropped" />
   </Form>
 </template>
 
@@ -376,13 +377,10 @@ export default {
       this.resetErrorMsgs()
 
       let editMode = this.editMode
-      let formModel = this.formModel || {}
 
       if (this.videoErrorMsg) {
         return false
       }
-
-      this.formModel = Object.assign({}, formModel)
 
       let valid = await this.validateForm()
 
@@ -390,12 +388,14 @@ export default {
         return false
       }
 
+      let formModel = Object.assign({}, this.formModel)
+
       let result = null
 
       if (this.editMode === 'update') {
-        result = await this.update()
+        result = await this.update(formModel)
       } else {
-        result = await this.create()
+        result = await this.create(formModel)
       }
 
       this.$emit('save', result)
@@ -403,7 +403,7 @@ export default {
       return result
     },
 
-    async create () {
+    async create (formModel) {
       if (this.modelData && this.modelData.id) {
         return false
       }
@@ -422,12 +422,12 @@ export default {
           return Promise.reject(new Error('提交文件错误，请重试。'))
         }
         
-        let formModel = Object.assign({
+        formModel = Object.assign({
           store: 'app/material',
           rtype: 'video',
           key: uploadData.tmpKey,
           pfopid: res.persistentId
-        }, this.formModel)
+        }, formModel)
 
         let { duration } = this.videoFileMeta || {}
 
@@ -466,9 +466,7 @@ export default {
       })
     },
 
-    async update () {
-      let formModel = this.formModel
-      
+    async update (formModel) {
       if (this.isRecmdThumb) {
         formModel.thumbOffset = this.videoThumbOffset || 0
       } else if (this.customThumbOrigin) {
@@ -477,7 +475,7 @@ export default {
 
       formModel.thumbType = this.videoThumbType
 
-      let result = await this.$service('rescs').patch(this.rescId, this.formModel)
+      let result = await this.$service('rescs').patch(this.rescId, formModel)
       this.$emit('update', result)
       return result
     },

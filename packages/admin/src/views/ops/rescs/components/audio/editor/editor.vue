@@ -59,7 +59,9 @@
     </FormItem>
 
     <image-selector-modal ref="imgSelectorModal" single @selected="onThumbSelected" />
-    <image-cropper-modal ref="imgCropperModal" :aspect-ratio="1.5" @cropped="onThumbCropped" />
+    <image-cropper-modal ref="imgCropperModal"
+      :aspect-ratio="1.5" :cropperWidth="300"
+      @cropped="onThumbCropped" />
   </Form>
 </template>
 

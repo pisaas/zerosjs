@@ -1,6 +1,6 @@
 const { ApiService } = require('../../service');
 
-module.exports = function (app) {
+module.exports = function () {
   new Service().register('apps', {
     adapterService: {
       path: 'data/apps'
@@ -35,10 +35,8 @@ class Service extends ApiService {
   }
 
   async create (data, params) {
-    let { user } = params;
-
-    data.uid = user.id;
-    let app = await this.adapterService.create(data);
+    const appService = zeros.service('sys/app');
+    let app = await appService.create(data, params);
 
     return app;
   }
@@ -52,12 +50,8 @@ class Service extends ApiService {
       throw new zeros.$errors.BadRequest('无法获取应用');
     }
 
-    let logo = data.logo;
-    delete data.logo;
-
-    app = await this.adapterService.patch(id, data);
-
-    app = await zeros.service('sys/app').updateLogo(app, logo);
+    const appService = zeros.service('sys/app');
+    app = await appService.patch(id, data, params);
 
     return app;
   }

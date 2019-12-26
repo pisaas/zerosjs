@@ -44,4 +44,19 @@ exports.EntityService = class EntityService extends Service {
 
     return zeros.$service.register(path, this, opts);
   }
+
+  async findOne (query) {
+    query = Object.assign({}, query, { $limit: 1 });
+
+    let queryResults = await this.find({
+      query,
+      paginate: false
+    });
+
+    if (!queryResults.data || !queryResults.data.length) {
+      return null;
+    }
+
+    return queryResults.data[0];
+  }
 };

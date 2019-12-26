@@ -121,14 +121,15 @@ class RescService extends SysService {
     }
     
     let modelData = _.pick(data, [
-      'id', 'appid', 'uid', 'uname', 'rtype', 'pfopid',
+      'id', 'appid', 'uid', 'uname', 'rtype', 'refid', 'pfopid',
       'name', 'fname', 'desc', 'extra'
     ]);
 
     modelData = Object.assign({
       appid: app.id,
       uid: user.id,
-      uname: user.displayName
+      uname: user.displayName,
+      rtype: store.rtype,
     }, modelData, {
       store: storeKey,
       stype: store.type,
@@ -136,7 +137,7 @@ class RescService extends SysService {
     });
 
     // 为了防止多个await竞争，这里放弃await模式
-    return await Promise.resolve().then(() => {
+    return Promise.resolve().then(() => {
       if (modelData.id) {
         return;
       }
@@ -146,36 +147,40 @@ class RescService extends SysService {
         modelData.id = id;
       });
     }).then(() => {
+      return store.getKey({ model: modelData, data, options, params });
+    }).then((rescKeyData) => {
+      if (!modelData.refid) {
+        modelData.refid = rescKeyData.refid;
+      }
+
       if (modelData.pfopid) {
-        return this.storeByPfop(store, modelData, data, options, params);
+        return this.storeByPfop(store, modelData, rescKeyData, data, options, params);
       } else {
-        return this.storeByResc(store, modelData, data, options, params);
+        return this.storeByResc(store, modelData, rescKeyData, data, options, params);
       }
     });
   }
 
   // 根据资源Key或url存储资源
-  async storeByResc (store, modelData, data, options, params) {
+  async storeByResc (store, modelData, rescKeyData, data, options, params) {
     const srcBucket = 'tmp';
     const destBucket = 'resc';
 
     const qiniuService = zeros.service('open/qiniu');
     const dataService = zeros.service('data/rescs');
-
-    if (!store.getKey) {
-      throw new errors.InnerError('获取资源键错误。');
-    }
-
-    let destRescKeyData = null;
-
-    let modelChanges = {};
     
     let rescModel = await Promise.resolve().then(() => {
-      return store.getKey({ model: modelData, params });
+      if (rescKeyData) {
+        return rescKeyData;
+      }
+      return store.getKey({ model: modelData, data, options, params });
     }).then((res) => {
-      destRescKeyData = res;
-      modelChanges.path = res.key;
+      rescKeyData = res;
 
+      let modelChanges = {
+        path: rescKeyData.key
+      };
+  
       if (!modelData.name) {
         modelChanges.name = path.basename(modelData.path);
       }
@@ -189,7 +194,7 @@ class RescService extends SysService {
       }
     });
 
-    let destRescKey = destRescKeyData.key;
+    let destRescKey = rescKeyData.key;
 
     if (data.tmpKey) {
       await qiniuService.move({
@@ -200,7 +205,7 @@ class RescService extends SysService {
         options
       });
     } else if (data.url) {
-      return qiniuService.fetch({
+      await qiniuService.fetch({
         url: data.url,
         bucket: destBucket,
         key: destRescKey,
@@ -222,7 +227,7 @@ class RescService extends SysService {
     });
 
     // 保存缩略图
-    let thumbUpdates = await this.storeRescThumb(store, rescModel, data, {}, params);
+    let thumbUpdates = await this.storeRescThumb(store, rescModel, data, rescKeyData, params);
     modelUpdates = Object.assign(modelUpdates, thumbUpdates);
 
     modelUpdates.status = 'pubed';
@@ -233,7 +238,7 @@ class RescService extends SysService {
     return modelResult;
   }
 
-  async storeByPfop (store, modelData, data, options, params) {
+  async storeByPfop (store, modelData, rescKeyData, data, options, params) {
     const dataService = zeros.service('data/rescs');
 
     modelData.status = 'transcoding';
@@ -241,12 +246,20 @@ class RescService extends SysService {
     let rescModel = await dataService.create(modelData);
 
     // 保存缩略图
-    let thumbUpdates = await this.storeRescThumb(store, rescModel, data, {}, params);
+    let thumbUpdates = await this.storeRescThumb(store, rescModel, data, rescKeyData, params);
     rescModel = await dataService.patch(rescModel.id, thumbUpdates);
 
     let modelResult = await this.checkPersistent(rescModel, params);
 
     return modelResult;
+  }
+
+  get (id, params) {
+    return zeros.service('data/rescs').get(id, params);
+  }
+
+  find (params) {
+    return zeros.service('data/rescs').find(params);
   }
 
   async patch (id, data, params) {
@@ -273,8 +286,14 @@ class RescService extends SysService {
 
       const rescStore = this.getStore(rescModel.store);
 
-      return this.storeRescThumb(rescStore, rescModel, data, {}, params).then((thumbUpdates) => {
-        data = Object.assign({}, data, thumbUpdates);
+      return Promise.resolve().then(() => {
+        return rescStore.getKey({ model: rescModel, data, params });
+      }).then((rescKeyData) => {
+        return this.storeRescThumb(
+          rescStore, rescModel, data, rescKeyData, params
+        ).then((thumbUpdates) => {
+          data = Object.assign({}, data, thumbUpdates);
+        });
       });
     }).then(() => {
       return dataService.patch(id, data);
@@ -286,14 +305,16 @@ class RescService extends SysService {
    * @param {string} key 资源名
    * @param {ref} data 数据
    */
-  async remove (id) {
-    if (!id) {
+  async remove (rescModel) {
+    if (!rescModel) {
       throw new errors.InnerError('请提供资源id。');
     }
 
     const dataService = zeros.service('data/rescs');
 
-    let rescModel = await dataService.get(id);
+    if (typeof rescModel === 'string') {
+      rescModel = await dataService.get(rescModel);
+    }
 
     if (!rescModel) {
       throw new errors.InnerError('资源不存在或已删除。');
@@ -310,7 +331,7 @@ class RescService extends SysService {
     }
     
     // TODO: 是否需要在删除前先冻结记录
-    // rescModel = await dataService.patch(id, { frzn: true });
+    // rescModel = await dataService.patch(rescModel.id, { frzn: true });
 
     const qiniuService = zeros.service('open/qiniu');
 
@@ -335,39 +356,49 @@ class RescService extends SysService {
       await Promise.all(delOps);
     }
 
-    rescModel = await dataService.remove(id);
+    rescModel = await dataService.remove(rescModel.id);
 
     return rescModel;
   }
 
-  async storeRescThumb (rescStore, rescModel, data, options, params) {
-    options = Object.assign({}, options);
+  /**
+   * 同时删除多个，资源，但一次性不能删除超过50个
+   */
+  async removeMany (store, params) {
+    let { query } = params;
 
-    let { destRescKey, thumbKey, avatarKey } = options;
-    let thumbUrl = null;
-    let avatarUrl = null;
-
-    let destRescKeyData = await Promise.resolve().then(() => {
-      return rescStore.getKey({ model: rescModel, params });
+    query = Object.assign(query, {
+      store,
+      $limit: 50
     });
 
-    if (!destRescKey) {
-      if (rescModel.path) {
-        destRescKey = rescModel.path;
-      } else {
-        destRescKey = destRescKeyData.key;
-      }
-    }
+    let findResults = await this.find({
+      query,
+      pagination: false
+    });
+
+    let removeOps = findResults.data.map((it) => {
+      return this.remove(it);
+    });
+
+    let results = await Promise.all[removeOps];
+    return results;
+  }
+
+  async storeRescThumb (rescStore, rescModel, data, options) {
+    options = Object.assign({}, options);
+
+    let { key, thumbKey, avatarKey } = options;
+    let destRescKey = key || rescModel.path;
+    let thumbUrl = null;
+    let avatarUrl = null;
 
     if (!thumbKey) {
       thumbKey = `${destRescKey}_thumb`;
     }
 
-    if (!avatarKey) {
-      // 用户头像
-      if (rescStore.avatar && destRescKeyData.avatarKey) {
-        avatarKey = `avatars/${destRescKeyData.avatarKey}`;
-      }
+    if (avatarKey && rescStore.avatar) {
+      avatarKey = `avatars/${avatarKey}`;
     }
 
     if (rescModel.rtype === 'image') {
@@ -508,7 +539,7 @@ class RescService extends SysService {
 
     const store = this.getStore(rescModel.store);
 
-    rescModel = await this.storeByResc (store, rescModel, {
+    rescModel = await this.storeByResc (store, rescModel, null, {
       tmpKey
     }, { force: true }, params);
 

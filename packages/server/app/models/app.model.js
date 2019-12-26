@@ -29,6 +29,10 @@ module.exports = function () {
       transform (doc, ret) {
         if (ret.logo) {
           ret.logo = zeros.$resc.fullUrl(`${ret.logo}`);
+
+          if (doc.updatedAt) {
+            ret.logo += `?ts=${+doc.updatedAt}`;
+          }
         }
         
         let status = '';

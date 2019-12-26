@@ -1,15 +1,13 @@
 <template>
-  <Modal ref="editorModal" v-model="showModal" :title="modalTitle"
-    class="app-editor-modal" :width="600" :loading="loading"
+  <Modal class="app-editor-modal"
+    v-model="showModal" :title="modalTitle"
+    :width="600" :loading="loading" :mask-closable="false"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
-    <div class="modal-container">
-      <app-editor ref="editor"></app-editor>
-    </div>
+    <app-editor ref="editor"></app-editor>
   </Modal>
 </template>
 
 <script>
-
 import AppEditor from './editor'
 
 export default {
@@ -19,7 +17,6 @@ export default {
 
   data () {
     return {
-      appId: null,
       editMode: 'create',
       showModal: false,
       loading: true
@@ -28,16 +25,19 @@ export default {
 
   computed: {
     modalTitle () {
-      if (this.editMode === 'edit') {
-        return `编辑应用 (${this.appId || ''})`
+      if (this.editMode === 'update') {
+        return `编辑应用`
       }
       return '新建应用'
     }
   },
 
+  mounted () {
+  },
+
   methods: {
     onOk () {
-      this.$refs.editor.submit().then((res) => {
+      this.$refs.editor.save().then((res) => {
         this.resetLoading()
         
         if (res === false) {
@@ -64,30 +64,16 @@ export default {
       this.$emit('close', formModel)
     },
 
-    open (mode, options) {
-      let opts = Object.assign({}, options)
-
-      switch (mode) {
-        case 'create':
-          this.create()
-          break;
-        case 'edit':
-          this.edit(opts.id)
-          break;
-      }
-    },
-
-    create () {
+    openCreate () {
       this.editMode = 'create'
-      this.$refs.editor.create().then(() => {
+      this.$refs.editor.loadCreate().then(() => {
         this.showModal = true
       })
     },
 
-    edit (appId) {
-      this.editMode = 'edit'
-      this.$refs.editor.edit(appId).then(() => {
-        this.appId = appId
+    openUpdate (id, cb) {
+      this.editMode = 'update'
+      this.$refs.editor.loadUpdate(id).then(() => {
         this.showModal = true
       }).catch(() => {
         this.close()
@@ -98,6 +84,15 @@ export default {
       this.showModal = false
     },
 
+    reset () {
+      this.editMode = 'create'
+      this.formModel = null
+
+      if (this.$refs.editor) {
+        this.$refs.editor.reset()
+      }
+    },
+
     resetLoading () {
       this.loading = false
 
@@ -105,17 +100,7 @@ export default {
         this.loading = true
       })
     }
-  },
-
-  mounted () {
   }
 }
 
 </script>
-
-<style lang="less" scoped>
-.modal-container {
-  display: flex;
-  justify-content: center;
-}
-</style>

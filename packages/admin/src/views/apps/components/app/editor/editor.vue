@@ -1,5 +1,5 @@
 <template>
-  <Form v-if="formModel" class="editor-form padding" ref="form"
+  <Form v-if="formModel" ref="form" class="editor-form padding"
     :model="formModel" :rules="formRules" :label-width="80">
     <FormItem label="应用名称" required prop="name">
       <Input v-model="formModel.name" :maxlength="50" placeholder="请输入应用名称 (50字以内)" />
@@ -19,44 +19,26 @@
           style="display: inline-block;">
           <Button type="primary" size="small">选择图片</Button>
         </image-upload>
-        <Button v-if="isLogoChanged" class="q-ml-sm" size="small"
-          @click="onLogoReset">还原</Button>
+        <Button v-if="logoData.file && isLogoChanged" class="q-ml-sm" size="small"
+          @click="onLogoReset">取消</Button>
       </div>
 
-      <div class="cropper">
+      <div v-show="logoData.file" class="cropper">
         <image-cropper ref="logoCropper"
           :aspectRatio="1" :viewMode="1"
           :cropperHeight="240" :cropperWidth="200"
           :previewHeight="220" no-selection />
       </div>
+
+      <div v-if="!isLogoChanged && logoData.url" class="logo-photo flex-center panel-shadow">
+        <img :src="logoData.url" @click="onLogoPreview" />
+      </div>
+      
+      <Modal title="预览" transfer v-model="isLogoPreview"
+        cancel-text='' :z-index="9000">
+        <img :src="logoData.url" style="width: 100%">
+      </Modal>
     </FormItem>
-    
-    <!-- <FormItem label="应用头像">
-      <Row>
-        <i-col span="6" class="text-center">
-          <div class="logo-upload">
-            <div class="logo-photo flex-center panel-shadow">
-              <img v-if="logoUrl" :src="logoUrl" @click="onLogoPreview" />
-              <Icon v-else type="md-image" size="120"></Icon>
-            </div>
-            <div class="logo-actions q-py-sm">
-              <image-upload ref="logoUploader" @image-selected="onLogoSelected"
-                style="display: inline-block;">
-                <Button type="primary" size="small">选择</Button>
-              </image-upload>
-              <Button v-if="logoUrl" class="q-ml-sm" size="small"
-                @click="onLogoCrop">剪切</Button>
-              <Button v-if="isLogoChanged" class="q-ml-sm" size="small"
-                @click="onLogoReset">还原</Button>
-            </div>
-          </div>
-          <Modal title="预览" transfer v-model="isLogoPreview"
-            cancel-text='' :z-index="9000">
-            <img :src="logoUrl" style="width: 100%">
-          </Modal>
-        </i-col>
-      </Row>
-    </FormItem> -->
   </Form>
 </template>
 
@@ -64,7 +46,7 @@
 import ImageUpload from '@components/upload/image-upload'
 import { ImageCropper } from '@resc-components/image/cropper'
 
-const LogoImageSpec = {
+const LogoSpec = {
   MimeType: 'image/png', // 图片格式
   MaxSize: 500 * 1024, // 最大图片大小 500k
   MaxWidth: 600,   // 最大图片宽度
@@ -81,33 +63,28 @@ export default {
   data () {
     return {
       editMode: 'create', // 编辑模式（update, create）
-      maxFileSize: 500, // 单位kb
-      appId: null,
-      uploadUrl: '',
       isLogoPreview: false,
-      logoUrl: null,
+      appId: null,
+      modelData: null,
       formModel: {},
-      confirmPassword: null,
+      logoData: {},
       formRules: {
         name: [ { required: true, message: '请输入应用名', trigger: 'blur' } ],
         code: [ { required: true, message: '请输入应用编号', trigger: 'blur' } ],
-        desc: [ { required: true, message: '请输入应用简介', trigger: 'blur' } ]
+        desc: [ { required: true, message: '请输入应用简介', trigger: 'blur' } ],
+        logo: [ { required: true, message: '请选择应用头像', trigger: 'blur' } ]
       }
     }
   },
 
   computed: {
     isLogoChanged () {
-      if ((!this.formModel && this.logoUrl) ||
-        (this.formModel.logo !== this.logoUrl &&
-        this.formModel.logoOrigin !== this.logoUrl)) {
-        return true
-      }
-      return false
+      let logoData = this.logoData || {}
+      return !!(logoData.file || logoData.tmpUrl)
     },
 
     logoMaxSizeStr () {
-      return this.$util.filesize(LogoImageSpec.MaxSize)
+      return this.$util.filesize(LogoSpec.MaxSize)
     }
   },
 
@@ -115,40 +92,22 @@ export default {
   },
 
   methods: {
-    onOrgFilter (query) {
-      setTimeout(() => {
-        this.loadOrgData(query)
-      }, 1000);
-    },
-
     onLogoSelected (file) {
       if (!file) {
         return
       }
 
-      let fileSize = file.size
-
-      if (fileSize > (this.maxFileSize * 1024)) {
-        this.$app.toast(`文件 ${file.name} 太大，不能超过 ${this.maxFileSize}K。`, {
+      if (file.size > LogoSpec.MaxSize) {
+        this.$app.toast(`文件 ${file.name} 太大，不能超过 ${this.logoMaxSizeStr}。`, {
           type: 'warning'
         })
         return
       }
 
       this.$media.readFileAsDataUrl(file).then((url) => {
+        this.resetLogoData({ file })
         this.$refs.logoCropper.load({ url })
       })
-
-      // this.$media.scalePhoto.call(this, file, LogoImageSpec).then((url) => {
-      //   if (!url) {
-      //     return
-      //   }
-      //   this.logoUrl = url
-      // })
-    },
-
-    onLogoCrop () {
-
     },
 
     onLogoPreview () {
@@ -156,41 +115,112 @@ export default {
     },
 
     onLogoReset () {
-      let formModel = this.formModel
-
-      if (this.$refs.logoUploader) {
-        this.$refs.logoUploader.reset()
-      }
-
-      if (!formModel) {
-        this.logoUrl = null
-      } else {
-        this.logoUrl = (formModel.logoOrigin || formModel.logo || null)
-      }
+      this.resetLogo()
     },
 
-    create () {
+    isAllowedEdit (field) {
+      if (!field) {
+        return true
+      }
+
+      let modelData = this.modelData
+
+      switch (field) {
+        case 'code':
+          return !modelData || !modelData.pubed
+      }
+
+      return true
+    },
+
+    loadCreate () {
       this.reset()
       this.editMode = 'create'
 
       return Promise.resolve()
     },
 
-    edit (appId) {
+    loadUpdate (appId) {
       this.reset()
-      this.editMode = 'edit'
+      this.editMode = 'update'
       this.appId = appId
 
       return this.loadData()
     },
 
+    async save () {
+      let editMode = this.editMode
+
+      let valid = await this.validateForm()
+
+      if (!valid) {
+        return false
+      }
+
+      let uploadResult = await this.uploadLogo()
+
+      let formModel = Object.assign({
+        tmpLogoUrl: this.logoData.tmpUrl
+      }, this.formModel)
+
+      delete formModel.logo
+
+      let result
+      if (this.editMode === 'update') {
+        result = await this.update(formModel)
+      } else {
+        result = await this.create(formModel)
+      }
+
+      this.$emit('save', result)
+
+      return result
+    },
+
+    async create (formModel) {
+      if (this.modelData && this.modelData.id) {
+        return false
+      }
+
+      return this.$service('apps').create(formModel).then((res) => {
+        this.appId = res.id
+        this.modelData = res
+
+        this.$emit('create', res)
+        return res
+      })
+    },
+
+    async update (formModel) {
+      return this.$service('apps').patch(this.appId, formModel).then((res) => {
+        this.modelData = res
+
+        this.$emit('update', res)
+      })
+    },
+
     reset () {
+      this.editMode = 'create'
       this.appId = null
-      this.logoUrl = null
+      this.modelData = null
       this.formModel = {}
+      this.logoData = {}
+
+      this.resetLogo()
 
       if (this.$refs.form) {
         this.$refs.form.resetFields()
+      }
+    },
+
+    resetLogo () {
+      let modelData = this.modelData
+      this.logoData = {}
+
+      if (modelData) {
+        this.resetLogoData({
+          url: modelData.logo
+        })
       }
 
       if (this.$refs.logoUploader) {
@@ -202,84 +232,77 @@ export default {
       }
     },
 
-    submit () {
-      let editMode = this.editMode
-      let formModel = this.formModel
+    validateForm () {
+      let { url, tmpUrl, file } = this.logoData
+      this.formModel.logo = tmpUrl || url || 'file'
 
-      return new Promise((resolve, reject) => {
-        if (!formModel) {
-          return resolve(false)
-        }
-        this.$refs.form.validate((valid) => {
-          return resolve(valid)
-        })
-      }).then((valid) => {
-        if (!valid) {
-          return false
-        }
-        
-        let appService = this.$service('apps')
-        
-        return Promise.resolve().then(() => {
-          if (editMode !== 'create') {
-            return this.appId
-          }
-
-          return appService.create(formModel).then((res) => {
-            return res.id
-          })
-        }).then((appId) => {
-          return this.uploadLogo({ appId }).then((res) => {
-            if (res && res.key) {
-              formModel.logo = { key: res.key }
-            }
-
-            return appService.patch(appId, formModel)
+      return new Promise ((resolve) => {
+        this.$nextTick(() => {
+          this.$refs.form.validate((valid) => {
+            resolve(valid)
           })
         })
       })
     },
 
-    uploadLogo () {
-      let logoUrl = this.logoUrl
-
-      if (!this.$media.isImageDataUrl(logoUrl)) {
-        return Promise.resolve(null)
-      }
-
-      let bolb = this.$media.dataURItoBlob(logoUrl)
-
-      // 上传并保存头像文件
-      return this.$apis.app.uploadFile(bolb)
+    resetLogoData (data) {
+      this.logoData = Object.assign({
+        url: null,
+        file: null,
+        tmpKey: '',
+        tmpUrl: '',
+      }, this.logoData, data)
     },
 
-    isAllowedEdit (field) {
-      if (!field) {
-        return true
+    async uploadLogo () {
+      let logoData = this.logoData
+
+      if (!logoData || !logoData.file) {
+        return logoData
       }
 
-      switch (field) {
-        case 'code':
-          return !this.formModel.pubed
-      }
+      // 上传并保存头像文件
+      return this.$apis.zeros.uploadFile(logoData.file).then((res) => {
+        let tmpKey = res.key
+        let tmpUrl = this.$app.tmpRescUrl(tmpKey)
 
-      return true
+        return this.$refs.logoCropper.getData({
+          replaceUrl: tmpUrl
+        }).then((cropData) => {
+          this.resetLogoData({
+            tmpKey,
+            tmpUrl: cropData.croppedUrl
+          })
+
+          return this.logoData
+        })
+      }).catch ((err) => {
+        let errorMsg = '上传文件错误。'
+
+        if (err.message) {
+          errorMsg = err.message
+        }
+
+        this.$app.toast(errorMsg)
+      })
     },
 
     loadData () {
       if (!this.appId) {
         this.formModel = {}
         this.$refs.form.resetFields()
-
         return Promise.resolve()
       }
 
       return this.$service('apps').get(this.appId).then((res) => {
-        let formModel = res
-        this.formModel = formModel
-        this.logoUrl = formModel.logo
+        this.modelData = res
+        this.formModel = _.pick(res, ['name', 'code', 'desc'])
+
+        this.resetLogoData({ url: res.logo })
+
+        this.$emit('load', res)
         
-        return formModel
+        return res
       })
     }
   }
@@ -300,6 +323,8 @@ export default {
 
 .logo-photo {
   height: @logoPhotoSize;
+  width: @logoPhotoSize;
+
   border-radius: 4px;
 
   &>i {

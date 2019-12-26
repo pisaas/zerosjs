@@ -4,7 +4,7 @@
     :title="title" :width="width"
     :loading="loading" :mask-closable="false"
     @on-ok="onOk" @on-visible-change="onVisibleChange">
-    <image-cropper ref="cropper" />
+    <image-cropper ref="cropper" :cropperWidth="cropperWidth" />
   </Modal>
 </template>
 
@@ -17,15 +17,10 @@ export default {
   },
 
   props: {
-    title: {
-      type: String,
-      default: '图片剪切'
-    },
-    width: {
-      type: Number,
-      default: 650
-    },
-    aspectRatio: Number
+    title: { type: String, default: '图片剪切' },
+    width: { type: Number, default: 650 },
+    aspectRatio: Number,
+    cropperWidth: Number
   },
 
   data () {
@@ -39,7 +34,7 @@ export default {
     onOk () {
       let editMode = this.editMode
 
-      this.$refs.cropper.crop().then((res) => {
+      this.$refs.cropper.getData().then((res) => {
         this.resetLoading()
         
         if (!res) {

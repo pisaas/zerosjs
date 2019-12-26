@@ -20,25 +20,20 @@ module.exports = function (app) {
     ],
 
     'stores': {
-      'avatar': {
-        'name': '头像', // 用户/应用头像
-        'type': 'app',
-        'storage': 'qiniu',
-        'getKey': (options) => {
-          return { key: `avatars/${options.key}`, options };
-        }
-      },
-
       'app/logo': {
         'name': '应用Logo',
         'type': 'app',
+        'rtype': 'image',
         'avatar': true,
         'storage': 'qiniu',
         'getKey': (options) => {
-          let opts = _.defaultsDeep(options, { ts: (+new Date()) });
+          let opts = Object.assign({}, options);
+          let { appid } = opts.model;
+
           return {
-            key: `apps/${opts.appid}/logo_${opts.ts}`,
-            avatarKey: `a_${opts.appid}`,
+            refid: appid,
+            key: `apps/${appid}/logo`,
+            avatarKey: `a_${appid}`,
             options: opts
           };
         }
@@ -49,11 +44,12 @@ module.exports = function (app) {
         'type': 'app',
         'storage': 'qiniu',
         'getKey': (options) => {
-          let opts = options || {};
-          let { model } = opts;
+          let opts = Object.assign({}, options);
+          let { id, appid } = opts.model;
 
           return {
-            key: `apps/${model.appid}/m/${model.id}`,
+            refid: appid,
+            key: `apps/${appid}/m/${id}`,
             options: opts
           };
         }
@@ -65,10 +61,13 @@ module.exports = function (app) {
         'avatar': true,
         'storage': 'qiniu',
         'getKey': (options) => {
-          let opts = _.defaultsDeep(options, { ts: (+new Date()) });
+          let opts = Object.assign({}, options);
+          let { uid } = opts.model;
+
           return {
-            key: `users/${opts.uid}/avatar_${opts.ts}`,
-            avatarKey: `u_${opts.uid}`,
+            refid: uid,
+            key: `users/${uid}/avatar`,
+            avatarKey: `u_${uid}`,
             options: opts
           };
         }
@@ -79,9 +78,12 @@ module.exports = function (app) {
         'type': 'usr',
         'storage': 'qiniu',
         'getKey': (options) => {
-          let opts = options || {};
+          let opts = Object.assign({}, options);
+          let { model, key } = opts;
+
           return {
-            key: `apps/${opts.appid}/users/${opts.uid}/${opts.key}`,
+            refid: model.uid,
+            key: `apps/${model.appid}/users/${model.uid}/${key}`,
             options: opts
           };
         }
@@ -92,9 +94,12 @@ module.exports = function (app) {
         'type': 'app',
         'storage': 'qiniu',
         'getKey': (options) => {
-          let opts = options || {};
+          let opts = Object.assign({}, options);
+          let { model, tid, key } = opts;
+          
           return {
-            key: `apps/${opts.appid}/t/${opts.tid}/${opts.key}`,
+            refid: tid,
+            key: `apps/${model.appid}/t/${tid}/${key}`,
             options: opts
           };
         }
@@ -106,10 +111,13 @@ module.exports = function (app) {
         'avatar': true,
         'storage': 'qiniu',
         'getKey': (options) => {
-          let opts = _.defaultsDeep(options, { ts: (+new Date()) });
+          let opts = Object.assign({}, options);
+          let { rid } = opts;
+          
           return {
-            key: `rooms/${opts.rcode}/avatar_${opts.ts}`,
-            avatarKey: `r_${opts.rcode}`,
+            refid: rid,
+            key: `rooms/${rid}/avatar`,
+            avatarKey: `r_${rid}`,
             options: opts
           };
         }

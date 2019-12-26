@@ -100,25 +100,18 @@ class Service extends ApiService {
       throw new zeros.$errors.BadRequest('一次删除不能超过50条资源信息');
     }
 
-    let findResult = await this.adapterService.find({
+    let findResults = await this.adapterService.find({
       query: {
         appid: app.id,
         id: { $in: ids },
         frzn: { $ne: true }
-      }
-    });
-
-    if (!findResult.total) {
-      return {};
-    }
-
-    let removeIds = findResult.data.map((it) => {
-      return it.id;
+      },
+      pagination: false
     });
 
     const rescService = zeros.service('sys/resc');
 
-    let removeOps = removeIds.map((it) => {
+    let removeOps = findResults.data.map((it) => {
       return rescService.remove(it);
     });
 

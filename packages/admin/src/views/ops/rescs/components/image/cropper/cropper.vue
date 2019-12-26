@@ -10,7 +10,7 @@
             :preview="`#${preivewImageId}`" :ready="onCropperReady">
           </vue-cropper>
         </div>
-        <!-- <div v-if="!url" class="no-data">
+        <div v-if="!url" class="no-data">
           <slot v-if="!noSelection" name="selector">
             <image-upload ref="imgUpload" @image-selected="onImageSelected">
               <Button type="primary" size="small">选择图片</Button>
@@ -19,7 +19,7 @@
         </div>
         <div v-else-if="loading" class="loading-data">
           <Spin />
-        </div> -->
+        </div>
       </div>
     </div>
     <div class="preview-section">
@@ -78,7 +78,6 @@ export default {
       preivewImageId,
       cropAspectRatio: this.aspectRatio,
       url: '',
-      previewUrl: '',
       croppedUrl: '',
       loading: true
     }
@@ -87,6 +86,13 @@ export default {
   computed: {
     cropper () {
       return this.$refs.cropper
+    },
+
+    innerCropper () {
+      if (!this.cropper || !this.cropper.cropper) {
+        return null
+      }
+      return this.cropper.cropper
     },
 
     cropperSectionStyle () {
@@ -113,12 +119,14 @@ export default {
       this.loading = false
     },
 
-    async crop () {
+    async getData (options) {
+      let { replaceUrl } = Object.assign({}, options);
+
       let croppedData = this.cropper.getData()
 
       let { width, height, x, y } = croppedData
 
-      let url = this.url
+      let url = replaceUrl || this.url
       let imageMogr2Str = `imageMogr2/crop/!${width}x${height}a${x}a${y}`
 
       let croppedUrl
@@ -150,10 +158,14 @@ export default {
     reset () {
       this.cropAspectRatio = this.aspectRatio
       this.url = ''
-      this.previewUrl = ''
       this.croppedUrl = ''
-      this.cropper.replace('')
       this.loading = true
+      this.cropper.replace('')
+
+      if (this.innerCropper) {
+        // this.innerCropper.previews.forEach((it) => {
+        // })
+      }
     },
 
     reloadCrop () {

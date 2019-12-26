@@ -17,8 +17,8 @@
         </div>
       </div>
       <div class="app-info">
-        <div><b>应用状态：</b>{{ app.statusName }}</div>
-        <div><b>应用描述：</b>{{ app.desc }}</div>
+        <div><b>描述：</b>{{ app.desc }}</div>
+        <div><b>状态：</b>{{ app.statusName }}</div>
       </div>
     </div>
 
@@ -81,6 +81,7 @@ export default {
     img {
       width: 80px;
       max-height: 80px;
+      border-radius: 5px;
     }
   }
 }

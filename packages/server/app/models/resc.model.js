@@ -11,6 +11,7 @@ module.exports = function () {
       appid: { type: 'string', required: true, maxlength: 50 }, // 所属appid
       uid: { type: 'string', required: true, maxlength: 50 },  // 一般为创建人id
       uname: { type: 'string', maxlength: 100 },  // 所有人名称
+      refid: { type: 'string', required: true, maxlength: 50 },  // 关联属性id
 
       name: { type: 'string', required: true, maxlength: 100 }, // 资源名
       stype: { type: 'string', required: true, protected: true, maxlength: 100 }, // 存储类型（app, tpc, usr）
