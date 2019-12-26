@@ -1,45 +1,50 @@
 <template>
   <div class="image-selector page-list" :class="{ 'single-select': single }">
-    <div class="list-header">
-      <div class="flex-main">
-        <Input v-model="listQuery.search" icon="ios-search" placeholder="名称/描述/ID"
-          @on-enter="onQuery" style="width: 180px" />
+    <page-section list-section fixed>
+      <div class="list-header">
+        <div class="body">
+          <Input class="list-search"
+            v-model="listQuery.search"
+            icon="ios-search" placeholder="名称/描述/ID"
+            @on-enter="onQuery" />
 
-        <resc-uploader ref="uploader"
-          class="inline q-ml-md"
-          modal-title="图片上传"
-          upload-text="上传图片"
-          upload-icon="md-image"
-          store-key="app/material" resc-type="image"
-          open-file close-when-completed multi
-          @completed="onUploadCompleted" />
+          <resc-uploader ref="uploader"
+            class="inline q-ml-md"
+            modal-title="图片上传"
+            upload-text="上传图片"
+            upload-icon="md-image"
+            store-key="app/material" resc-type="image"
+            open-file close-when-completed multi
+            @completed="onUploadCompleted" />
+        </div>
+        <div class="tail">
+          <list-nav :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
+            @on-change="onPageChange" />
+        </div>
       </div>
-      <div class="tail">
-        <list-nav :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
-          @on-change="onPageChange" />
+      
+      <div class="list-body">
+        <div v-if="listItems.length" class="items-checkbox-group">
+          <CheckboxGroup v-model="selItemIds" @on-change="onSelectionChange" >
+            <Checkbox v-for="it in listItems" :label="it.id" :key="it.id"
+              class="image-item-checkbox" @click.native="onItemClick(it)">
+              <div class="image-item">
+                <div class="thumb" :style="{ 'backgroundImage': `url(${it.thumb})` }" />
+                <div class="title text-ellipsis" :title="it.name">{{ it.name }}</div>
+              </div>
+            </Checkbox>
+          </CheckboxGroup>
+        </div>
+        <div v-else class="no-data">
+          <div class="notice">暂无图片</div>
+        </div>
       </div>
-    </div>
-    <div class="list-body">
-      <div v-if="listItems.length" class="items-checkbox-group">
-        <CheckboxGroup v-model="selItemIds" @on-change="onSelectionChange" >
-          <Checkbox v-for="it in listItems" :label="it.id" :key="it.id"
-            class="image-item-checkbox" @click.native="onItemClick(it)">
-            <div class="image-item">
-              <div class="thumb" :style="{ 'backgroundImage': `url(${it.thumb})` }" />
-              <div class="title text-ellipsis" :title="it.name">{{ it.name }}</div>
-            </div>
-          </Checkbox>
-        </CheckboxGroup>
-      </div>
-      <div v-else class="no-data">
-        <div class="notice">暂无图片</div>
-      </div>
-    </div>
 
-    <div class="list-footer">
-      <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
-        show-total @on-change="onPageChange"></Page>
-    </div>
+      <div class="list-footer">
+        <Page :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
+          show-total @on-change="onPageChange"></Page>
+      </div>
+    </page-section>
 
     <div class="selector-footer">
       <div class="flex-main">
@@ -186,7 +191,7 @@ export default {
 }
 
 .list-body {
-  border: 1px solid @border-color;
+  border-top: 1px solid @light-border-color;
   padding: 10px 15px;
   height: 320px;
 }
@@ -226,6 +231,10 @@ export default {
 
 <style lang="less">
 .image-selector {
+  .page-section {
+    box-shadow: none;
+  }
+
   .image-item-checkbox {
     position: relative;
 

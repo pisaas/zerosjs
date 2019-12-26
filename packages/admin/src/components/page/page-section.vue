@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <div v-if="showBody" class="page-section-body">
+    <div v-if="showBody" class="page-section-body" :style="bodyStyle">
       <slot></slot>
     </div>
 
@@ -41,7 +41,9 @@ export default {
     noPaddingTop: Boolean,
     transparent: Boolean,
     flex: Boolean,
-    title: String
+    title: String,
+    headerHeight: { type: String, default: '45px' },
+    footerHeight: { type: String, default: '55px' }
   },
 
   computed: {
@@ -71,6 +73,14 @@ export default {
 
     showBody () {
       return this.$slots.default !== undefined
+    },
+
+    bodyStyle () {
+      if (!this.fixed) {
+        return
+      }
+
+      return `padding-top: ${this.headerHeight}; padding-bottom: ${this.footerHeight};`
     }
   },
 
@@ -201,8 +211,6 @@ export default {
       .page-section-body {
         height: 100%;
         padding: 0;
-        padding-top: @listHeaderHeight;
-        padding-bottom: @listFooterHeight;
       }
 
       .list-header {
