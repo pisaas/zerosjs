@@ -1,6 +1,6 @@
 <template>
   <page-section no-padding transparent>
-    <div class="flex">
+    <div class="app-list">
       <div v-for="item in dataItems" :key="item.id"
         class="app-item">
         <app-card :app="item" @edit="onEdit" @click="onClick" />
@@ -119,6 +119,12 @@
 </script>
 
 <style lang="less" scoped>
+.app-list {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
 .app-item {
   min-width: (@screen-size-sm / 3);
   justify-content: space-between;
