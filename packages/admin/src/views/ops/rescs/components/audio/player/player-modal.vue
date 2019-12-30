@@ -34,11 +34,14 @@ export default {
       this.$emit('close')
     },
 
-    open (params) {
-      this.$refs.player.load(params)
-      if (params.title) {
-        this.title = params.title
-      }
+    open (data, options) {
+      options = Object.assign({
+        height: 300,
+        width: 498,
+      }, options)
+      
+      this.$refs.player.load(data, options)
+      this.title = data.title || data.name
 
       this.showModal = true
     },

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
 // 在toolbar上展示redo undo功能
-export default class RedoUndo {
+export default class UndoRedo {
   constructor(quill, options) {
     if (!options) {
       return
@@ -58,12 +58,10 @@ export default class RedoUndo {
   }
 
   undo () {
-    console.log('undo ------>')
     this.quill.history.undo()
   }
 
   redo () {
-    console.log('redo ------>')
     this.quill.history.redo()
   }
 }

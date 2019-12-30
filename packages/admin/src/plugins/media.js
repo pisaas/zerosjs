@@ -83,12 +83,45 @@ function initialize () {
     })
   }
 
+  function getBgAudioEl () {
+    return document.getElementById('appBgAudio')
+  }
+
+  function playBgAudio (url) {
+    const bgAudio = getBgAudioEl()
+
+    if (!bgAudio) {
+      return
+    }
+
+    if (!url && bgAudio.src || url && bgAudio.src != url) {
+      bgAudio.src = url
+    }
+
+    if (bgAudio.src) {
+      bgAudio.play()
+    }
+  }
+
+  function stopBgAudio () {
+    const bgAudio = getBgAudioEl()
+
+    if (!bgAudio) {
+      return
+    }
+
+    bgAudio.pause()
+  }
+
   return {
     scalePhoto,
     dataURItoBlob,
     isImageDataUrl,
     readFileAsDataUrl,
-    getAudioMetadata
+    getAudioMetadata,
+    getBgAudioEl,
+    playBgAudio,
+    stopBgAudio
   }
 }
 

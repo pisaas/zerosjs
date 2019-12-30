@@ -209,6 +209,7 @@ export default {
     .list-item {
       cursor: pointer;
       padding: 10px;
+      position: relative;
 
       &-extra {
         width: 50px;
@@ -272,9 +273,17 @@ export default {
         height: calc(100% - 100px);
       }
 
+      ivu-list-item-extra
+
       &-items {
         height: 100%;
         overflow: scroll;
+      }
+
+      &-item-extra {
+        position: absolute;
+        right: 0px;
+        padding: 10px;
       }
     }
   }

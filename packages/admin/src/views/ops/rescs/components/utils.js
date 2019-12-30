@@ -7,6 +7,12 @@ export const RescMimeTypes = {
   'audio': "audio/*"
 }
 
+export const RescTypeNames = {
+  'image': '图片',
+  'audio': '音频',
+  'video': '视频'
+}
+
 // 获取文件上传key
 export function isSameFile (file1, file2) {
   if (!file1 || !file2) {
@@ -76,7 +82,11 @@ export function rescUpload (file, options) {
   })
 }
 
-export function checkPersistent (rescId) {
+export function checkPersistent (rescId, options) {
+  options = Object.assign({
+    silent: false
+  }, options)
+
   if (!rescId) {
     return Promise.resolve()
   }
@@ -85,6 +95,22 @@ export function checkPersistent (rescId) {
 
   return vmService('resc').get('check_transcoding', {
     query: { id: rescId }
+  }).then((res) => {
+    if (options.silent === true) {
+      return res
+    }
+
+    let rtypeName = RescTypeNames[res.rtype] || '资源'
+
+    if (res.status === 'transcoding') {
+      this.$app.toast('正在转码中 ...')
+    } else if (res.pubed) {
+      this.$app.toast(`${rtypeName}已发布。`, { type: 'success' })
+    } else {
+      this.$app.toast(`${rtypeName} ${res.statusName}`)
+    }
+
+    return res
   })
 }
 
@@ -102,6 +128,7 @@ export function postPersistent (tmpKey, rtype) {
 
 export default {
   RescMimeTypes,
+  RescTypeNames,
   isSameFile,
   isImageFile,
   getFileThumbnail,

@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import { checkPersistent } from '@resc-components/utils'
 import { AudioPlayerModal } from '@resc-components/audio/player'
 import { AudioEditorModal } from '@resc-components/audio/editor'
 
@@ -124,10 +125,8 @@ export default {
         return
       }
 
-      this.$refs.playerModal.open({
-        title: row.name,
-        src: row.path,
-        autoPlay: true
+      this.$refs.playerModal.open(row, {
+        autoplay: true
       })
     },
 
@@ -191,21 +190,9 @@ export default {
         return
       }
 
-      this.$service('resc').get('check_transcoding', {
-        query: { id: row.id }
-      }).then((res) => {
-        if (res.status === 'transcoding') {
-          this.$app.toast('正在转码中 ...')
-        }
-
+      checkPersistent(row.id).then((res) => {
         if (res.status === row.status) {
           return
-        }
-
-        if (res.pubed) {
-          this.$app.toast('音频已发布。', { type: 'success' })
-        } else {
-          this.$app.toast(`音频 ${res.statusName}`)
         }
 
         this.loadData()

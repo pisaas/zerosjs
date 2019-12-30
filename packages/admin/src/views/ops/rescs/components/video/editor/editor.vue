@@ -566,7 +566,7 @@ export default {
 
         checking = true
 
-        checkPersistent(modelData.id).then((res) => {
+        checkPersistent(modelData.id, { silent: true }).then((res) => {
           this.modelData = res
           checking = false
 

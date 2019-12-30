@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import { checkPersistent } from '@resc-components/utils'
 import { VideoPlayerModal } from '@resc-components/video/player'
 import { VideoEditorModal } from '@resc-components/video/editor'
 
@@ -116,11 +117,9 @@ export default {
       if (!row.pubed) {
         return
       }
-
-      this.$refs.playerModal.open({
-        title: row.name,
-        src: row.path,
-        autoPlay: true
+      
+      this.$refs.playerModal.open(row, {
+        autoplay: true
       })
     },
 
@@ -181,21 +180,9 @@ export default {
         return
       }
 
-      this.$service('resc').get('check_transcoding', {
-        query: { id: row.id }
-      }).then((res) => {
-        if (res.status === 'transcoding') {
-          this.$app.toast('正在转码中 ...')
-        }
-
+      checkPersistent(row.id).then((res) => {
         if (res.status === row.status) {
           return
-        }
-
-        if (res.pubed) {
-          this.$app.toast('视频已发布。', { type: 'success' })
-        } else {
-          this.$app.toast(`视频 ${res.statusName}`)
         }
 
         this.loadData()

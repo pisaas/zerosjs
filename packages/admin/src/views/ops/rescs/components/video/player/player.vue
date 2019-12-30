@@ -1,6 +1,6 @@
 <template>
   <div class="player flex-center">
-    <video ref="video" :src="src" controls="controls" :autoplay="autoPlayStr" />
+    <video-player v-if="loaded" :options="videoOptions" />
   </div>
 </template>
 
@@ -11,45 +11,44 @@ export default {
   
   data () {
     return {
-      src: null,
-      autoPlay: false
+      loaded: false,
+      options: {}
     }
   },
 
   computed: {
-    autoPlayStr () {
-      if (this.autoPlay) {
-        return 'autoplay'
-      }
-      return null
+    videoOptions () {
+      let options = Object.assign({
+        type: 'video/mp4',
+        autoplay: this.autoplay,
+        controls: true
+      }, this.options)
+      
+      return options
     }
   },
 
   methods: {
-    load ({ src, autoPlay }) {
-      this.src = src
-      this.autoPlay = autoPlay || false
+    load (data, options) {
+      this.options = Object.assign({
+        poster: data.thumb,
+        sources: [{
+          type: data.mime,
+          src: data.path
+        }]
+      }, options)
+
+      this.loaded = false
+      
+      this.$nextTick(() => {
+        this.loaded = true
+      })
     },
 
     reset () {
-      this.autoPlay = false
-      this.src = null
-
-      let video = this.$refs.video
-      video.currentTime = 0
-      video.pause()
+      this.options = {}
+      this.loaded = false
     },
   }
 }
 </script>
-
-<style lang="less" scoped>
-.player {
-  padding: 10px;
-
-  video {
-    height: 400px;
-    width: 100%;
-  }
-}
-</style>

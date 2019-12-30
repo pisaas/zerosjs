@@ -297,6 +297,10 @@ export default {
       if (this.$refs.form) {
         this.$refs.form.resetFields()
       }
+
+      if (this.$refs.player) {
+        this.$refs.player.reset()
+      }
     },
 
     async save () {
@@ -432,7 +436,7 @@ export default {
 
         checking = true
 
-        checkPersistent(modelData.id).then((res) => {
+        checkPersistent(modelData.id, { silent: true }).then((res) => {
           this.modelData = res
           checking = false
 
@@ -522,10 +526,7 @@ export default {
         return
       }
 
-      audioPlayer.load({
-        src: audioPath,
-        autoPlay: false
-      })
+      audioPlayer.load(this.modelData)
     },
 
     loadData () {

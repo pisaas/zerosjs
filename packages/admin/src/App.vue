@@ -6,6 +6,7 @@
 
     <img ref="bufferImg" id="appBufferImg" class="hidden" />
     <canvas ref="bufferCanvas" id="appBufferCanvas" class="hidden" />
+    <audio ref="bgAudio" id="appBgAudio" loop="loop" class="hidden" />
   </div>
 </template>
 

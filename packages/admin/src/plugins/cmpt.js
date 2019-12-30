@@ -2,9 +2,10 @@ import ViewUI  from 'view-design'
 
 import Vue2Editor, { Quill } from 'vue2-editor'
 
-import { ImageExtend } from 'quill-image-extend-module'
 import QuillUndoRedo from '@/libs/quill/quill-undo-redo-module'
 import QuillWordCounter from '@/libs/quill/quill-word-counter-module'
+import QuillImageResize from '@/libs/quill/quill-image-resize-module'
+import QuillZerosMedia from '@/libs/quill/quill-zeros-media-module'
 
 import 'swiper/dist/css/swiper.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
@@ -12,8 +13,12 @@ import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'cropperjs/dist/cropper.css'
 import VueCropper from 'vue-cropperjs'
 
+import 'video.js/dist/video-js.css'
+// import VideoJs from 'video.js'
+
 import { Page, PageSection, PageResult } from '@components/page'
 import { ListNav, ListActions, ListAction, ListItemActions, ListItemAction } from '@components/list'
+import { VideoPlayer, AudioPlayer } from '@components/media'
 import { UserAvatar } from '@components/user'
 
 import { routeCmpts } from '@/router/routes'
@@ -26,12 +31,10 @@ export default ({ zeros, router, Vue }) => {
   // quill editor, 因为 quill-image-resize-module 内使用了window.Quill
   window.Quill = Quill
   
-  Quill.register("modules/imageExtend", ImageExtend)
   Quill.register("modules/undoRedo", QuillUndoRedo)
   Quill.register("modules/wordCounter", QuillWordCounter)
-
-  const ImageResize = require("quill-image-resize-module")
-  Quill.register("modules/imageResize", ImageResize.default)
+  Quill.register("modules/zerosMedia", QuillZerosMedia)
+  Quill.register("modules/imageResize", QuillImageResize)
 
   const QuillSize = Quill.import("attributors/style/size")
   QuillSize.whitelist = ["12px", false, "15px", "16px", "17px", "18px", "20px", "24px"]
@@ -55,6 +58,9 @@ export default ({ zeros, router, Vue }) => {
   Vue.component(ListItemAction.name, ListItemAction)
 
   Vue.component(UserAvatar.name, UserAvatar)
+
+  Vue.component(AudioPlayer.name, AudioPlayer)
+  Vue.component(VideoPlayer.name, VideoPlayer)
   
   Vue.prototype.$cmpt = initialize()
 }

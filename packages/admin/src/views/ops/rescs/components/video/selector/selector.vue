@@ -1,5 +1,5 @@
 <template>
-  <div class="image-selector page-list" :class="{ 'single-select': single }">
+  <div class="video-selector page-list" :class="{ 'single-select': single }">
     <page-section list-section fixed>
       <div class="list-header">
         <div class="body">
@@ -7,15 +7,8 @@
             v-model="listQuery.search"
             icon="ios-search" placeholder="名称/描述/ID"
             @on-enter="onQuery" />
-
-          <resc-uploader ref="uploader"
-            class="inline q-ml-md"
-            modal-title="图片上传"
-            upload-text="上传图片"
-            upload-icon="md-image"
-            store-key="app/material" resc-type="image"
-            open-file close-when-completed multi
-            @completed="onUploadCompleted" />
+          
+          <Button class="q-ml-md" type="primary" icon="md-musical-notes" @click="onUpload">添加视频</Button>
         </div>
         <div class="tail">
           <list-nav :total="listTotal" :current="listQuery.page" :page-size="listQuery.size"
@@ -27,16 +20,17 @@
         <div v-if="listItems.length" class="items-checkbox-group">
           <CheckboxGroup v-model="selItemIds" @on-change="onSelectionChange" >
             <Checkbox v-for="it in listItems" :label="it.id" :key="it.id"
-              class="image-item-checkbox" @click.native="onItemClick(it)">
-              <div class="image-item">
-                <div class="thumb" :style="{ 'backgroundImage': `url(${it.thumb})` }" />
-                <div class="title text-ellipsis" :title="it.name">{{ it.name }}</div>
+              class="video-item-checkbox" :disabled="!it.pubed"
+              @click.native="onItemClick(it)">
+              <div class="video-item">
+                <video-card :video="it" :disabled="!it.pubed" check-transcoding
+                  @change="onVideoChange" @play="onPlay" />
               </div>
             </Checkbox>
           </CheckboxGroup>
         </div>
         <div v-else class="no-data">
-          <div class="notice">暂无图片</div>
+          <div class="notice">暂无视频</div>
         </div>
       </div>
 
@@ -56,15 +50,23 @@
           @click="onConfirm">确定</Button>
       </div>
     </div>
+    
+    <video-player-modal ref="playerModal" />
+    <video-editor-modal ref='editorModal' @submit="onEditSubmit" />
   </div>
 </template>
 
 <script>
-import RescUploader from '@resc-components/uploader'
+import { VideoPlayerModal } from '@resc-components/video/player'
+import { VideoEditorModal } from '@resc-components/video/editor'
+
+import VideoCard from '@resc-components/video/card'
 
 export default {
   components: {
-    RescUploader
+    VideoPlayerModal,
+    VideoEditorModal,
+    VideoCard
   },
 
   props: {
@@ -93,19 +95,33 @@ export default {
   },
 
   methods: {
+    onPlay (item) {
+      this.$refs.playerModal.open(item, {
+        autoplay: true
+      })
+    },
+
     onSelectionChange (sels, a) {
       if (!this.single) {
         return
       }
       
       this.$nextTick(() => {
-        if (this.selItem) {
+        if (this.selItem && this.selItem.pubed) {
           this.selItemIds = [this.selItem.id]
         }
       })
     },
 
+    onVideoChange () {
+      this.loadData()
+    },
+
     onItemClick (item) {
+      if (!item.pubed) {
+        return
+      }
+
       this.selItem = item
     },
 
@@ -114,7 +130,12 @@ export default {
       this.loadData()
     },
 
-    onUploadCompleted () {
+    onUpload () {
+      this.$refs.editorModal.openCreate()
+    },
+
+    onEditSubmit (e) {
+      this.$refs.editorModal.close()
       this.loadData()
     },
 
@@ -174,8 +195,9 @@ export default {
       let query = this.$service.getSearchQuery(this.listQuery)
 
       query = Object.assign({
-        rtype: 'image',
-        store: 'app/material'
+        rtype: 'video',
+        store: 'app/material',
+        frzn: { $ne: true }
       }, query)
 
       let result = await this.$service('rescs').find({ query })
@@ -187,7 +209,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.image-selector {
+.video-selector {
   padding-bottom: 60px;
 }
 
@@ -197,24 +219,12 @@ export default {
   height: 320px;
 }
 
-.image-item {
+.video-item {
   padding: 5px;
+  opacity: 0.8;
 
-  &>.thumb {
-    width: 110px;
-    height: 110px;
-    cursor: pointer;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.8;
-  }
-
-  &>.title {
-    text-align: center;
-    line-height: 25px;
-    width: 100px;
-    padding: 0 5px;
+  &-checkbox {
+    width: 50%;
   }
 }
 
@@ -231,12 +241,12 @@ export default {
 </style>
 
 <style lang="less">
-.image-selector {
+.video-selector {
   .page-section {
     box-shadow: none;
   }
 
-  .image-item-checkbox {
+  .video-item-checkbox {
     position: relative;
 
     .ivu-checkbox {
@@ -246,16 +256,23 @@ export default {
       z-index: 10;
     }
 
+    &.ivu-checkbox-wrapper {
+      margin-right: 0;
+    }
+
     &.ivu-checkbox-wrapper-checked {
-      .image-item>.thumb {
-        box-shadow: 0 0 5px @active;
+      .video-item {
         opacity: 1;
+
+        &>.video-card {
+          box-shadow: 0 0 5px @active;
+        }
       }
     }
   }
 
   &.single-select {
-    .image-item-checkbox .ivu-checkbox {
+    .video-item-checkbox .ivu-checkbox {
       display: none;
     }
   }

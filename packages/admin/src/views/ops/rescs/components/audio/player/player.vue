@@ -1,6 +1,6 @@
 <template>
   <div class="player flex-center">
-    <audio ref="audio" :src="src" controls="controls" :autoplay="autoPlayStr" />
+    <audio-player v-if="loaded" :options="audioOptions" />
   </div>
 </template>
 
@@ -11,44 +11,44 @@ export default {
   
   data () {
     return {
-      src: null,
-      autoPlay: false
+      loaded: false,
+      options: {}
     }
   },
 
   computed: {
-    autoPlayStr () {
-      if (this.autoPlay) {
-        return 'autoplay'
-      }
-      return null
+    audioOptions () {
+      let options = Object.assign({
+        type: 'audio/mpeg',
+        autoplay: this.autoplay,
+        controls: true
+      }, this.options)
+      
+      return options
     }
   },
 
   methods: {
-    load ({ src, autoPlay }) {
-      this.src = src
-      this.autoPlay = autoPlay || false
+    load (data, options) {
+      this.options = Object.assign({
+        poster: data.thumb,
+        sources: [{
+          type: data.mime,
+          src: data.path
+        }]
+      }, options)
+
+      this.loaded = false
+      
+      this.$nextTick(() => {
+        this.loaded = true
+      })
     },
 
     reset () {
-      this.autoPlay = false
-      this.src = null
-
-      let audio = this.$refs.audio
-      audio.currentTime = 0
-      audio.pause()
+      this.options = {}
+      this.loaded = false
     },
   }
 }
 </script>
-
-<style lang="less" scoped>
-.player {
-  height: 100px;
-
-  audio {
-    width: calc(100% - 100px);
-  }
-}
-</style>

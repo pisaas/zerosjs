@@ -173,3 +173,11 @@ export default {
   }
 }
 </script>
+
+<style lang="less">
+  .tpc-editor-modal {
+    .ivu-modal {
+      min-width: 1024px;
+    }
+  }
+</style>
