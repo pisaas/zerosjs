@@ -41,4 +41,5 @@ export default {
 @import './styles/app.less';
 @import './styles/ivu.less';
 @import './styles/quill.less';
+@import './styles/tiptap.less';
 </style>

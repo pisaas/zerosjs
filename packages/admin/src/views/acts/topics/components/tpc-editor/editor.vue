@@ -31,7 +31,7 @@
 import { getTopicCat, getTopicCatPathNames } from '../../common'
 
 import CatSelector from '../cat-selector'
-import ContEditor from './cont-editor'
+import ContEditor from './cont-editor2'
 import TpcPreviewer from '../tpc-previewer'
 
 export default {

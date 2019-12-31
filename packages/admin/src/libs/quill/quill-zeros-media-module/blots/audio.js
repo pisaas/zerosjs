@@ -47,5 +47,5 @@ export default class AudioBlot extends BlockEmbed {
 }
 
 AudioBlot.blotName = 'zerosAudio'
-AudioBlot.className = 'ql-zeros-audio';
+AudioBlot.className = 'ql-audio';
 AudioBlot.tagName = 'iframe'
