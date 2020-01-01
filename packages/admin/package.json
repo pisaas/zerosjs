@@ -21,6 +21,7 @@
     "socket.io-client": "^2.3.0",
     "timeago.js": "^4.0.0-beta.2",
     "tiptap": "^1.26.6",
+    "tiptap-commands": "^1.12.5",
     "tiptap-extensions": "^1.28.6",
     "video.js": "^7.6.6",
     "view-design": "^4.0.2",

@@ -2,52 +2,66 @@
   <div class="tpc-cont-editor tiptap">
     <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
       <div class="editor-menubar">
-        <ButtonGroup>
-          <Button :disabled="!isUndo" @click="commands.undo" icon="md-undo" />
-          <Button :disabled="!isRedo" @click="commands.redo" icon="md-redo" />
-        </ButtonGroup>
-        <ButtonGroup class="q-ml-sm">
-          <Button class="text-bold" :class="{'active': isActive.bold()}" @click="commands.bold">B</Button>
-          <Button :class="{'active': isActive.italic()}" @click="commands.italic"><u>I</u></Button>
-          <Button class="text-underline" :class="{'active': isActive.underline()}" @click="commands.underline">U</Button>
-          <Button :class="{'active': isActive.strike()}" @click="commands.strike"><s>S</s></Button>
-        </ButtonGroup>
+        <div class="q-mb-sm">
+          <ButtonGroup class="q-mr-sm">
+            <Button :disabled="!isUndo" @click="commands.undo" icon="md-undo" />
+            <Button :disabled="!isRedo" @click="commands.redo" icon="md-redo" />
+          </ButtonGroup>
 
-        <ButtonGroup class="q-ml-sm">
-          <Button :class="{'active': isActive.paragraph()}" @click="commands.paragraph">P</Button>
-        </ButtonGroup>
+          <ButtonGroup class="q-mr-sm">
+            <Button class="text-bold" :class="{'active': isActive.bold()}" @click="commands.bold">B</Button>
+            <Button :class="{'active': isActive.italic()}" @click="commands.italic"><u>I</u></Button>
+            <Button class="text-underline" :class="{'active': isActive.underline()}" @click="commands.underline">U</Button>
+            <Button :class="{'active': isActive.strike()}" @click="commands.strike"><s>S</s></Button>
+          </ButtonGroup>
 
-        <Select class="q-ml-sm sel-header" :value="headerLevel" @on-change="onHeaderChange">
-          <Option v-for="it in HeaderLevels" :class="`h${it}`" :value="it" :key="it">Header {{ it }}</Option>
-          <Option :value="0">Normal</Option>
-        </Select>
+          <ButtonGroup class="q-mr-sm">
+            <Button :class="{'active': isTextAlign('left')}" @click="commands.text_align({ align: 'left' })">L</Button>
+            <Button :class="{'active': isTextAlign('center')}" @click="commands.text_align({ align: 'center' })">C</Button>
+            <Button :class="{'active': isTextAlign('right')}" @click="commands.text_align({ align: 'right' })">R</Button>
+            <!-- <Button :class="{'active': isActive.paragraph()}" @click="commands.paragraph">P</Button> -->
+          </ButtonGroup>
 
-        <ButtonGroup class="q-ml-sm">
-          <Button :class="{'active': isActive.blockquote()}" @click="commands.blockquote" icon="md-quote" />
-          <Button :class="{'active': isActive.code_block()}" @click="commands.code_block" icon="md-code-working" />
-        </ButtonGroup>
+          <Select class="q-mr-sm sel-header" :value="headerLevel" @on-change="onHeaderChange">
+            <Option v-for="it in HeaderLevels" :class="`h${it}`" :value="it" :key="it">Header {{ it }}</Option>
+            <Option :value="0">Normal</Option>
+          </Select>
 
-        <ButtonGroup class="q-ml-sm">
-          <Button :class="{'active': isActive.bullet_list()}" @click="commands.bullet_list" icon="md-list" />
-          <Button :class="{'active': isActive.ordered_list()}" @click="commands.ordered_list" icon="md-reorder" />
-        </ButtonGroup>
+          <ButtonGroup class="q-mr-sm">
+            <Button :class="{'active': isActive.blockquote()}" @click="commands.blockquote" icon="md-quote" />
+            <Button :class="{'active': isActive.code_block()}" @click="commands.code_block" icon="md-code-working" />
+          </ButtonGroup>
 
-        <ButtonGroup class="q-ml-sm">
-          <Button @click="commands.horizontal_rule" icon="md-remove" />
-        </ButtonGroup>
+          <ButtonGroup class="q-mr-sm">
+            <Button :class="{'active': isActive.bullet_list()}" @click="commands.bullet_list" icon="md-list" />
+            <Button :class="{'active': isActive.ordered_list()}" @click="commands.ordered_list" icon="md-reorder" />
+          </ButtonGroup>
 
-        <ButtonGroup class="q-ml-sm">
-          <Button @click="onLinkEdit" icon="md-link" />
-          <Button @click="$refs.imageSelectorModal.open()" icon="md-image" />
-          <Button @click="$refs.audioSelectorModal.open()" icon="md-musical-notes" />
-          <Button @click="$refs.videoSelectorModal.open()" icon="md-film" />
-        </ButtonGroup>
+          <ButtonGroup class="q-mr-sm relative">
+            <Button @click="onColorSelect('front')" icon="md-color-wand" />
+            <Button @click="onColorSelect('bg')" icon="md-color-palette" />
+            <ColorPicker ref="colorPicker" value="" class="q-mr-sm sel-color" @on-change="onColorChange" />
+          </ButtonGroup>
+
+          <ButtonGroup class="q-mr-sm">
+            <Button @click="commands.horizontal_rule" icon="md-remove" />
+          </ButtonGroup>
+        </div>
+        
+        <div class="q-mb-sm">
+          <ButtonGroup class="q-mr-sm">
+            <Button @click="onLinkEdit" icon="md-link" />
+            <Button @click="$refs.imageSelectorModal.open()" icon="md-image" />
+            <Button @click="$refs.audioSelectorModal.open()" icon="md-musical-notes" />
+            <Button @click="$refs.videoSelectorModal.open()" icon="md-film" />
+          </ButtonGroup>
+        </div>
       </div>
     </editor-menu-bar>
 
     <editor-menu-bubble ref="menuBubble" :editor="editor" v-slot="{ commands, isActive, menu }"
       @hide="onMenuBubbleHide">
-      <div class="menububble" :class="{ 'active': isMenuBubbleActive }"
+      <div class="menububble" :class="{ 'active': (menu.isActive && isMenuBubbleActive) }"
         :style="`left: ${menu.left + menuBubblePosAdjust.x}px; bottom: ${menu.bottom}px;`">
         <div v-if="isLinkActive" class="link-editor form-panel">
           <div class="form-label">链接地址:</div>
@@ -58,7 +72,7 @@
       </div>
     </editor-menu-bubble>
 
-    <editor-content class="editor-content zero-view" :editor="editor" />
+    <editor-content class="editor zero-view" :editor="editor" />
 
     <image-selector-modal ref="imageSelectorModal" single @selected="onImageSelected" />
     <audio-selector-modal ref="audioSelectorModal" single @selected="onAudioSelected" />
@@ -73,14 +87,16 @@ import {
   Blockquote, CodeBlock, HardBreak, Heading, HorizontalRule,
   OrderedList, BulletList, ListItem, TodoItem, TodoList,
   Bold, Code, Italic, Link, Strike, Underline,
-  History, Image
+  History, Image, TrailingNode, Placeholder
 } from 'tiptap-extensions'
+import { TextAlign, TextColor } from '@/libs/tiptap'
 
 import { ImageSelectorModal } from '@resc-components/image/selector'
 import { AudioSelectorModal } from '@resc-components/audio/selector'
 import { VideoSelectorModal } from '@resc-components/video/selector'
 
 const HeaderLevels = [1, 2, 3]
+const FontSizes = ['12px', false, "15px", "16px", "17px", "18px", "20px", "24px"]
 
 export default {
   components: {
@@ -102,6 +118,7 @@ export default {
       isMenuBubbleActive: false,
       isLinkActive: false,
       linkUrl: null,
+      textColor: '',
 
       content: this.value,
       editor: new Editor({
@@ -124,6 +141,16 @@ export default {
           new Underline(),
           new History(),
           new Image(),
+          new TrailingNode({ node: 'paragraph', notAfter: ['paragraph'], }),
+          new Placeholder({
+            emptyEditorClass: 'is-editor-empty',
+            emptyNodeClass: 'is-empty',
+            emptyNodeText: '点击这里开始创作吧 ...',
+            showOnlyWhenEditable: true,
+            showOnlyCurrent: true,
+          }),
+          new TextAlign(),
+          new TextColor()
         ],
         content: this.value,
         onUpdate: ({ getHTML }) => {
@@ -210,6 +237,21 @@ export default {
       this.editor.commands.heading({ level })
     },
 
+    onColorSelect () {
+      let colorPicker = this.$refs.colorPicker
+      colorPicker.toggleVisible ()
+
+      if (!colorPicker.visible) {
+        this.$nextTick(() => {
+          colorPicker.toggleVisible ()
+        })
+      }
+    },
+
+    onColorChange (color) {
+      this.editor.commands.text_color({ color })
+    },
+
     onLinkEdit () {
       this.isLinkActive = true
       this.isMenuBubbleActive = true
@@ -249,6 +291,10 @@ export default {
     insertMedia (type, attrs) {
     },
 
+    isTextAlign (type) {
+      return this.editor.getMarkAttrs('text_align').align === type
+    },
+
     hideMenuBubble () {
       this.isMenuBubbleActive = false
       const { to } = this.editor.resolveSelection()
@@ -285,16 +331,12 @@ export default {
 <style lang="less" scoped>
 .tpc-cont-editor {
   position: relative;
-  padding: 10px;
+  padding: 5px 10px;
   height: 100%;
 }
 
-.editor-menubar {
-  padding-bottom: 10px;
-}
-
-.editor-content {
-  height: calc(100% - 40px);
+.editor {
+  height: calc(100% - 80px);
   overflow: scroll;
   padding: 10px;
   border: 1px solid @border-color;
@@ -318,6 +360,19 @@ export default {
     .h1 { font-size: 2em !important; }
     .h2 { font-size: 1.5em !important; }
     .h3 { font-size: 1.17em !important; }
+  }
+
+  .sel-color {
+    position: absolute;
+    left: 0;
+
+    .ivu-input {
+      visibility: hidden;
+
+      &-icon {
+        display: none;
+      }
+    }
   }
 }
 </style>
