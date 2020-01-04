@@ -2,47 +2,45 @@ import { Quill } from 'vue2-editor'
 
 const BlockEmbed = Quill.import('blots/block/embed');
 
-const ATTRIBUTES = ['controls', 'width', 'height'];
-
 export default class AudioBlot extends BlockEmbed {
   static create({ data, options }) {
-    let node = super.create()
-    node.setAttribute('src', data.path)
-
+    debugger
+    let node = super.create();
+    node.setAttribute('src', data.path);
+    // Set non-format related attributes with static values
     node.setAttribute('frameborder', '0');
     node.setAttribute('allowfullscreen', true);
 
     return node;
   }
 
-  static formats(domNode) {
-    return ATTRIBUTES.reduce((formats, attribute) => {
-      if (domNode.hasAttribute(attribute)) {
-        formats[attribute] = domNode.getAttribute(attribute);
-      }
-      return formats;
-    }, {});
+  static formats(node) {
+    // We still need to report unregistered embed formats
+    let format = {};
+    if (node.hasAttribute('height')) {
+      format.height = node.getAttribute('height');
+    }
+    if (node.hasAttribute('width')) {
+      format.width = node.getAttribute('width');
+    }
+    return format;
   }
 
   static value(node) {
-    return node.getAttribute('src')
+    return node.getAttribute('src');
   }
 
   format(name, value) {
-    if (ATTRIBUTES.indexOf(name) > -1) {
+    // Handle unregistered embed formats
+    if (name === 'height' || name === 'width') {
       if (value) {
         this.domNode.setAttribute(name, value);
       } else {
-        this.domNode.removeAttribute(name);
+        this.domNode.removeAttribute(name, value);
       }
     } else {
       super.format(name, value);
     }
-  }
-
-  html() {
-    const { audio } = this.value();
-    return `<a href="${audio}">${audio}</a>`;
   }
 }
 

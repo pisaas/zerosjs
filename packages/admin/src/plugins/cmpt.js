@@ -19,6 +19,7 @@ import 'video.js/dist/video-js.css'
 import { Page, PageSection, PageResult } from '@components/page'
 import { ListNav, ListActions, ListAction, ListItemActions, ListItemAction } from '@components/list'
 import { VideoPlayer, AudioPlayer } from '@components/media'
+import { ModalHeader, ModalFullscreenIcon } from '@components/modal'
 import { UserAvatar } from '@components/user'
 
 import { routeCmpts } from '@/router/routes'
@@ -57,10 +58,13 @@ export default ({ zeros, router, Vue }) => {
   Vue.component(ListItemActions.name, ListItemActions)
   Vue.component(ListItemAction.name, ListItemAction)
 
-  Vue.component(UserAvatar.name, UserAvatar)
+  Vue.component(ModalHeader.name, ModalHeader)
+  Vue.component(ModalFullscreenIcon.name, ModalFullscreenIcon)
 
   Vue.component(AudioPlayer.name, AudioPlayer)
   Vue.component(VideoPlayer.name, VideoPlayer)
+
+  Vue.component(UserAvatar.name, UserAvatar)
   
   Vue.prototype.$cmpt = initialize()
 }

@@ -1,9 +1,11 @@
 <template>
   <Modal ref="editorModal" v-model="showModal"
-    class-name="tpc-editor-modal"
-    :title="modalTitle" :width="modalWidth"
-    :loading="loading" footer-hide :mask-closable="false"
+    class-name="tpc-editor-modal" :fullscreen="fullscreen"
+    :width="modalWidth" :loading="loading" footer-hide :mask-closable="false"
     @on-visible-change="onVisibleChange">
+    <modal-header slot="header" :title="modalTitle"
+      fullscreenable :fullscreen="fullscreen" @fullscreen-click="onFullscreenClick" />
+
     <new-tpc-editor v-if="editMode === 'create'" ref="editor"
       @cancel="onCancel" @create="onCreate" />
     <tpc-editor v-else ref="editor"
@@ -25,6 +27,7 @@ export default {
 
   data () {
     return {
+      fullscreen: false,
       tpcid: null,
       catid: null,
       editMode: 'create',
@@ -66,6 +69,10 @@ export default {
   },
 
   methods: {
+    onFullscreenClick (e) {
+      this.fullscreen = e
+    },
+
     onCancel (e) {
       this.resetLoading()
       this.close()
@@ -175,9 +182,23 @@ export default {
 </script>
 
 <style lang="less">
-  .tpc-editor-modal {
-    .ivu-modal {
-      min-width: 1024px;
+.tpc-editor-modal {
+  .ivu-modal {
+    min-width: 1024px;
+
+    &-fullscreen {
+      .tpc-editor {
+        height: 100%;
+      }
+
+      .tpc-cont-editor .zero-view {
+        height: calc(100% - 70px);
+
+        .ql-editor {
+          height: 100%;
+        }
+      }
     }
   }
+}
 </style>
