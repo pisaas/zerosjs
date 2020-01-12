@@ -1,9 +1,27 @@
 .zero-view {
   .ql-editor {
     font-size: 14px;
+    position: relative;
+  }
 
-    video,audio {
-      max-width: 100%;
+  .ql-video,.ql-audio, img {
+    width: 100%;
+  }
+
+  .ql-video {
+    background: black;
+    background-size: cover;
+    cursor: pointer;
+
+    &:after {
+      content: 'Play';
+      position: absolute;
+      font-size: 16px;
+      font-weight: bold;
+      color: red;
+      z-index: 100;
+      left: 30px;
+      bottom: 30px;
     }
   }
 

@@ -1,0 +1,5 @@
+export { default as TextAlign } from './marks/TextAlign'
+export { default as TextColor } from './marks/TextColor'
+export { default as FontSize } from './marks/FontSize'
+export { default as FillColor } from './marks/FillColor'
+export { default as Image } from './nodes/Image'

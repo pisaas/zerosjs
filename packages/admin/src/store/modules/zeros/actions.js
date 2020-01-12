@@ -1,4 +1,3 @@
-import uni from '@/utils/uni'
 import apis from '@/apis'
 
 export function load ({ commit, state }, payload) {
@@ -20,7 +19,5 @@ export function login ({ commit, state }, payload) {
     silentError: true
   }, payload)
 
-  return apis.service.authenticate(data).then((res) => {
-    uni.reload()
-  })
+  return apis.service.authenticate(data)
 }

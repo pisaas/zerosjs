@@ -20,7 +20,8 @@ import { Page, PageSection, PageResult } from '@components/page'
 import { ListNav, ListActions, ListAction, ListItemActions, ListItemAction } from '@components/list'
 import { VideoPlayer, AudioPlayer } from '@components/media'
 import { ModalHeader, ModalFullscreenIcon } from '@components/modal'
-import { UserAvatar } from '@components/user'
+import { ImageResizer } from '@components/resizer'
+import { UserAvatar } from '@components/avatar'
 
 import { routeCmpts } from '@/router/routes'
 
@@ -60,6 +61,7 @@ export default ({ zeros, router, Vue }) => {
 
   Vue.component(ModalHeader.name, ModalHeader)
   Vue.component(ModalFullscreenIcon.name, ModalFullscreenIcon)
+  Vue.component(ImageResizer.name, ImageResizer)
 
   Vue.component(AudioPlayer.name, AudioPlayer)
   Vue.component(VideoPlayer.name, VideoPlayer)
