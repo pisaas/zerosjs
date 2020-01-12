@@ -147,7 +147,7 @@ export default function () {
         next() // 继续
       } else {
         // 未登录且要跳转的页面不是登录页
-        next({ name: LOGIN_PAGE_NAME }) // 跳转到登录页
+        next({ name: LOGIN_PAGE_NAME, query: { redirect: to.fullPath } }) // 跳转到登录页
       }
 
       return next()

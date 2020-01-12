@@ -179,6 +179,8 @@ function onServiceError (ctx) {
   let errorMsg = uni.getReqErrorMessage(error)
 
   if (!silent) {
+    // show login modal
+    
     showToast({
       type: 'error',
       title: errorMsg

@@ -19,7 +19,8 @@ import 'video.js/dist/video-js.css'
 import { Page, PageSection, PageResult } from '@components/page'
 import { ListNav, ListActions, ListAction, ListItemActions, ListItemAction } from '@components/list'
 import { VideoPlayer, AudioPlayer } from '@components/media'
-import { UserAvatar } from '@components/user'
+import { ImageResizer } from '@components/resizer'
+import { UserAvatar } from '@components/avatar'
 
 import { routeCmpts } from '@/router/routes'
 
@@ -56,6 +57,8 @@ export default ({ zeros, router, Vue }) => {
   Vue.component(ListAction.name, ListAction)
   Vue.component(ListItemActions.name, ListItemActions)
   Vue.component(ListItemAction.name, ListItemAction)
+
+  Vue.component(ImageResizer.name, ImageResizer)
 
   Vue.component(UserAvatar.name, UserAvatar)
 

@@ -1,12 +1,12 @@
 import { Mark } from 'tiptap'
-import { updateMark, markInputRule, removeMark, toggleMark } from 'tiptap-commands'
+import { updateMark, markInputRule, removeMark } from 'tiptap-commands'
 
 export default class TextAlign extends Mark {
-  get name() {
+  get name () {
     return 'text_align';
   }
 
-  get schema() {
+  get schema () {
     return {
       attrs: {
         align: {
@@ -19,22 +19,21 @@ export default class TextAlign extends Mark {
           getAttrs: value => ({ align: value }),
         },
       ],
-      toDOM: mark => ['span', { style: `text-align: ${mark.attrs.align};display: block` }, 0],
+      toDOM: mark => ['span', { style: `text-align: ${mark.attrs.align}; display: block` }, 0],
     };
   }
 
-  commands({ type }) {
+  commands ({ type }) {
     return attrs => {
       if (attrs.align === 'left') {
         return removeMark(type, attrs)
       }
 
-      // return updateMark(type, attrs);
-      return toggleMark(type, attrs)
+      return updateMark(type, attrs)
     }
   }
 
-  inputRules({ type }) {
+  inputRules ({ type }) {
     return [
       markInputRule(/(?:\*\*|__)([^*_]+)(?:\*\*|__)$/, type),
     ];

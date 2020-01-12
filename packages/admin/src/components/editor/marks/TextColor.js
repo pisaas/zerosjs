@@ -1,28 +1,22 @@
 import { Mark } from 'tiptap'
-import { removeMark, updateMark } from 'tiptap-commands'
+import { removeMark, updateMark, markInputRule } from 'tiptap-commands'
 
 export default class TextColor extends Mark {
   get name () {
     return 'text_color'
   }
 
-  get defaultOptions () {
-    return {
-      color: ['red'],
-    }
-  }
-
   get schema () {
     return {
       attrs: {
         color: {
-          default: 'rgba(0,0,0,1)',
+          default: '#000000',
         },
       },
-      parseDOM: this.options.color.map(color => ({
-        tag: `span[style="color:${color}"]`,
-        attrs: { color },
-      })),
+			parseDOM: [{
+				style: 'color',
+				getAttrs: mark => mark.indexOf('rgb') !== -1 ? { color: mark } : ''
+			}],
       toDOM:
         node => {
           return ['span', {
@@ -40,5 +34,11 @@ export default class TextColor extends Mark {
 
       return updateMark(type, attrs)
     }
+  }
+
+  inputRules({ type }) {
+    return [
+      markInputRule(/(?:\*\*|__)([^*_]+)(?:\*\*|__)$/, type),
+    ]
   }
 }

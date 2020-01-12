@@ -3,47 +3,54 @@
     <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
       <div class="editor-menubar">
         <div class="q-mb-sm">
-          <ButtonGroup class="q-mr-sm">
+          <ButtonGroup class="action-group">
             <Button :disabled="!isUndo" @click="commands.undo" icon="md-undo" />
             <Button :disabled="!isRedo" @click="commands.redo" icon="md-redo" />
           </ButtonGroup>
 
-          <ButtonGroup class="q-mr-sm">
+          <Select class="action-group sel-fontsize" :value="fontSize" @on-change="onFontSizeChange">
+            <Option v-for="it in FontSizes" :value="it" :key="it"
+              :style="`font-size: ${it} !important;`">{{ it || '14px' }}</Option>
+          </Select>
+
+          <!-- <Select class="action-group sel-header" :value="headerLevel" @on-change="onHeaderChange">
+            <Option v-for="it in HeaderLevels" :class="`h${it}`" :value="it" :key="it">Header {{ it }}</Option>
+            <Option :value="0">Normal</Option>
+          </Select> -->
+
+          <ButtonGroup class="action-group">
             <Button class="text-bold" :class="{'active': isActive.bold()}" @click="commands.bold">B</Button>
             <Button :class="{'active': isActive.italic()}" @click="commands.italic"><u>I</u></Button>
             <Button class="text-underline" :class="{'active': isActive.underline()}" @click="commands.underline">U</Button>
             <Button :class="{'active': isActive.strike()}" @click="commands.strike"><s>S</s></Button>
           </ButtonGroup>
 
-          <ButtonGroup class="q-mr-sm">
+          <ButtonGroup class="action-group">
             <Button :class="{'active': isTextAlign('left')}" @click="commands.text_align({ align: 'left' })">L</Button>
             <Button :class="{'active': isTextAlign('center')}" @click="commands.text_align({ align: 'center' })">C</Button>
             <Button :class="{'active': isTextAlign('right')}" @click="commands.text_align({ align: 'right' })">R</Button>
             <!-- <Button :class="{'active': isActive.paragraph()}" @click="commands.paragraph">P</Button> -->
           </ButtonGroup>
 
-          <Select class="q-mr-sm sel-header" :value="headerLevel" @on-change="onHeaderChange">
-            <Option v-for="it in HeaderLevels" :class="`h${it}`" :value="it" :key="it">Header {{ it }}</Option>
-            <Option :value="0">Normal</Option>
-          </Select>
-
-          <ButtonGroup class="q-mr-sm">
+          <ButtonGroup class="action-group">
             <Button :class="{'active': isActive.blockquote()}" @click="commands.blockquote" icon="md-quote" />
             <Button :class="{'active': isActive.code_block()}" @click="commands.code_block" icon="md-code-working" />
           </ButtonGroup>
 
-          <ButtonGroup class="q-mr-sm">
+          <ButtonGroup class="action-group">
             <Button :class="{'active': isActive.bullet_list()}" @click="commands.bullet_list" icon="md-list" />
             <Button :class="{'active': isActive.ordered_list()}" @click="commands.ordered_list" icon="md-reorder" />
           </ButtonGroup>
 
-          <ButtonGroup class="q-mr-sm relative">
-            <Button @click="onColorSelect('front')" icon="md-color-wand" />
-            <Button @click="onColorSelect('bg')" icon="md-color-palette" />
-            <ColorPicker ref="colorPicker" value="" class="q-mr-sm sel-color" @on-change="onColorChange" />
+          <ButtonGroup class="action-group relative">
+            <Button @click="onColorSelect('text')" icon="md-color-wand" />
+            <Button @click="onColorSelect('fill')" icon="md-color-palette" />
+            <ColorPicker ref="colorPicker" class="sel-color"
+              editable :value="colorValue"
+              @on-change="onColorChange" @on-open-change="onColorOpen"/>
           </ButtonGroup>
 
-          <ButtonGroup class="q-mr-sm">
+          <ButtonGroup class="action-group">
             <Button @click="commands.horizontal_rule" icon="md-remove" />
           </ButtonGroup>
         </div>
@@ -81,22 +88,23 @@
 </template>
 
 <script>
-import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils'
 import { Editor, EditorContent, EditorMenuBar, EditorMenuBubble } from 'tiptap'
 import {
   Blockquote, CodeBlock, HardBreak, Heading, HorizontalRule,
   OrderedList, BulletList, ListItem, TodoItem, TodoList,
   Bold, Code, Italic, Link, Strike, Underline,
-  History, Image, TrailingNode, Placeholder
+  History, TrailingNode, Placeholder, Focus
 } from 'tiptap-extensions'
-import { TextAlign, TextColor } from '@/libs/tiptap'
+import { TextAlign, TextColor, FontSize, FillColor, Image } from '@/components/editor'
+import { getSelectionNode } from '@/components/editor/util'
 
 import { ImageSelectorModal } from '@resc-components/image/selector'
 import { AudioSelectorModal } from '@resc-components/audio/selector'
 import { VideoSelectorModal } from '@resc-components/video/selector'
 
 const HeaderLevels = [1, 2, 3]
-const FontSizes = ['12px', false, "15px", "16px", "17px", "18px", "20px", "24px"]
+const DefaultFontSize = '14px'
+const FontSizes = ['12px', '14px', '15px', '16px', '17px', '18px', '20px', '24px']
 
 export default {
   components: {
@@ -115,10 +123,12 @@ export default {
   data () {
     return {
       HeaderLevels,
+      FontSizes,
       isMenuBubbleActive: false,
       isLinkActive: false,
       linkUrl: null,
-      textColor: '',
+      colorType: '',
+      colorValue: '',
 
       content: this.value,
       editor: new Editor({
@@ -140,7 +150,6 @@ export default {
           new Strike(),
           new Underline(),
           new History(),
-          new Image(),
           new TrailingNode({ node: 'paragraph', notAfter: ['paragraph'], }),
           new Placeholder({
             emptyEditorClass: 'is-editor-empty',
@@ -149,8 +158,12 @@ export default {
             showOnlyWhenEditable: true,
             showOnlyCurrent: true,
           }),
+          // new Focus ({ className: 'ProseMirror-selectednode' }),
           new TextAlign(),
-          new TextColor()
+          new TextColor(),
+          new FontSize(),
+          new FillColor(),
+          new Image(),
         ],
         content: this.value,
         onUpdate: ({ getHTML }) => {
@@ -182,13 +195,23 @@ export default {
     },
 
     headerLevel () {
-      let node = this.getSelectionNode('heading')
+      let node = this.getSelectionNode(this.editor, 'heading')
 
       if (!node || !node.node || !node.node.attrs) {
         return 0
       }
 
       return node.node.attrs.level || 0
+    },
+
+    fontSize () {
+      let attrs = this.editor.getMarkAttrs('font_size')
+
+      if (!attrs) {
+        return DefaultFontSize
+      }
+
+      return attrs.size || DefaultFontSize
     },
 
     menuBubblePosAdjust () {
@@ -234,10 +257,24 @@ export default {
     },
 
     onHeaderChange (level) {
-      this.editor.commands.heading({ level })
+      if (level === 0) {
+        this.editor.commands.paragraph()
+      } else {
+        this.editor.commands.heading({ level })
+      }
     },
 
-    onColorSelect () {
+    onFontSizeChange (size) {
+      if (size === DefaultFontSize) {
+        size = false
+      }
+
+      this.editor.commands.font_size({ size })
+    },
+
+    onColorSelect (type) {
+      this.colorType = type
+
       let colorPicker = this.$refs.colorPicker
       colorPicker.toggleVisible ()
 
@@ -249,7 +286,31 @@ export default {
     },
 
     onColorChange (color) {
-      this.editor.commands.text_color({ color })
+      if (this.colorType === 'fill') {
+        this.editor.commands.fill_color({ color })
+      } else {
+        this.editor.commands.text_color({ color })
+      }
+    },
+
+    onColorOpen (open) {
+      if (!open) {
+        return
+      }
+
+      let attrs
+
+      if (this.colorType === 'fill') {
+        attrs = this.editor.getMarkAttrs('fill_color')
+      } else {
+        attrs = this.editor.getMarkAttrs('text_color')
+      }
+
+      if (!attrs) {
+        this.colorValue = ''
+      }
+      
+      this.colorValue = attrs.color || ''
     },
 
     onLinkEdit () {
@@ -292,7 +353,8 @@ export default {
     },
 
     isTextAlign (type) {
-      return this.editor.getMarkAttrs('text_align').align === type
+      let align = this.editor.getMarkAttrs('text_align').align || 'left'
+      return align === type
     },
 
     hideMenuBubble () {
@@ -302,17 +364,6 @@ export default {
       setTimeout(() => {
         this.editor.setSelection(to, to)
       }, 500)
-    },
-
-    getSelectionNode (type) {
-      let nodeType = this.editor.schema.nodes[type]
-      let state = this.editor.state
-
-      const predicate = node => node.type === nodeType
-      const node = findSelectedNodeOfType(type)(state.selection)
-        || findParentNode(predicate)(state.selection)
-
-      return node
     },
 
     getPlugin (name) {
@@ -342,13 +393,21 @@ export default {
   border: 1px solid @border-color;
   border-radius: @border-radius;
 }
+
+.link-editor {
+  width: 250px;
+}
 </style>
 
 <style lang="less">
 .editor-menubar {
-  button.ivu-btn {
-    width: 28px;
-    padding: 0;
+  .action-group {
+    margin-right: 8px;
+
+    &>button.ivu-btn {
+      width: 28px;
+      padding: 0;
+    }
   }
 
   .sel-header {
@@ -362,12 +421,17 @@ export default {
     .h3 { font-size: 1.17em !important; }
   }
 
+  .sel-fontsize {
+    width: 70px;
+  }
+
   .sel-color {
     position: absolute;
-    left: 0;
+    left: 20px;
+    top: 20px;
 
     .ivu-input {
-      visibility: hidden;
+      display: none;
 
       &-icon {
         display: none;

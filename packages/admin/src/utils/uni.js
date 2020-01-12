@@ -80,10 +80,15 @@ export function setAppId (val) {
 }
 
 // 重新加载页面(兼容微信端刷新)
-export function reload (url) {
+export function reload (url, hash) {
+  let location = (window.location.protocol + '//' + window.location.host) + '?ts=' + new Date().getTime()
+
   if (!url) {
-    // url = (window.top.location.href + '?timestamp=' + new Date().getTime())
-    url = (window.location.protocol + '//' + window.location.host + '?ts=' + new Date().getTime() + '/' + window.location.hash)
+    url = (location + '/' + window.location.hash)
+  } else if (url === 'location') {
+    if (hash) {
+      url = (location + '#' + hash)
+    }
   }
 
   window.top.location.href = url

@@ -56,10 +56,12 @@
 </template>
 
 <script>
-import uni from '../../utils/uni'
+import uni from '@/utils/uni'
+
 export default {
   data () {
     return {
+      redirect: null,
       form: {
         username: '',
         password: ''
@@ -91,7 +93,7 @@ export default {
   },
 
   mounted () {
-    // this.$router.tryReplace('/error/500')
+    this.redirect = this.$route.query.redirect
   },
 
   methods: {
@@ -112,7 +114,7 @@ export default {
 
     login () {
       this.$store.dispatch('zeros/login', this.form).then((res) => {
-        this.$router.goHome()
+        uni.reload('location', this.redirect)
       }).catch((err) => {
         let errorMsg = this.$uni.getReqErrorMessage(err) || '未知登陆错误'
         this.loginError = errorMsg
