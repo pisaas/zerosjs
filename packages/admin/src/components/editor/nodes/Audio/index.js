@@ -15,7 +15,7 @@ export default class Audio extends Node {
       draggable: true,
       parseDOM: [
         {
-          tag: 'video',
+          tag: 'audio',
           getAttrs: (dom) => {
             let dataSetupStr = dom.getAttribute('data-setup')
             let src = dom.getAttribute('src')
