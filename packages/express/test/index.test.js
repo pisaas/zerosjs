@@ -208,41 +208,41 @@ describe('@zerosjs/express', () => {
     }
   });
 
-  it('Works with HTTPS', done => {
-    const todoService = {
-      get (name) {
-        return Promise.resolve({
-          id: name,
-          description: `You have to do ${name}!`
-        });
-      }
-    };
+  // it('Works with HTTPS', done => {
+  //   const todoService = {
+  //     get (name) {
+  //       return Promise.resolve({
+  //         id: name,
+  //         description: `You have to do ${name}!`
+  //       });
+  //     }
+  //   };
 
-    const app = expressify(zeros())
-      .configure(expressify.rest())
-      .use('/secureTodos', todoService);
+  //   const app = expressify(zeros())
+  //     .configure(expressify.rest())
+  //     .use('/secureTodos', todoService);
 
-    const httpsServer = https.createServer({
-      key: fs.readFileSync(path.join(__dirname, '..', '..', 'tests', 'resources', 'privatekey.pem')),
-      cert: fs.readFileSync(path.join(__dirname, '..', '..', 'tests', 'resources', 'certificate.pem')),
-      rejectUnauthorized: false,
-      requestCert: false
-    }, app).listen(7889);
+  //   const httpsServer = https.createServer({
+  //     key: fs.readFileSync(path.join(__dirname, '..', '..', 'tests', 'resources', 'privatekey.pem')),
+  //     cert: fs.readFileSync(path.join(__dirname, '..', '..', 'tests', 'resources', 'certificate.pem')),
+  //     rejectUnauthorized: false,
+  //     requestCert: false
+  //   }, app).listen(7889);
 
-    app.setup(httpsServer);
+  //   app.setup(httpsServer);
 
-    httpsServer.on('listening', function () {
-      const instance = axios.create({
-        httpsAgent: new https.Agent({
-          rejectUnauthorized: false
-        })
-      });
+  //   httpsServer.on('listening', function () {
+  //     const instance = axios.create({
+  //       httpsAgent: new https.Agent({
+  //         rejectUnauthorized: false
+  //       })
+  //     });
 
-      instance.get('https://localhost:7889/secureTodos/dishes').then(response => {
-        assert.ok(response.status === 200, 'Got OK status code');
-        assert.strictEqual(response.data.description, 'You have to do dishes!');
-        httpsServer.close(() => done());
-      }).catch(done);
-    });
-  });
+  //     instance.get('https://localhost:7889/secureTodos/dishes').then(response => {
+  //       assert.ok(response.status === 200, 'Got OK status code');
+  //       assert.strictEqual(response.data.description, 'You have to do dishes!');
+  //       httpsServer.close(() => done());
+  //     }).catch(done);
+  //   });
+  // });
 });

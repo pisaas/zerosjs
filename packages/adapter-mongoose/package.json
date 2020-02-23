@@ -17,7 +17,7 @@
     "url": "git+ssh://git@bitbucket.org/pisaas/zeros.git"
   },
   "scripts": {
-    "test": "jest test --forceExit"
+    "test": "jest test -i --env=node --forceExit"
   },
   "peerDependencies": {
     "mongoose": "^5.7.7"

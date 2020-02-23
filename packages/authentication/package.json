@@ -18,7 +18,7 @@
 		"url": "git+ssh://git@bitbucket.org/pisaas/zeros.git"
 	},
 	"scripts": {
-		"test": "jest test"
+		"test": "jest test --env=node"
 	},
 	"dependencies": {
 		"@zerosjs/errors": "^0.0.1",

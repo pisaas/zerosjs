@@ -1,3 +1,5 @@
+const assert = require('assert');
+
 // const memory = require('@zerosjs/adapter-memory');
 const errors = require('@zerosjs/errors');
 const zeros = require('@zerosjs/zeros');
@@ -68,6 +70,9 @@ const testSuite = adapterTests([
 ]);
 
 describe('Zeros Memory Service', () => {
+  // 由于涉及到循环依赖，这里不作测试
+  it('empty test', done => done())
+
   // const events = [ 'testing' ];
   // const app = zeros()
   //   .use('/people', memory({ events }))

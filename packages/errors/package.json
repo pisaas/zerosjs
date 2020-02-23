@@ -9,7 +9,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jest test"
+    "test": "jest test --env=node"
   },
   "author": {
     "name": "rayl",

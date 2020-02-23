@@ -44,10 +44,13 @@ module.exports = (test, app, errors, serviceName, idProp) => {
 
       test('.get + id + query', async () => {
         try {
-          await service.get(doug[idProp], {
+          let rec = await service.get(doug[idProp], {
             query: { name: 'Tester' }
           });
-          throw new Error('Should never get here');
+
+          assert.strictEqual(rec, null);
+
+          // throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
             'Got a NotFound Zeros error'
@@ -57,8 +60,10 @@ module.exports = (test, app, errors, serviceName, idProp) => {
 
       test('.get + NotFound', async () => {
         try {
-          await service.get('568225fbfe21222432e836ff');
-          throw new Error('Should never get here');
+          let rec = await service.get('568225fbfe21222432e836ff');
+          assert.strictEqual(rec, null);
+
+          // throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
             'Error is a NotFound Zeros error'
@@ -73,10 +78,12 @@ module.exports = (test, app, errors, serviceName, idProp) => {
         });
 
         try {
-          await service.get(doug[idProp], {
+          let rec = await service.get(doug[idProp], {
             query: { [idProp]: alice[idProp] }
           });
-          throw new Error('Should never get here');
+          assert.strictEqual(rec, null);
+
+          // throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
             'Got a NotFound Zeros error'
@@ -289,12 +296,13 @@ module.exports = (test, app, errors, serviceName, idProp) => {
 
       test('.patch + id + query', async () => {
         try {
-          await service.patch(doug[idProp], {
+          let data = await service.patch(doug[idProp], {
             name: 'id patched doug'
           }, {
             query: { name: 'Tester' }
           });
-          throw new Error('Should never get here');
+          assert.strictEqual(data, null);
+          // throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
             'Got a NotFound Zeros error'
@@ -370,8 +378,9 @@ module.exports = (test, app, errors, serviceName, idProp) => {
 
       test('.patch + NotFound', async () => {
         try {
-          await service.patch('568225fbfe21222432e836ff', { name: 'PatchDoug' });
-          throw new Error('Should never get here');
+          let data = await service.patch('568225fbfe21222432e836ff', { name: 'PatchDoug' });
+          assert.strictEqual(data, null)
+          // throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
             'Error is a NotFound Zeros error'
@@ -386,12 +395,15 @@ module.exports = (test, app, errors, serviceName, idProp) => {
         });
 
         try {
-          await service.patch(doug[idProp], {
+          let data = await service.patch(doug[idProp], {
             age: 33
           }, {
             query: { [idProp]: alice[idProp] }
           });
-          throw new Error('Should never get here');
+
+          assert.strictEqual(data, null);
+
+          // throw new Error('Should never get here');
         } catch (error) {
           assert.strictEqual(error.name, 'NotFound',
             'Got a NotFound Zeros error'

@@ -19,7 +19,7 @@
   "scripts": {
     "clean": "npx shx rm -rf dist/ && npx shx mkdir -p dist",
     "version": "npm run build",
-    "test": "npm run build && jest test && npm run test:browser",
+    "test": "npm run build && jest test --env=node && npm run test:browser",
     "test:browser": "jest browser/test.js",
     "build": "npm run clean && npm run webpack",
     "webpack": "parallel-webpack"

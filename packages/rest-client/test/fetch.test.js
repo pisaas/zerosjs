@@ -77,7 +77,7 @@ describe('fetch REST connector', function () {
     assert.ok(todos instanceof init.Service, 'Returned service is a client');
 
     return todos.find({}).then(todos =>
-      assert.deepStrictEqual(todos, [
+      assert.deepStrictEqual([todos[0]], [
         {
           text: 'some todo',
           complete: false,

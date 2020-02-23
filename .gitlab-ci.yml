@@ -1,0 +1,43 @@
+image: pisaas/node:10
+
+cache:
+  paths:
+    - packages/
+    - deliveries/
+    - node_modules/
+
+stages:
+  - prepare
+  - test
+  - build
+  - deploy
+
+prepare packages:
+  stage: prepare
+  script:
+    - test -e package.json && npm install
+
+run test:
+  stage: test
+  script:
+    - npm run test
+
+build frontend:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - deliveries/admin/dist
+      - deliveries/console/dist
+
+deploy frontend:
+  stage: deploy
+  script:
+    - echo "deploying admin"
+
+deploy server:
+  stage: deploy
+  script:
+    - echo "deploying server"
+    # - docker-compose up -d
