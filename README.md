@@ -36,6 +36,13 @@ lerna add <package>[@version] [--dev] [--exact]
 #### lerna create
 新建包
 
+## CI
+### Gitlab CI/CD
+```bash
+# 同步
+rsync -rav --delete sync_test/ liuting@host.docker.internal:/Users/liuting/liuyi/tmp/sync_test/
+```
+
 ## 参考
 - [lerna Github](https://github.com/lerna/lerna)
 - [lerna的基础使用](https://www.jianshu.com/p/8b7e6025354b)

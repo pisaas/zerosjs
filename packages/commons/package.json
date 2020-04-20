@@ -1,5 +1,6 @@
 {
   "name": "@zerosjs/commons",
+  "private": true,
   "version": "0.0.1",
   "description": "Shared Zeros utility functions",
   "author": "rayl <rayl@pistech.com>",

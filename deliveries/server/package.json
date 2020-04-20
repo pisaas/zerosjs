@@ -1,8 +1,8 @@
 {
   "name": "zeros-server",
-  "description": "",
   "version": "0.0.1",
   "private": true,
+  "description": "",
   "main": "src",
   "author": {
     "name": "rayl",

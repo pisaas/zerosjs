@@ -1,5 +1,6 @@
 {
   "name": "@zerosjs/express",
+  "private": true,
   "description": "Express framework bindings and REST provider.",
   "version": "0.0.1",
   "private": true,

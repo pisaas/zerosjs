@@ -1,5 +1,6 @@
 {
   "name": "@zerosjs/errors",
+  "private": true,
   "description": "Common error types for Pisaas Zeros apps.",
   "version": "0.0.1",
   "homepage": "https://pisaas.com",

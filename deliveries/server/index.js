@@ -14,3 +14,11 @@ try {
 
 // Start server
 server.start();
+
+// 拦截关机信号
+process.on('SIGINT', () => {
+  server.stop((err) => {
+    console.error(err);
+    process.exit(err ? 1 : 0);
+  });
+});

@@ -1,10 +1,18 @@
-image: pisaas/node:10
+variables:
+  CI_IMAGE: pisaas/node:10
+  DEPLOY_HOST: admin@host.docker.internal
+  DEPLOY_DIR: /opt/apps/zeros
+
+image: $CI_IMAGE
 
 cache:
+  key: zerosjs-v1
   paths:
-    - packages/
-    - deliveries/
+    - .cache/
     - node_modules/
+
+tags:
+  - zerosjs
 
 stages:
   - prepare
@@ -15,7 +23,9 @@ stages:
 prepare packages:
   stage: prepare
   script:
-    - test -e package.json && npm install
+    - npm config set cache ".cache/npm"
+    - npm config set registry=http://registry.npm.taobao.org
+    - test -e package.json && npm install --progress=false
 
 run test:
   stage: test
@@ -31,13 +41,17 @@ build frontend:
       - deliveries/admin/dist
       - deliveries/console/dist
 
-deploy frontend:
+deploy all:
   stage: deploy
   script:
-    - echo "deploying admin"
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_dsa
+    - chmod 600 ~/.ssh/id_dsa
+    - echo "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - rsync -rav --delete deliveries/admin/dist/ $DEPLOY_HOST:$DEPLOY_DIR/admin/dist/
+    - rsync -rav --delete deliveries/console/dist/ $DEPLOY_HOST:$DEPLOY_DIR/console/dist/
+    - rsync -rav --delete deliveries/server/ $DEPLOY_HOST:$DEPLOY_DIR/server/
+    - rsync -rav --delete deliveries/admin/dist/ $DEPLOY_HOST:$DEPLOY_DIR/admin/dist/
+    - chmod 755 ./ci/bin/deploy.sh
+    - ./ci/bin/deploy.sh
 
-deploy server:
-  stage: deploy
-  script:
-    - echo "deploying server"
-    # - docker-compose up -d

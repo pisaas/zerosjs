@@ -1,5 +1,6 @@
 {
   "name": "@zerosjs/authentication-local",
+  "private": true,
   "version": "0.0.1",
   "description": "> TODO: description",
   "author": "rayl <rayl@pistech.com>",
