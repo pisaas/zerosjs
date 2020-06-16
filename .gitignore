@@ -47,3 +47,5 @@ derelicts
 # gitlab public
 /public/
 /ci/data/
+
+package-lock.json

@@ -18,6 +18,9 @@ Zerosjs为了提高开发效率，并保存组件统一发布，采用MonoRepo�
 
 ```bash
 lerna bootstrap
+
+# 构建client，否则delieveries/admin无法启动
+cd packages/client && npm run build
 ```
 
 #### lerna add
@@ -27,7 +30,7 @@ lerna bootstrap
 lerna add <package>[@version] [--dev] [--exact]
 ```
 
-#### learn clean
+#### lerna clean
 删除各个包下的node_modules
 
 #### lerna link

@@ -19,6 +19,7 @@ module.exports = function () {
       status: { type: 'string', default: 'new' },
       pubed: { type: 'boolean', default: false },
       frzn: { type: 'boolean', default: false },
+      deled: { type: 'boolean', default: false },
     },
     
     toJSON: {
