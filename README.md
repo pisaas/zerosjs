@@ -21,6 +21,9 @@ lerna bootstrap
 
 # 构建client，否则delieveries/admin无法启动
 cd packages/client && npm run build
+
+# 安装node-sass遇到超时问题
+npm i node-sass --sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
 ```
 
 #### lerna add
@@ -44,6 +47,14 @@ lerna add <package>[@version] [--dev] [--exact]
 ```bash
 # 同步
 rsync -rav --delete sync_test/ liuting@host.docker.internal:/Users/liuting/liuyi/tmp/sync_test/
+```
+
+## Mongo backup
+```bash
+# 备份
+mongodump -d zeros -o <path>
+# 还原
+mongorestore -d zeros --drop <path>
 ```
 
 ## 参考
