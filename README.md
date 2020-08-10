@@ -17,6 +17,7 @@ Zerosjs为了提高开发效率，并保存组件统一发布，采用MonoRepo�
 - 执行 npm run prepare
 
 ```bash
+npm config set package-lock false
 lerna bootstrap
 
 # 构建client，否则delieveries/admin无法启动
@@ -44,6 +45,14 @@ lerna add <package>[@version] [--dev] [--exact]
 ```bash
 # 同步
 rsync -rav --delete sync_test/ liuting@host.docker.internal:/Users/liuting/liuyi/tmp/sync_test/
+```
+
+## Mongo backup
+```bash
+# 备份
+mongodump -d zeros -o <path>
+# 还原
+mongorestore -d zeros --drop <path>
 ```
 
 ## 参考
