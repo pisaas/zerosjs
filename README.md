@@ -17,6 +17,7 @@ Zerosjs为了提高开发效率，并保存组件统一发布，采用MonoRepo�
 - 执行 npm run prepare
 
 ```bash
+npm config set package-lock false
 lerna bootstrap
 
 # 构建client，否则delieveries/admin无法启动
