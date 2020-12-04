@@ -119,7 +119,7 @@ export default {
   }
 
   &-body {
-    overflow: scroll;
+    overflow: auto;
     padding: 10px 0;
     width: 100%;
     display: flex;
@@ -218,12 +218,12 @@ export default {
         top: 0;
         left: 0;
         height: @listHeaderHeight;
-        overflow-x: scroll;
+        overflow-x: auto;
         width: 100%;
       }
 
       .list-body {
-        overflow-y: scroll;
+        overflow-y: auto;
         height: 100%;
         width: 100%;
       }
@@ -245,7 +245,7 @@ export default {
 
         .ivu-table-body {
           height: calc(100% - 30px + 1px);
-          overflow: scroll;
+          overflow: auto;
         }
 
         // .ivu-table-tbody {

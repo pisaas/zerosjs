@@ -195,7 +195,7 @@ export default {
 
 .cropper-section {
   .cropper-box {
-    overflow: scroll;
+    overflow: auto;
     max-height: 100%;
   }
 }

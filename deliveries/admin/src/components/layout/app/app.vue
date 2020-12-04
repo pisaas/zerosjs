@@ -220,14 +220,14 @@ export default {
 .layout-content {
   height: calc(100vh - @headerHeight);
   min-width: 600px;
-  overflow: scroll;
+  overflow: auto;
 
   .content-container {
     border-radius: 0;
     height: 100%;
 
     .content-body {
-      // overflow: scroll;
+      // overflow: auto;
       height: 100%;
     }
   }

@@ -35,19 +35,6 @@ module.exports = {
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
     types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)))
 
-    // config.module.rule('quill-icons')
-    //   .test(/\.svg$/)
-    //   .include
-    //     .add(resolve('node_modules/quill/assets/icons'))
-    //     .end()
-    //   .use('raw-loader')
-    //     .loader('raw-loader')
-
-    // config.module.rule("vue")
-    //   .use("vue-svg-inline-loader")
-    //   .loader("vue-svg-inline-loader")
-    //   .options({})
-
     config.plugin('define').tap((definitions) => {
       definitions[0]['process.env'] = JSON.stringify({
         BASE_URL: process.env.VUE_APP_BASE_URL,

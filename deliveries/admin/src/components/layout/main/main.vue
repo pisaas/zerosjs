@@ -145,7 +145,7 @@ export default {
     height: 100%;
 
     .content-body {
-      overflow: scroll;
+      overflow: auto;
       height: 100%;
     }
   }

@@ -5,7 +5,7 @@ module.exports = function () {
     timestamps: true,
 
     attributes: {
-      id: { type: 'string', required: true, unique: true, maxlength: 50 },  // follow id (type为10，则为openid)
+      id: { type: 'string', required: true, unique: true, maxlength: 50 },
       appid: { type: 'string', required: true, maxlength: 50 },  // 应用id
       uid: { type: 'string', required: true, maxlength: 50 },  // 所属成员, 一般为创建人id
 

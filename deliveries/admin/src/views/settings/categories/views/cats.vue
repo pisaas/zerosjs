@@ -1,5 +1,5 @@
 <template>
-  <page class="page-cats" full-height>
+  <page class="page-cats" full-height no-padding>
     <Split v-model="splitRate" min="200px">
       <div slot="left" class="page-left">
         <cat-tree @on-node-select="onNodeSelect" @on-node-change="onNodeChange" />
@@ -114,7 +114,7 @@ export default {
 <style lang="less" scoped>
 .page-left {
   height: 100%;
-  overflow: scroll;
+  overflow: auto;
   background: white;
 }
 
@@ -137,7 +137,7 @@ export default {
 .body-content {
   padding: 10px;
   height: calc(100% - 50px);
-  overflow: scroll;
+  overflow: auto;
 }
 </style>
 

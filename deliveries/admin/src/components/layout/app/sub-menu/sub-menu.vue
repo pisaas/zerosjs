@@ -126,7 +126,7 @@ export default {
 
 <style lang="less" scoped>
 .layout-sub-menu {
-  overflow: scroll;
+  overflow: auto;
   height: 100%;
   padding: 10px;
 }

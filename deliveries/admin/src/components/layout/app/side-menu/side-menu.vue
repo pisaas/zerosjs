@@ -81,7 +81,7 @@ export default {
 
 <style lang="less" scoped>
 .layout-side-menu {
-  overflow: scroll;
+  overflow: auto;
 
   .menu-header {
     height: 50px;

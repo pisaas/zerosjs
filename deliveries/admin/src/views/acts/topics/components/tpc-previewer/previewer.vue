@@ -36,7 +36,7 @@ export default {
   background: white;
   padding: 10px;
   color: @dark;
-  overflow: scroll;
+  overflow: auto;
 
   &>.title {
     padding: 10px;

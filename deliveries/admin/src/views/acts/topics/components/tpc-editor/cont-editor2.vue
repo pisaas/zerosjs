@@ -388,7 +388,7 @@ export default {
 
 .editor {
   height: calc(100% - 80px);
-  overflow: scroll;
+  overflow: auto;
   padding: 10px;
   border: 1px solid @border-color;
   border-radius: @border-radius;

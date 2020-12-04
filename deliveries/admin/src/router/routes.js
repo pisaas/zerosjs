@@ -157,15 +157,15 @@ const routes = [
         ]
       },
       { path: 'sys', name: 'app:set:sys', component: Parent,
-        redirect: '/settings/sys/logs',
+        redirect: '/settings/sys/cats',
         meta: { title: '系统设置', icon: 'md-code-working' },
         children: [
           { path: 'cats', name: 'app:set:sys:cats', component: load('settings/categories'),
             meta: { title: '信息分类' },
           },
-          { path: 'logs', name: 'app:set:sys:logs', component: load('settings/logs'),
-            meta: { title: '系统日志' }
-          },
+          // { path: 'logs', name: 'app:set:sys:logs', component: load('settings/logs'),
+          //   meta: { title: '系统日志' }
+          // },
           { path: 'api', name: 'app:set:sys:api', component: load('settings/staffs'),
             meta: { title: 'API' },
           },

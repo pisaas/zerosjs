@@ -277,7 +277,7 @@ export default {
 
       &-items {
         height: 100%;
-        overflow: scroll;
+        overflow: auto;
       }
 
       &-item-extra {

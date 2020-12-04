@@ -87,14 +87,14 @@ export default {
     }
 
     .page-body {
-      overflow: scroll;
+      overflow: auto;
       height: 100%;
     }
   }
 
   &.full-height {
     height: 100%;
-    overflow: scroll;
+    overflow: auto;
   }
 
   &.no-padding {
