@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-describe('@feathersjs/tests', () => {
+describe('@zerosjs/tests', () => {
   it('does not to be tested', () => {
     assert.ok(true);
   });

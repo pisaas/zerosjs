@@ -1,0 +1,32 @@
+{
+  "name": "@zerosjs/adapter-commons",
+  "private": true,
+  "version": "0.0.1",
+  "description": "> TODO: description",
+  "author": "rayl <rayl@pistech.com>",
+  "homepage": "https://bitbucket.org/pisaas/zeros#readme",
+  "license": "ISC",
+  "main": "lib",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/pisaas/zeros.git"
+  },
+  "scripts": {
+    "test": "jest test --env=node"
+  },
+  "dependencies": {
+    "@zerosjs/commons": "^0.0.1",
+    "@zerosjs/errors": "^0.0.1",
+    "@zerosjs/zeros": "^0.0.1"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "mongodb": "^3.3.3"
+  }
+}

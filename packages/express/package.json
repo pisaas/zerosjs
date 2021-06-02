@@ -1,15 +1,16 @@
 {
-  "name": "@zero/express",
-  "description": "Express framework bindings and REST provider. Forked from feathersjs.",
+  "name": "@zerosjs/express",
+  "private": true,
+  "description": "Express framework bindings and REST provider.",
   "version": "0.0.1",
+  "private": true,
   "homepage": "https://pisaas.com",
   "main": "lib/",
-  "types": "index.d.ts",
   "engines": {
     "node": ">= 6"
   },
   "scripts": {
-    "test": "jest test "
+    "test": "jest test --env=node"
   },
   "directories": {
     "lib": "lib"
@@ -18,20 +19,20 @@
     "access": "public"
   },
   "dependencies": {
-    "@feathersjs/commons": "^4.3.0",
-    "@zero/errors": "^0.0.1",
+    "@zerosjs/commons": "^0.0.1",
+    "@zerosjs/errors": "^0.0.1",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "lodash": "^4.17.15",
     "uberproto": "^2.0.4"
   },
   "devDependencies": {
-    "@feathersjs/authentication": "^4.3.3",
-    "@feathersjs/authentication-local": "^4.3.3",
-    "@feathersjs/feathers": "^4.3.3",
-    "@zero/tests": "^0.0.1",
+    "@zerosjs/adapter-memory": "^0.0.1",
+    "@zerosjs/authentication": "^0.0.1",
+    "@zerosjs/authentication-local": "^0.0.1",
+    "@zerosjs/tests": "^0.0.1",
+    "@zerosjs/zeros": "^0.0.1",
     "axios": "^0.19.0",
-    "feathers-memory": "^4.0.1",
     "jest": "^24.9.0",
     "lodash": "^4.17.15"
   }

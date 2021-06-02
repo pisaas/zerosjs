@@ -1,4 +1,4 @@
-const errors = require('@zero/errors');
+const errors = require('@zerosjs/errors');
 const path = require('path');
 
 const defaults = {
@@ -35,7 +35,7 @@ module.exports = function (options = {}) {
       }
     }
 
-    if (error.type !== 'FeathersError') {
+    if (error.type !== 'ZerosError') {
       let oldError = error;
       error = new errors.GeneralError(oldError.message, {
         errors: oldError.errors

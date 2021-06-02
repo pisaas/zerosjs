@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  ci:
+    image: gitlab/gitlab-runner
+    container_name: gitlab-runner
+    depends_on:
+      - mongo
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $HOME/.ssh:/root/.ssh
+      - ./ci/etc:/etc/gitlab-runner
+      - ./ci/data:/home/zeros
+    networks:
+      - zeros
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  mongo:
+    image: mongo:4.2.3
+    container_name: ci_mongo
+    ports:
+      - 27017:27017
+
+networks: 
+  zeros:
+    driver: bridge

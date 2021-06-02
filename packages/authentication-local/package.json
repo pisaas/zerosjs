@@ -1,0 +1,35 @@
+{
+  "name": "@zerosjs/authentication-local",
+  "private": true,
+  "version": "0.0.1",
+  "description": "> TODO: description",
+  "author": "rayl <rayl@pistech.com>",
+  "homepage": "https://bitbucket.org/pisaas/zeros#readme",
+  "main": "lib",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/pisaas/zeros.git"
+  },
+  "scripts": {
+    "test": "jest test --env=node"
+  },
+  "dependencies": {
+    "@zerosjs/authentication": "^0.0.1",
+    "@zerosjs/errors": "^0.0.1",
+    "@zerosjs/zeros": "^0.0.1",
+    "bcryptjs": "^2.4.3",
+    "debug": "^4.1.1",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@zerosjs/adapter-memory": "^0.0.1",
+    "jest": "^24.9.0"
+  }
+}

@@ -5,7 +5,7 @@ const assert = require('assert');
  * @param {any} app 
  * @param {string} name 
  */
-module.exports.setupTests = function (app, name) {
+exports.setupTests = function (app, name) {
   const getService = () => (name && typeof app.service === 'function')
     ? app.service(name) : app;
 
@@ -93,7 +93,7 @@ module.exports.setupTests = function (app, name) {
     it('.get with error', () => {
       const query = { error: true };
 
-      return getService().get(0, { query }).catch((error: Error) =>
+      return getService().get(0, { query }).catch((error) =>
         assert.ok(error && error.message)
       );
     });
@@ -101,5 +101,5 @@ module.exports.setupTests = function (app, name) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = Object.assign(setupTests, module.exports);
+  module.exports = Object.assign(exports.setupTests, module.exports);
 }

@@ -1,6 +1,6 @@
-const errors = require('@zero/errors');
-const { omit } = require('@feathersjs/commons')._;
-const debug = require('debug')('@zero/express/rest');
+const errors = require('@zerosjs/errors');
+const { omit } = require('@zerosjs/commons')._;
+const debug = require('debug')('@zerosjs/express/rest');
 
 const statusCodes = {
   created: 201,
@@ -35,7 +35,7 @@ function makeArgsGetter (argsOrder) {
   return (req, params) => argsOrder.map((argName) => {
     switch (argName) {
       case 'id':
-        return req.params.__feathersId || null;
+        return req.params.__zerosId || null;
       case 'data':
         return req.body;
       case 'params':
@@ -53,7 +53,7 @@ module.exports = function getHandler (method) {
 
     return function (req, res, next) {
       const { query } = req;
-      const route = omit(req.params, '__feathersId');
+      const route = omit(req.params, '__zerosId');
 
       res.setHeader('Allow', allowedMethods.join(','));
 
@@ -65,11 +65,11 @@ module.exports = function getHandler (method) {
         return next(new errors.MethodNotAllowed(`Method \`${method}\` is not supported by this endpoint.`));
       }
 
-      // Grab the service parameters. Use req.feathers
+      // Grab the service parameters. Use req.zeros
       // and set the query to req.query merged with req.params
       const params = Object.assign({
         query, route
-      }, req.feathers);
+      }, req.zeros);
 
       Object.defineProperty(params, '__returnHook', {
         value: true

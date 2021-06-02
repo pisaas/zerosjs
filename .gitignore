@@ -14,6 +14,7 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+.coverage
 
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
@@ -43,12 +44,8 @@ dist/
 # derelicted folder
 derelicts
 
-# TypeScript compiled files
-packages/adapter-commons/lib
-packages/authentication/lib
-packages/authentication-local/lib
-packages/authentication-client/lib
-packages/authentication-oauth/lib
-packages/configuration/lib
-packages/commons/lib
-packages/transport-commons/lib
+# gitlab public
+/public/
+/ci/data/
+
+package-lock.json

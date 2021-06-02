@@ -1,0 +1,92 @@
+.zero-view {
+  .ql-editor {
+    font-size: 14px;
+    position: relative;
+  }
+
+  .ql-video,.ql-audio, img {
+    width: 100%;
+  }
+
+  .ql-video {
+    background: black;
+    background-size: cover;
+    cursor: pointer;
+
+    &:after {
+      content: 'Play';
+      position: absolute;
+      font-size: 16px;
+      font-weight: bold;
+      color: red;
+      z-index: 100;
+      left: 30px;
+      bottom: 30px;
+    }
+  }
+
+  &.icon-md {
+    .ql-snow.ql-toolbar {
+      button svg { width: 18px; height: 18px; }
+      .ql-formats { margin-right: 12px; margin-bottom: 8px; background: @bg-color; }
+      .ql-picker-label { font-size: 12px; }
+    }
+
+    .ql-snow .ql-picker {
+      font-size: 11px;
+
+      &:not(.ql-background) {
+        top: 0;
+      }
+    }
+
+    .ql-snow .ql-icon {
+      font-size: 18px;
+
+      &.disabled {
+        opacity: 0.5;
+      }
+    }
+
+    .ql-snow .ql-picker.ql-size {
+      .ql-picker-item,.ql-picker-label {
+        &::before { content: '14px'; font-size: 14px !important; }
+        &[data-value="12px"]::before { content: '12px'; font-size: 12px !important; }
+        &[data-value="14px"]::before { content: '14px'; font-size: 14px !important; }
+        &[data-value="15px"]::before { content: '15px'; font-size: 15px !important; }
+        &[data-value="16px"]::before { content: '16px'; font-size: 16px !important; }
+        &[data-value="17px"]::before { content: '17px'; font-size: 17px !important; }
+        &[data-value="18px"]::before { content: '18px'; font-size: 18px !important; }
+        &[data-value="20px"]::before { content: '20px'; font-size: 20px !important; }
+        &[data-value="24px"]::before { content: '24px'; font-size: 24px !important; }
+      }
+    }
+  }
+
+  &.lang-cn {
+    .ql-snow .ql-tooltip {
+      &[data-mode=link]::before { content: "链接地址:"; }
+      &[data-mode=video]::before { content: "视频地址:"; }
+
+      &.ql-editing a.ql-action::after { border-right: 0px; content: '保存'; padding-right: 0px; }
+      a.ql-action::after { content: '编辑' }
+      a.ql-remove::after { content: '移除' }
+    }
+
+    .ql-snow .ql-picker.ql-header.ql-picker {
+      &-label:before, &-item:before { content: '文本'; }
+      &-label:before, &-item:before[data-value=serif] { content: '衬线字体'; }
+      &-label:before, &-item:before[data-value=monospace] { content: '等宽字体'; }
+    }
+
+    .ql-snow .ql-picker.ql-font.ql-picker {
+      &-label:before, &-item:before { content: '标准字体'; }
+      &-label:before, &-item:before[data-value="1"] { content: '标题1'; }
+      &-label:before, &-item:before[data-value="2"] { content: '标题2'; }
+      &-label:before, &-item:before[data-value="3"] { content: '标题3'; }
+      &-label:before, &-item:before[data-value="4"] { content: '标题4'; }
+      &-label:before, &-item:before[data-value="5"] { content: '标题5'; }
+      &-label:before, &-item:before[data-value="6"] { content: '标题6'; }
+    }
+  }
+}

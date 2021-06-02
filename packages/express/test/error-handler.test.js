@@ -2,7 +2,7 @@
 /* tslint:disable:no-unused-expression */
 const express = require('express');
 
-const errors = require('@zero/errors');
+const errors = require('@zerosjs/errors');
 const request = require('request');
 const fs = require('fs');
 const { join } = require('path');
@@ -271,7 +271,7 @@ describe('error-handler', () => {
       this.server.close(done);
     });
 
-    describe('converts an non-feathers error', () => {
+    describe('converts an non-zeros error', () => {
       it('is an instance of GeneralError', done => {
         request({
           url: 'http://localhost:5060/error',

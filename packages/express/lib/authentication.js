@@ -1,5 +1,5 @@
 const { flatten, merge } = require('lodash');
-const debug = require('debug')('@zero/express/authentication');
+const debug = require('debug')('@zerosjs/express/authentication');
 
 const normalizeStrategy = (_settings = [], ..._strategies) =>
   typeof _settings === 'string'
@@ -28,7 +28,7 @@ exports.parseAuthentication = (settings = {}) => {
           debug('Parsed authentication from HTTP header', authentication);
           merge(req, {
             authentication,
-            feathers: { authentication }
+            zeros: { authentication }
           });
         }
 
@@ -50,7 +50,7 @@ exports.authenticate = (...strategies) => {
 
     debug('Authenticating with Express middleware and strategies', settings.strategies);
 
-    service.authenticate(authentication, req.feathers, ...settings.strategies)
+    service.authenticate(authentication, req.zeros, ...settings.strategies)
       .then(authResult => {
         debug('Merging request with', authResult);
         merge(req, authResult);

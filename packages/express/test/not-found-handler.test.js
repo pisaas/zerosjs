@@ -1,4 +1,4 @@
-const errors = require('@zero/errors');
+const errors = require('@zerosjs/errors');
 
 const handler = require('../lib/not-found-handler');
 

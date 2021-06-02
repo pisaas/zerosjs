@@ -1,0 +1,26 @@
+{
+  "name": "@zerosjs/commons",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Shared Zeros utility functions",
+  "author": "rayl <rayl@pistech.com>",
+  "homepage": "https://bitbucket.org/pisaas/zeros#readme",
+  "license": "MIT",
+  "main": "lib/",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/pisaas/zeros.git"
+  },
+  "scripts": {
+    "test": "jest test --env=node"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
+}

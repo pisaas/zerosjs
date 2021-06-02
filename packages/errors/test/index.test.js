@@ -3,14 +3,14 @@ const assert = require('assert');
 const errors = require('../lib');
 const { convert } = errors;
 
-describe('@zero/errors', () => {
+describe('@zerosjs/errors', () => {
   it('is CommonJS compatible', () => {
     assert.strictEqual(typeof require('../lib'), 'object');
-    assert.strictEqual(typeof require('../lib').ZeroError, 'function');
+    assert.strictEqual(typeof require('../lib').ZerosError, 'function');
   });
 
   describe('errors.convert', () => {
-    it('converts objects to zero errors', () => {
+    it('converts objects to zeros errors', () => {
       const error = convert({
         name: 'BadRequest',
         message: 'Hi',
@@ -106,6 +106,10 @@ describe('@zero/errors', () => {
       assert.notStrictEqual(typeof errors.Unavailable, 'undefined', 'has Unavailable');
     });
 
+    it('InnerError', () => {
+      assert.notStrictEqual(typeof errors.InnerError, 'undefined', 'has InnerError');
+    });
+
     it('400', () => {
       assert.notStrictEqual(typeof errors[400], 'undefined', 'has BadRequest alias');
     });
@@ -170,6 +174,10 @@ describe('@zero/errors', () => {
       assert.notStrictEqual(typeof errors[503], 'undefined', 'has Unavailable alias');
     });
 
+    it('509', () => {
+      assert.notStrictEqual(typeof errors[509], 'undefined', 'has InnerError alias');
+    });
+
     it('instantiates every error', () => {
       Object.keys(errors).forEach(name => {
         if (name === 'convert') {
@@ -195,8 +203,7 @@ describe('@zero/errors', () => {
     it('follows the prototypical inheritance chain', () => {
       const error = new errors.MethodNotAllowed();
       assert.ok(error instanceof Error);
-      // assert.ok(error instanceof errors.FeathersError);
-      assert.ok(error instanceof errors.ZeroError);
+      assert.ok(error instanceof errors.ZerosError);
     });
 
     it('has the correct constructors', () => {
@@ -215,8 +222,7 @@ describe('@zero/errors', () => {
         assert.strictEqual(error.message, 'Error');
         assert.notStrictEqual(error.stack, undefined);
         assert.strictEqual(error instanceof errors.GeneralError, true);
-        // assert.strictEqual(error instanceof errors.FeathersError, true);
-        assert.strictEqual(error instanceof errors.ZeroError, true);
+        assert.strictEqual(error instanceof errors.ZerosError, true);
       });
 
       it('can wrap an existing error', () => {

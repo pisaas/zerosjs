@@ -1,4 +1,4 @@
-const errors = require('@zero/errors');
+const errors = require('@zerosjs/errors');
 
 module.exports = function ({ verbose = false } = {}) {
   return function (req, res, next) {

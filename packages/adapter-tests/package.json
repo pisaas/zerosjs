@@ -1,0 +1,28 @@
+{
+  "name": "@zerosjs/adapter-tests",
+  "private": true,
+  "version": "0.0.1",
+  "description": "> TODO: description",
+  "author": "rayl <rayl@pistech.com>",
+  "homepage": "https://bitbucket.org/pisaas/zeros#readme",
+  "license": "ISC",
+  "main": "lib",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/pisaas/zeros.git"
+  },
+  "scripts": {
+    "test": "jest test --env=node"
+  },
+  "devDependencies": {
+    "@zerosjs/errors": "^0.0.1",
+    "@zerosjs/zeros": "^0.0.1"
+  }
+}

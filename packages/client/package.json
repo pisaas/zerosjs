@@ -1,0 +1,60 @@
+{
+  "name": "@zerosjs/client",
+  "private": true,
+  "version": "0.0.1",
+  "description": "> TODO: description",
+  "author": "rayl <rayl@pistech.com>",
+  "homepage": "https://bitbucket.org/pisaas/zero#readme",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/pisaas/zero.git"
+  },
+  "scripts": {
+    "clean": "npx shx rm -rf dist/ && npx shx mkdir -p dist",
+    "version": "npm run build",
+    "test": "npm run build && jest test --env=node && npm run test:browser",
+    "test:browser": "jest browser/test.js",
+    "build": "npm run clean && npm run webpack",
+    "webpack": "parallel-webpack"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "IE 10"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/preset-env": "^7.6.3",
+    "@zerosjs/adapter-memory": "^0.0.1",
+    "@zerosjs/authentication-client": "^0.0.1",
+    "@zerosjs/errors": "^0.0.1",
+    "@zerosjs/express": "^0.0.1",
+    "@zerosjs/primus": "^0.0.1",
+    "@zerosjs/primus-client": "^0.0.1",
+    "@zerosjs/rest-client": "^0.0.1",
+    "@zerosjs/socketio": "^0.0.1",
+    "@zerosjs/socketio-client": "^0.0.1",
+    "@zerosjs/tests": "^0.0.1",
+    "@zerosjs/zeros": "^0.0.1",
+    "babel-loader": "^8.0.6",
+    "body-parser": "^1.19.0",
+    "jest": "^24.9.0",
+    "jquery": "^3.4.1",
+    "jsdom": "^15.2.0",
+    "node-fetch": "^2.6.0",
+    "parallel-webpack": "^2.4.0",
+    "socket.io-client": "^2.3.0",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.41.1",
+    "webpack-merge": "^4.2.2",
+    "ws": "^7.1.2",
+    "xhr2": "^0.2.0"
+  }
+}
